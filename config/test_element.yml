@@ -1,0 +1,2 @@
+inputbtn: (By.XPATH, '//input[@name="wd"]')
+searchbtn: (By.XPATH, '//input[@value="百度一下"]')
