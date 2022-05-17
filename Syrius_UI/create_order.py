@@ -168,7 +168,7 @@ if __name__ == '__main__':
     ci.order_id(
         pick_type=1,  # 订单类型.1=Total,2=Order
         num=200,  # 多少个不同的订单ID.
-        same_id=2,  # 一个ID号要几个商品
+        same_id=3,  # 一个ID号要几个商品
         container_num=1,  # 载物箱索引,1=1A,2=3A,3=6A,4=9A
         count_range=10,  # 拣货数量的随机范围1~这个值.
         code_len=15,  # 商品码长度
