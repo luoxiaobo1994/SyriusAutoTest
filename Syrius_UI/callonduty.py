@@ -7,7 +7,9 @@ from appium import webdriver
 from base.base_page import TestKey
 from selenium.webdriver.common.by import By
 from Syrius_API.CallOnDuty.create_task import create_task
-from utils.log import logger
+from utils.log import Logger
+
+logger = Logger(file=f'log.txt').get_logger()
 
 language = {"cn": "已完成，继续任务", "en": 'Completed, resuming the task'}
 continue_btn = (By.XPATH, '//android.view.View[@text="%s"]' % language['cn'])
@@ -16,7 +18,7 @@ notask_btn = (By.XPATH, '//android.widget.Button[@text="退出"]')
 app_data = {
     "platformName": "Android",
     "platformVersion": "10",  # 注意调试平板的安卓版本
-    "udid":"10.2.13.221:5555",
+    "udid": "10.2.13.221:5555",
     "deviceName": "k11",  # 注意调试平板的IP
     "apppackage": "com.syriusrobotics.platform.launcher",
     "appActivity": "com.syriusrobotics.platform.launcher/com.syriusrobotics.platform.jarvis.MainFlutterActivity",
@@ -44,7 +46,7 @@ while True:
     except:
         pass
     try:
-        if driver.find_element(continue_btn,wait=speed+0.5):
+        if driver.find_element(continue_btn, wait=speed + 0.5):
             time.sleep(speed)  # 给程序预留一个播报时间.
             driver.click_element(continue_btn, i=False)
             count += 1

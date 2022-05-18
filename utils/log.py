@@ -9,7 +9,7 @@ from utils.config import LOG_PATH
 
 class Logger(object):
 
-    def __init__(self, log_name="Syrius", file='SpeedPicker_test.txt'):
+    def __init__(self, log_name="Syrius", file='log.txt'):
         self.logger = logging.getLogger(log_name)
         logging.root.setLevel(logging.NOTSET)  # 日志级别,NOTEST是比DEBUG还低一级的级别,就是全部输出了.
         self.logger_file_name = file  # 生成的文件名称,取脚本名称来区分.应对多机测试.
@@ -41,6 +41,7 @@ class Logger(object):
             file_handler.setFormatter(self.formatter)
             file_handler.setLevel(self.file_output_level)
             self.logger.addHandler(file_handler)
+        # print(self.logger_file_name)
         return self.logger
 
 

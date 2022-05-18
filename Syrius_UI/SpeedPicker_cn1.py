@@ -9,8 +9,6 @@ from GGR import GGR
 from base.common import *
 from utils.log import logger
 
-logger.debug("开始整个脚本,大致看一下运行时长.")
-
 
 class SpeedPicker:
 
@@ -478,6 +476,7 @@ class SpeedPicker:
             if '扫码绑定 载物箱' in tmp_text:
                 logger.debug("到了输入载物箱码流程。")
                 self.inputcode(random_string(64))  # 1-64个长度的随机字符串.
+                # self.inputcode('Thisis6A')  # 1-64个长度的随机字符串.
                 sleep(1)  # 绑定单个的时候,抓太快了,会重复输一下,此时页面换了,就没有输入框了.给个延时.
                 try:
                     self.click_view_text("完成", wait=2)
@@ -586,8 +585,8 @@ class SpeedPicker:
                 logger.info('~*' * 25 + '\n')
                 self.wait_moment('已取下')
             elif '已取下' in view_ls or '拣货执行结果' in view_ls:
-                logger.debug(f"拣货信息-text:{self.get_text()}")
-                logger.debug(f"拣货信息-content:{self.driver.app_elements_content_desc((By.XPATH,'//*'))}")
+                # logger.debug(f"拣货信息-text:{self.get_text()}")
+                # logger.debug(f"拣货信息-content:{self.driver.app_elements_content_desc((By.XPATH,'//*'))}")
                 self.press_ok()  # 确定波次.
                 # 异常处理区,或者订单异常终止,都是这个流程,无需重复点.
                 self.click_view_text("已取下")  # 强点.

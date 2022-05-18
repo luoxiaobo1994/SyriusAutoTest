@@ -9,10 +9,11 @@ from selenium.webdriver.common.by import By
 from GGR import GGR
 from devices_pad import devices
 from base.common import *
-from utils.log import logger
+from utils.log import Logger
 from multiprocessing.dummy import Pool
 import threading
 
+logger = Logger(file=f'{get_devices()[0]}.txt').get_logger()
 
 class Ggr_Debug():
 

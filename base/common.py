@@ -7,10 +7,11 @@ import time, csv
 import traceback
 import sys, os, wcwidth
 import threading
-from utils.log import logger
+from utils.log import Logger
 from multiprocessing.dummy import Pool
 from collections.abc import Iterable
 
+logger = Logger().get_logger()
 
 """
 封装一些基础方法,公共使用.
@@ -252,6 +253,14 @@ def alpha_digit(num=10):
     return ''.join(random.sample(ls, random.choice(range(1, num))))
 
 
+def random_time():
+    x = [str(i).zfill(2) for i in list(time.localtime())]  # 时间戳
+    x.append('01')
+    # random.shuffle(x)  # 原地打乱列表顺序.
+    y = int(''.join(x))  # 拼接,转型.
+    return y
+
+
 def deep_flatten(ls):
     temp = []  # 临时存储
 
@@ -263,6 +272,7 @@ def deep_flatten(ls):
             return []  # 外层for循环执行完,返回的空列表,不会影响临时列表的值.
         else:
             return [ls]  # 不是迭代器,说明已经无法再展开了.
+
     f(ls)
     return temp
 
@@ -274,14 +284,4 @@ class just_err(Exception):
 
 
 if __name__ == '__main__':
-    ls = [1, [2, [3]], [[4], [[5, [6, 7, [8, 9]]]]], 10]
-    print(deep_flatten(ls))
-
-    def xx():
-        for i in range(10):
-            if i % 5 == 0:
-                print(1)
-        return 'xxx'
-
-
-    print(xx())
+    print(get_devices())

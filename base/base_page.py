@@ -15,7 +15,9 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC, select
 from selenium.webdriver.support.wait import WebDriverWait as wdw
 from base.common import *
-from utils.log import logger
+from utils.log import Logger
+
+logger = Logger().get_logger()
 
 
 class TestKey:
