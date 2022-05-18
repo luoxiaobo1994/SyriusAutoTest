@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 from GGR import GGR
 from base.common import *
 from utils.log import logger
+from utils.file_reader import YamlReader
 
 
 class SpeedPicker:
@@ -18,6 +19,8 @@ class SpeedPicker:
         self.view = (By.XPATH, '//android.view.View')
         self.image = (By.XPATH, '//android.widget.ImageView')
         self.notify()  # 刷新一些提醒，避免遗漏配置。
+        # self.config_data = YamlReader('../config/speedpicker_config.yml')  # 准备配置话,弄好再开.
+        # print(self.config_data)
 
     def init_driver(self):
         device = self.device_num()[0]  # 10.111.150.202 这种格式.
