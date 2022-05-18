@@ -1,0 +1,12 @@
+base_url: "https://flagship-sqa-test.flexgalaxy.com"
+result: "sucess"
+site1:
+  name: sqa-test
+  id: 02
+  user:
+    - 1
+    - 2
+    - 3
+site2:
+  name: sqa-spare-test
+  id: 1001

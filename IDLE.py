@@ -2,10 +2,8 @@
 # Author:Luoxiaobo
 # Time: 2021/7/6 23:09
 
-from utils.log import Logger
-from base.common import get_devices
+from utils.read_yaml import read_yaml
 
-x = get_devices()[0]
-print(x)
-logger = Logger().get_logger(file=f"{x}.txt")
-logger.info("111")
+res = read_yaml('config/flexgalxy_api.yaml')
+# s = read_yaml()
+print(res)
