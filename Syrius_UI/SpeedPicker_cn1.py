@@ -9,6 +9,7 @@ from GGR import GGR
 from base.common import *
 from utils.log import logger
 from utils.file_reader import YamlReader
+from Syrius_API.flagship.res_notify import send_order
 
 
 class SpeedPicker:
@@ -564,6 +565,19 @@ class SpeedPicker:
                     self.other_situation()
             elif '等待任务中' in view_ls:
                 logger.info("SpeedPicker当前没有任务,请下单。\n")  # 整两个空行来区分一下任务。
+                if self.random_trigger(n=1):
+                    order_num = 20
+                    logger.debug(f"即将通过接口下发[1-{order_num}]个随机数量拣货订单.")
+                    try:
+                        res = send_order(num=order_num)
+                        if 'successData' in res:
+                            logger.info("通过接口下发拣货任务成功.")
+                        else:
+                            sleep(10)
+                            logger.debug("通过接口下发任务失败了,请检查一下.或者手动发单.")
+                    except Exception as e:
+                        logger.debug(f"通过接口下发订单的流程出现了一些异常,请注意检查.异常信息:{e}")
+                        sleep(10)
                 self.wait_moment("等待任务中")
             elif '前往' in view_ls:
                 locate = view_ls[view_ls.index('前往') + 1]  # 前往的后一个，就是目标地点。

@@ -254,8 +254,8 @@ def alpha_digit(num=10):
 
 
 def random_time():
-    x = [str(i).zfill(2) for i in list(time.localtime())]  # 时间戳
-    x.append('01')
+    x = [str(i).zfill(2) for i in list(time.localtime())][:6]  # 时间戳
+    x.append(str(random.choice(range(1000))))
     # random.shuffle(x)  # 原地打乱列表顺序.
     y = int(''.join(x))  # 拼接,转型.
     return y
@@ -284,4 +284,4 @@ class just_err(Exception):
 
 
 if __name__ == '__main__':
-    print(get_devices())
+    print(random_time())
