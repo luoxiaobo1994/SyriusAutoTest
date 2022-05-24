@@ -1,0 +1,10 @@
+site_id: '202'
+picking_type: "ORDER_PICKING"
+order_num: 20
+item_num: 3
+container: "1A_container"
+container_list:
+  - "1A_container"
+  - "3A_container"
+  - "6A_container"
+  - "9A_container"

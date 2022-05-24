@@ -82,6 +82,6 @@ class ExcelReader():
 
 
 if __name__ == '__main__':
-    y = '../config/speedpicker_config.yml'
+    y = '../config/speedpicker_config.yaml'
     reader = YamlReader(y)
     print(reader.data['sp_text'])

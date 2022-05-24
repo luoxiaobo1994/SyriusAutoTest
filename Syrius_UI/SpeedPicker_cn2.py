@@ -20,7 +20,8 @@ class SpeedPicker:
         self.view = (By.XPATH, '//android.view.View')
         self.image = (By.XPATH, '//android.widget.ImageView')
         self.notify()  # 刷新一些提醒，避免遗漏配置。
-        self.config = self.get_cnfig()  # 流程开始之前读取一次配置就行了,不用每次都读取.
+        # self.config_data = YamlReader('../config/speedpicker_config.yaml')  # 准备配置话,弄好再开.
+        # print(self.config_data)
 
     def init_driver(self):
         device = self.device_num()[0]  # 10.111.150.202 这种格式.
@@ -262,7 +263,7 @@ class SpeedPicker:
             sleep(3)
         try:
             x = self.driver.app_elements_content_desc((By.XPATH, '//*'))
-            logger.debug(f"抓到了什么奇怪的content:{x}")
+            logger.debug(f"x:{x}")
         except:
             logger.debug("什么都没找到")
 
@@ -393,12 +394,12 @@ class SpeedPicker:
         logger.info(f"SpeedPicker处于拣货流程,页面信息:{view_ls}")  # 需要记录一下进入拣货流程.
         if '输入' in view_ls:  # 1.还没扫码，有输入按钮。
             logger.info("拣货情形1,还未扫码.")
-            if self.random_trigger(n=self.config['pick_psb']):  # 概率，上报异常。
+            if self.random_trigger(n=20):  # 概率，上报异常。
                 self.report_err()
                 return  # 结束拣货流程.
             self.click_view_text("输入")  # 点击输入按钮
             # total = view_ls[-4]  # 单独的最大拣货数量。  从输入开始走,可以这么拿.
-            if self.random_trigger(n=self.config['err_code_psb']):  # 随机触发,输入错误商品码的概率
+            if self.random_trigger(n=50):  # 随机触发,先去掉，100%触发。
                 self.input_error(random.randint(1, 564313112131))  # 随机取一个,取对了,就可以买彩票了。
             try:
                 good_code = view_ls[view_ls.index('×') - 1]  # 有什么办法,准确拿到商品码.
@@ -533,11 +534,11 @@ class SpeedPicker:
                 logger.info("发生了一些奇怪的异常,可能需要你自己去检查一下了.")
                 exit(-500)
 
-    def api_order(self, siteid='202'):
+    def api_order(self):
         order_num = 20
-        logger.debug(f"即将通过接口在场地:[{siteid}]下发[1-{order_num}]个随机数量拣货订单.")
+        logger.debug(f"即将通过接口下发[1-{order_num}]个随机数量拣货订单.")
         try:
-            res = send_order(num=order_num, siteid=siteid)
+            res = send_order(num=order_num)
             if 'successData' in res:
                 logger.info("通过接口下发拣货任务成功.")
             else:
@@ -546,9 +547,6 @@ class SpeedPicker:
         except Exception as e:
             logger.debug(f"通过接口下发订单的流程出现了一些异常,请注意检查.异常信息:{e}")
             sleep(10)
-
-    def get_cnfig(self):
-        return YamlReader('../config/speedpicker_config.yaml').data
 
     def main(self):
         """主业务流程，通过不断的抓取页面信息。去确定当前SpeedPicker运行状态"""
@@ -562,7 +560,8 @@ class SpeedPicker:
                 ls = ''.join(view_ls)  # 这个是长文本。用来做一些特殊判断。
             except:
                 continue
-            use_text = self.config['sp_text']  # 通过配置文件读取
+            use_text = {'等待任务中', '紧急拣货中', '前往', '拣货异常', '拣货中', '异常上报', '输入', '暂停', '恢复',
+                        '拣货执行结果', '隔口名称', '任务被终止', '请取下载物箱或货品', '已取下'}
             set_view = set(view_ls)
             if self.random_trigger(n=60):
                 logger.debug(f"主流程调试日志：{view_ls}")  # 调试打印的，后面不用了
@@ -571,7 +570,7 @@ class SpeedPicker:
                 self.driver.tap((By.XPATH, '//*[@text="重试"]'))
             elif '关闭' in view_ls:
                 self.click_view_text("关闭")
-            elif len(set(use_text) & set(view_ls)) == 0:
+            elif len(use_text & set(view_ls)) == 0:
                 logger.warning(f"页面获取的文本与SP不符。\n现在拿到的是:{view_ls}")
                 sleep(5)
                 if ['紧急停止', '若需恢复工作', '请解除急停状态'] in view_ls:
@@ -580,8 +579,8 @@ class SpeedPicker:
                     self.other_situation()
             elif '等待任务中' in view_ls:
                 logger.info("SpeedPicker当前没有任务,请下单。\n")  # 整两个空行来区分一下任务。
-                if self.config['api_order']:
-                    self.api_order(self.config['order_site'])
+                if self.random_trigger(n=0):
+                    self.api_order()
                 self.wait_moment("等待任务中")
             elif '前往' in view_ls:
                 locate = view_ls[view_ls.index('前往') + 1]  # 前往的后一个，就是目标地点。
@@ -589,10 +588,10 @@ class SpeedPicker:
                 logger.info(f"机器人正在前往:{locate},请等待。")
                 if locate.startswith('A0'):
                     logger.debug(f"前往目标的拣货点信息：{self.get_text()}")
-                if self.random_trigger(n=self.config['pasue_psb']):  # 触发随机。
+                if self.random_trigger(n=2):  # 触发随机。
                     self.pause_move()  # 暂停移动。
                 self.wait_moment("前往")
-            elif any_one(self.config['bind_text'], view_ls):
+            elif any_one(['扫码绑定 载物箱', '扫码绑定载物箱', '请放置好载物箱，并归位扫码枪'], view_ls):
                 self.bind_carrier()
             elif len(set_view.difference(use_text)) >= 3 and '拣货中' in ls:  # 储位,商品名称/编码,数量,x
                 # 拿到这个，说明在拣货页面。需要根据几种情况去进行处理操作。

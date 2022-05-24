@@ -11,6 +11,7 @@ from selenium.webdriver.common.by import By
 from base.common import *
 from utils.log import logger
 from selenium.webdriver import Chrome, ChromeOptions
+from selenium import webdriver
 
 
 class BluePrint(TestKey):
@@ -19,6 +20,7 @@ class BluePrint(TestKey):
 
     # def __init__(self):
     url = "https://gogoinsight-sqa-test.flexgalaxy.com/console/index.html"
+
     # self = TestKey(Chrome(options=BluePrint.options))
 
     def open_blueprint(self):
@@ -125,13 +127,12 @@ class BluePrint(TestKey):
         self.click_element((By.XPATH, '//a[starts-with(@class,"ant")]'))  # 整个页面只有一个a标签，只是为了避免以后有不一样的
         self.click_element((By.XPATH, f'//li/a[contains(text(),"{language}")]'))
 
-    def quit(self, timeout=3):
-        # 临时的退出浏览器函数，后面用例化之后要去除。
-        self.quit(timeout)
+    # def quit(self, timeout=3):
+    #     # 临时的退出浏览器函数，后面用例化之后要去除。
+    #     self.quit()
 
 
 if __name__ == '__main__':
-    from selenium import webdriver
     driver = webdriver.Chrome()
     bp = BluePrint(driver)
     bp.open_blueprint()
