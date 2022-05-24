@@ -49,7 +49,7 @@ def item_num(num=3):
 
 def random_id(siteid="202"):
     """ 用来生成单个的随机id数据. """
-    timestamp = str(int(time.time()) * 1000 + 28800)
+    timestamp = str(int(time.time()) * 1000 + 28800)  # *1000:从毫秒-秒. +28800,8小时的时区差值(秒)
     id_num = {
         "id": random_time(),
         "batchId": random_time(),

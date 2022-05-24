@@ -4,7 +4,7 @@
 
 from utils.file_reader import YamlReader
 
-file = 'config/speedpicker_config.yaml'
+file = 'config/yaml_demo.yaml'
 
 data = YamlReader(file).data
 print(data)

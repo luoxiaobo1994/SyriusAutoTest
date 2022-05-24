@@ -27,7 +27,11 @@ bind_text: # 绑定载物箱界面的文本
   - 扫码绑定 载物箱
   - 扫码绑定载物箱
   - 请放置好载物箱，并归位扫码枪
+container_code: 666   # 特定的载物箱码.
 api_order: True
 order_site: "202"
-
+estop_text:
+  - 紧急停止
+  - 若需恢复工作
+  - 请解除急停状态
 

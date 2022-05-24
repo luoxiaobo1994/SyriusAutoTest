@@ -128,7 +128,9 @@ class SpeedPicker:
         except:
             sleep(0.1)
 
-    def random_trigger(self, n=30):  # Probability value
+    def random_trigger(self, israndom=True, n=30):  # Probability value
+        if not israndom:  # 默认开启随机事件
+            return 0
         # 获取一个随机数值，选中了，就触发随机事件。
         if n == 0:  # 设置为0，关闭随机事件。
             return 0
@@ -137,8 +139,7 @@ class SpeedPicker:
             return 1
         elif n >= 2:
             num = random.randint(2, n + 2)  # 1和0被排除，得多加两个。
-            if num == n:  # Draw this number and turn on this function
-                # logger.info(A random event occurred。")
+            if num == n:  # 如果抽中的数和概率值一样,则中奖了.触发随机事件.
                 return 1  # return True
         else:
             return 0
@@ -473,6 +474,7 @@ class SpeedPicker:
             self.driver.tap((By.XPATH, '//*[@text="重试"]'))  # 通过元素的坐标进行点击.
         if '完成' in tt:
             self.click_view_text('完成')
+        container_code = {'1A_container':1647,'6A_container':666}
         while True:
             self.press_ok()
             tmp_text = ''.join(self.get_text())
