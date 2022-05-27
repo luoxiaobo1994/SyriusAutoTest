@@ -20,6 +20,12 @@ class Logger(object):
         # 日志输出格式,可以修改一下日期格式,避免出现三位数的毫秒.
         self.formatter = logging.Formatter("%(name)s %(asctime)s [%(levelname)s] : %(message)s",
                                            datefmt='%Y-%m-%d %H:%M:%S')
+        self.create_logdir()  # 判断是否有文件夹,没有就先创建一个.
+
+    def create_logdir(self):
+        dir = "D:\AutomationLog"
+        if not os.path.exists(dir):
+            os.makedirs("D:\AutomationLog")
 
     def get_logger(self):
         """在logger中添加日志句柄并返回,如果logger已有句柄,则直接返回"""
@@ -41,7 +47,6 @@ class Logger(object):
             file_handler.setFormatter(self.formatter)
             file_handler.setLevel(self.file_output_level)
             self.logger.addHandler(file_handler)
-        # print(self.logger_file_name)
         return self.logger
 
 

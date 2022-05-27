@@ -474,14 +474,19 @@ class SpeedPicker:
             self.driver.tap((By.XPATH, '//*[@text="重试"]'))  # 通过元素的坐标进行点击.
         if '完成' in tt:
             self.click_view_text('完成')
-        container_code = {'1A_container':1647,'6A_container':666}
+        container_code = self.config['container_code']
+        barcode = '19910318151 6ccc!@#$'
+        # 获取载物箱类型
+        for i in tt:
+            if '_container' in i:
+                barcode = container_code.get(i, '199103181516')
         while True:
             self.press_ok()
             tmp_text = ''.join(self.get_text())
             if '扫码绑定 载物箱' in tmp_text:
                 logger.debug("到了输入载物箱码流程。")
                 # self.inputcode(random_string(64))  # 1-64个长度的随机字符串.
-                self.inputcode('666')  # 1-64个长度的随机字符串.
+                self.inputcode(barcode)  # 1-64个长度的随机字符串.
                 sleep(1)  # 绑定单个的时候,抓太快了,会重复输一下,此时页面换了,就没有输入框了.给个延时.
                 try:
                     self.click_view_text("完成", wait=2)

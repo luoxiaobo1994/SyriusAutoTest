@@ -1,3 +1,4 @@
+base_url: 'https://flagship-sqa-test.flexgalaxy.com'
 site_id: '202'
 picking_type: "ORDER_PICKING"
 order_num: 20
@@ -8,3 +9,8 @@ container_list:
   - "3A_container"
   - "6A_container"
   - "9A_container"
+authdata:
+  "authFlow": "AK_SK_AUTH_FLOW"
+  "attributes":
+    "clientKey": "4otid7tu3lfu05p118ia7hvknq"
+    "clientSecret": "1ac4pmokjnuu4kc8rjq5ajcm6bcol1jls2n3cnqh84ssknqvulgi"
