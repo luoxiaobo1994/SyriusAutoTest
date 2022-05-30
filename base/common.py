@@ -205,12 +205,15 @@ def more_device():
 
 
 def ainb(a, b):
-    # a是b的子集.
-    tmp = list(set(a) & set(b))
-    if tmp.sort() == a.sort():
-        return True
-    else:
-        return False
+    # 函数功能,确认短的列表是不是长列表的子列表.
+    if len(a) > len(b):  # 默认a是短的
+        a, b = b, a
+    for i in a:
+        if i in b:
+            pass
+        else:
+            return False
+    return True
 
 
 def reset_keyboard(device):
@@ -284,4 +287,4 @@ class just_err(Exception):
 
 
 if __name__ == '__main__':
-    print(random_time())
+    pass
