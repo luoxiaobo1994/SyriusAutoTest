@@ -92,11 +92,15 @@ def random_id(siteid="202"):
     return id_num
 
 
-def id_num(num=5, siteid="202"):
+def id_num(specify=0, least=1, most=5, siteid="202"):
     """ 用来生成多个id的任务,每个id包含的拣货信息由random_id生成 """
-    n = random.choice(range(1, num + 1))
+    if specify:  # 指定个数
+        n = specify
+    else:
+        n = random.choice(range(least, most))  # 随机个数
+    logger.debug(f"通过接口,向场地:{siteid},下发:{n}个订单.")
     id_nums = []
-    for i in range(n):
+    for i in range(int(n)):
         id_nums.append(random_id(siteid))
     return id_nums  # 直接返回列表套字典了.
 
@@ -110,18 +114,19 @@ def item_code(num=20):
     return ''.join(code)
 
 
-def send_order(num=5, siteid="202"):
+def send_order(num=0, least=1, most=20, siteid="202"):
     # 发单的主函数
-    logger.debug(f"当前下发的场地ID是:{siteid},注意匹配机器人.")
+    # logger.debug(f"当前下发的场地ID是:{siteid},注意匹配机器人.")
     url = 'https://flagship-sqa-test.flexgalaxy.com/order/warehouse-order/'
     headers = {
         "Authorization": 'Bearer ' + get_token()['accessToken'],
         "Content-Type": "application/json"
     }
-    order_data = id_num(num, siteid="202")  # 订单号数量
+    order_data = id_num(specify=num, least=least, most=most, siteid=siteid)  # 订单号数量
     res = requests.post(url, json=order_data, headers=headers)
     return res.json()
 
 
 if __name__ == '__main__':
-    send_order(siteid="202")
+    send_order(num=1, siteid="202")
+    # id_num()

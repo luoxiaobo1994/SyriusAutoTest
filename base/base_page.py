@@ -215,7 +215,7 @@ class TestKey:
         try:
             element.clear()  # 先进行清空.避免干扰影响
         except:
-            logger.warning(f"元素输入文本:[{text}]失败.")
+            logger.warning(f"元素:[{locator}]输入文本:[{text}]失败.")
         finally:
             element.send_keys(text)
 
@@ -366,10 +366,9 @@ class TestKey:
         self.driver.swipe(wm['width'] * 0.8, wm['height'] * 0.5, wm['width'] * 0.2, wm['height'] * 0.5, duration)
         logger.debug("向右滑动成功.")
 
-
-    def swipto(self,dirct='up',duration=500):
+    def swipto(self, dirct='up', duration=500):
         if dirct == 'up':
-            x0,x1,y0,y1=0.5,0.5,0.8,0.2
+            x0, x1, y0, y1 = 0.5, 0.5, 0.8, 0.2
         wm = self.wm_size()
         self.driver.swipe(wm['width'] * 0.8, wm['height'] * 0.5, wm['width'] * 0.2, wm['height'] * 0.5, duration)
         sleep(0.5)  # 滑动完,APP自动化性能太差.

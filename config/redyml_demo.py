@@ -4,10 +4,15 @@
 # Desc: 用来测试读取配置文件的脚本.
 
 from utils.file_reader import YamlReader
+from time import  sleep
 
-file = 'speedpicker_config.yaml'
 
+
+# while True:
+file = "speedpicker_config.yaml"
 data = YamlReader(file).data
+print(data['sp_text'])
+    # for i,v in data.items():
+    #     print(i,v)
 
-for i,v in data.items():
-    print(i,v)
+    # sleep(20)
