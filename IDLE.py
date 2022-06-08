@@ -11,17 +11,6 @@ from utils.log import logger
 from time import sleep
 
 
-def api_order(order_num=20, siteid='202'):
-    try:
-        res = send_order(num=order_num, siteid=siteid)
-        if 'successData' in res:
-            logger.info("通过接口下发拣货任务成功.")
-        else:
-            sleep(10)
-            logger.debug("通过接口下发任务失败了,请检查一下.或者手动发单.")
-    except Exception as e:
-        logger.debug(f"通过接口下发订单的流程出现了一些异常,请注意检查.异常信息:{e}")
-        sleep(10)
-
-
-api_order()
+os.system(
+                    f'adb -s 10.2.10.229:5555 shell am start -n "com.syriusrobotics.platform.launcher/com.syriusrobotics.platform.jarvis.'
+                    f'SplashActivity" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER')
