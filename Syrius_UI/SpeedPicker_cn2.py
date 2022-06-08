@@ -71,7 +71,7 @@ class SpeedPicker:
                         sp_index = x.index('SpeedPicker') + 1  # 因为反过来了.从0开始.
                         self.driver.click_one(image[-sp_index])
                         logger.info("尚未启动SpeedPicker,即将自动启动SpeedPicker.")
-                        sleep(2)
+                        sleep(1)
                         tmp_text = self.get_text()
                         for item in tmp_text:
                             if 'version:' in item:
@@ -103,18 +103,16 @@ class SpeedPicker:
                         logger.info(f"这个设备发生了一些异常:[{i}] ,请先恢复异常.")
                         return 1
             else:
-                return 0  # Jump out of the loop and do nothing
+                return 0  # 跳出循环
         except:
-            return 0  # Exception notification is not available at any time. Exceptions will be reported
+            return 0  # 异常也跳出循环
 
-    def inputcode(self, code='199103181516'):  # The universal code is entered by default。
-        """For entering bar codes"""
+    def inputcode(self, code='199103181516'):  # 默认输入万能码
+        """ 输入条形码的函数 """
         try:
-            # The premise of entering numbers is to click the input button,and pop up the input box.
-            # self.driver.click_element((By.XPATH, '//android.widget.EditText'))
             self.driver.input_text(locator=(By.XPATH, '//android.widget.EditText'), text=str(code))
             logger.info(f"条形码[{code}]输入成功.")
-            self.driver.click_element((By.XPATH, '//android.widget.EditText'))  # need click input bar again
+            self.driver.click_element((By.XPATH, '//android.widget.EditText'))  # 再点击一次输入框,才能按回车
             self.driver.press_keyboard()
         except:
             pass
@@ -269,7 +267,7 @@ class SpeedPicker:
             x = self.driver.app_elements_content_desc((By.XPATH, '//*'))
             logger.debug(f"抓到了什么奇怪的content:{x}")
             if len(set(x) & set(self.get_cnfig()['exit_ggr'])) > 1:
-                logger.warning("脚本又导致GoGoReady退出了.准备启动GoGoReady.")
+                logger.warning("脚本又导致GoGoReady退出了.准备启动GoGoReady.请等待GoGoReady启动完成.约30s...")
                 os.system(f'adb -s {self.device_num()[0]} shell am start -n '
                           f'"com.syriusrobotics.platform.launcher/com.syriusrobotics.platform.jarvis.SplashActivity"'
                           f' -a android.intent.action.MAIN -c android.intent.category.LAUNCHER')
@@ -314,11 +312,11 @@ class SpeedPicker:
                 logger.info(f"确定上报[{err_type2}]异常吗?")  # 询问弹窗.
                 if err_type2 == err_type or err_type == '其他':  # 确定弹窗起来了. 选择其他异常,询问框不一致.
                     self.driver.click_one(self.driver.find_elements(self.view)[-1])  # 最后一个view元素是'确定'按钮.
-                    logger.info(f"确定上报:[{err_type}]异常.")
                     self.press_ok(timeout=1)  # 这里已经点击了确定，为什么还会卡呢？
                     if '确定' not in self.get_text():  # 跳转流程了.
                         sleep(6)  # 点完确定,会有个长等待.
                         # self.wait_moment(err_type)  # 用这个方法应该可以,需要验证一下.
+                        logger.info(f"上报异常:[{err_type}]成功.")
                         break
                     else:
                         logger.warning(f"上报异常流程,好像发生了什么异常,去看看吧.此时的页面:{self.get_text()}")
@@ -328,10 +326,10 @@ class SpeedPicker:
                 count -= 1
                 sleep(1)
         if err_type == '载具不合适':
-            count = 20
-            while count > 0:
+            self.wait_moment('前往')
+            while True:
                 try:
-                    self.click_view_text('完成', wait=3)
+                    self.click_view_text('完成', wait=2)
                     logger.info("安装载具完成.")
                     break
                 except:
@@ -364,7 +362,7 @@ class SpeedPicker:
                             # if without text display,break loop
                             if self.driver.element_display((By.XPATH, f'//*[@text="{without}"]')):
                                 logger.debug(f"文本[{without}]刷新. 停止检查[{text}].")
-                                break
+                                return
                         sleep(1)  # 等待时间不能太长。
                         count += timeout  # 持续计时,看看卡界面多久了.
                         minutes = count // 60
@@ -372,11 +370,12 @@ class SpeedPicker:
                             logger.warning(
                                 f"当前页面超过{minutes}分钟没有变化了, 请检查是否发生了什么异常情况.")
                             self.err_notify()
-                            break  # 出问题了，也跳出流程，等着回来吧。
-                    elif '立即更新' in view_ls:
+                            return  # 出问题了，也跳出流程，等着回来吧。
+                    elif '关闭' in view_ls:
+                        logger.debug(f"有可用版本更新,版本信息:{view_ls}")
                         self.click_view_text("关闭")
                     else:
-                        break  # 抓不到重复的文本了。跳出循环。
+                        return  # 抓不到重复的文本了。跳出循环。不能是break,会执行后面的if else
                 else:
                     if self.random_trigger(n=60):
                         logger.info(f"获取到了None文本,为什么?")
@@ -389,9 +388,9 @@ class SpeedPicker:
                 err -= 1
                 sleep(1)
         if text == '请到此处附近':
-            logger.warning("卡在推荐点位界面了,去检查一下吧!")
+            logger.warning("卡在推荐点位界面了,去检查一下吧!!!!!!")
         else:
-            logger.debug(f"持续检查文本,超过10次,都没有跳出检查函数.检查一下页面吧!当前页面:{self.get_text()}")
+            logger.debug(f"持续检查文本,超过{err}次,都没有跳出检查函数.检查一下页面吧!当前页面:{self.get_text()}")
 
     def click_view_text(self, text, wait=1, count=3):
         # 强点击,保证点到.
@@ -686,12 +685,11 @@ class SpeedPicker:
             elif '安装载具' in view_ls:
                 logger.debug("处于切换载具流程.")
                 self.click_view_text("完成")
-            elif '拣货异常' in ls:  # 异常处理区.
+            elif len(set(self.get_cnfig()) & set_view) > 0:  # 异常处理区.
                 logger.info("当前任务上报了异常,异常信息如下:")
-                # err_info = self.get_text()  # 可以根据'编码:'去拿到有几个异常商品.
                 logger.debug(f"异常信息如下:{self.get_text()}")
                 self.click_view_text("确定")  #
-                self.press_ok()  # 这里可能有波次完成需要确定.
+                self.press_ok()  # 这里可能有波次完成需要确定.再点一次,确保流程正常流转.
             elif view_ls[0] == "异常上报":  # 异常上报界面.
                 logger.info("当前处于异常上报流程。")
                 self.do_err()

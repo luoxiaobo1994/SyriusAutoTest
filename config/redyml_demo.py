@@ -11,7 +11,7 @@ from time import  sleep
 # while True:
 file = "speedpicker_config.yaml"
 data = YamlReader(file).data
-print(data['exit_ggr'])
+print(data)
     # for i,v in data.items():
     #     print(i,v)
 

@@ -2,9 +2,9 @@
 # Author: luoxiaobo
 # TIME: 2022/5/18 13:08
 # Desc: 测试notify
+
 import random
 import time
-
 import requests
 from base.common import *
 
@@ -41,10 +41,10 @@ def random_item():
                 '这个名称很长-超过100个字符-看看怎么显 示 的 ' * 3,
                 ]
     item = {
-        "name": f"接口订单:{random.choice(goods_ls)}",
-        "barcode": item_code(),
-        "quantity": random.choice(range(1, 100)),
-        "binLocations": [random.choice(['A07010202', 'A01010101', 'A03010203', 'A05010201'])],
+        "name": f"接口订单:{random.choice(goods_ls)}",  # 固定名称池里抓一个
+        "barcode": item_code(),  # 随机码
+        "quantity": random.choice(range(1, 100)),  # 随机数量
+        "binLocations": binlocation(),  # 随机生成一个.
         "imageUrl": f"file:///../sdcard/syrius_guanxi_productImg/{random.choice(img_list)}",
         "attributes": {
             "extensibleAttr0001": "222"
@@ -58,32 +58,32 @@ def item_num(num=3):
     n = random.choice(range(1, num + 1))
     items = []
     for i in range(n):
-        items.append(random_item())
-    return items
+        items.append(random_item())  # 单个商品的信息
+    return items  # 打包好的商品总表.
 
 
 def random_id(siteid="202"):
     """ 用来生成单个的随机ID数据. 商品信息另外的函数写 """
     timestamp = str(int(time.time()) * 1000 + 28800)  # *1000:秒-毫秒. +28800,8小时的时区差值(秒)
     id_num = {
-        "id": random_time(),
-        "batchId": random_time(),
+        "id": str(random_time()) + alpha_digit(46),  # 当前时间+随机长度字母数字
+        "batchId": str(random_time()) + alpha_digit(46),  # 当前时间+随机长度字母数字
         # "type": 'ORDER_PICKING',  # 指定类型时,把注释去掉,并去掉下面的随机选择.
         # "type": 'TOTAL_PICKING',  # 指定类型时,把注释去掉,并去掉下面的随机选择.
         "type": random.choice(['ORDER_PICKING', 'TOTAL_PICKING']),  # 随机选一个.
         "priority": 1,
         "notifyUrl": "https://peach-sqa-test.flexgalaxy.com/peach/notify",
-        "timestamp": timestamp,
-        "expectedExecutionTime": timestamp,
-        "expectedFinishTime": timestamp,
-        "warehouseId": siteid,
+        "timestamp": timestamp,  # 上传时间
+        "expectedExecutionTime": timestamp,  # 期望开始时间,暂时无用
+        "expectedFinishTime": timestamp,  # 期望结束时间,暂时无用
+        "warehouseId": siteid,  # 订单下发的目标场地.
         "storages": [
             {
                 # "type": '6A_container' # 指定类型时,把注释去掉,并去掉下面的随机选择.
                 "type": random.choice(['1A_container', '3A_container', '6A_container', '9A_container'])  # 随机选一个
             }
         ],
-        "items": item_num(),  # 每个订单有几个商品,由这个函数,再去生成.
+        "items": item_num(),  # 每个订单有几个商品,由这个函数,再去生成. 数量随机
         "attributes": {
             "extensibleAttr01": "222"  # 暂时用不上的数据,目前看着没啥影响.
         }

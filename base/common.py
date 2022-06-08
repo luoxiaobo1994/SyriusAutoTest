@@ -10,6 +10,7 @@ import threading
 from utils.log import Logger
 from multiprocessing.dummy import Pool
 from collections.abc import Iterable
+import itertools
 
 logger = Logger().get_logger()
 
@@ -261,7 +262,7 @@ def random_time():
     x.append(str(random.choice(range(1000))))
     # random.shuffle(x)  # 原地打乱列表顺序.
     y = int(''.join(x))  # 拼接,转型.
-    return y
+    return y  # 长度为17
 
 
 def deep_flatten(ls):
@@ -280,6 +281,17 @@ def deep_flatten(ls):
     return temp
 
 
+def binlocation(locate=''):
+    shelf = ['01', '02', '03', '04', '05', '06', '07']  # 货架
+    row = ['01', '02']  # 排
+    floor = ['01', '02']  # 层
+    location = ['01', '02', '03', '04']  # 位
+    ll = itertools.product(shelf, row, floor, location)
+    if not locate:
+        return 'A' + ''.join(random.choice(list(ll)))
+    return 'A01010101'
+
+
 class just_err(Exception):
 
     def __init__(self):
@@ -287,4 +299,5 @@ class just_err(Exception):
 
 
 if __name__ == '__main__':
-    pass
+    for i in range(10):
+        print(str(random_time()) + alpha_digit(47))
