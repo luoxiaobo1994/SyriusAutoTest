@@ -292,6 +292,10 @@ def binlocation(locate=''):
     return 'A01010101'
 
 
+def interset(a, b):
+    return set(a) & set(b)
+
+
 class just_err(Exception):
 
     def __init__(self):
@@ -299,5 +303,6 @@ class just_err(Exception):
 
 
 if __name__ == '__main__':
-    for i in range(10):
-        print(str(random_time()) + alpha_digit(47))
+    a = [1,2,3]
+    b = [2,5,6,3]
+    print(interset(a,b))

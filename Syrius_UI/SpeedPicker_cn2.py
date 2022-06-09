@@ -363,6 +363,10 @@ class SpeedPicker:
                             if self.driver.element_display((By.XPATH, f'//*[@text="{without}"]')):
                                 logger.debug(f"文本[{without}]刷新. 停止检查[{text}].")
                                 return
+                        elif 'version' in text:
+                            if '关闭' in view_ls:
+                                logger.debug(f"有可用版本更新,版本信息:{view_ls}")
+                                self.click_view_text("关闭")
                         sleep(1)  # 等待时间不能太长。
                         count += timeout  # 持续计时,看看卡界面多久了.
                         minutes = count // 60
@@ -371,9 +375,7 @@ class SpeedPicker:
                                 f"当前页面超过{minutes}分钟没有变化了, 请检查是否发生了什么异常情况.")
                             self.err_notify()
                             return  # 出问题了，也跳出流程，等着回来吧。
-                    elif '关闭' in view_ls:
-                        logger.debug(f"有可用版本更新,版本信息:{view_ls}")
-                        self.click_view_text("关闭")
+
                     else:
                         return  # 抓不到重复的文本了。跳出循环。不能是break,会执行后面的if else
                 else:
@@ -685,7 +687,7 @@ class SpeedPicker:
             elif '安装载具' in view_ls:
                 logger.debug("处于切换载具流程.")
                 self.click_view_text("完成")
-            elif len(set(self.get_cnfig()) & set_view) > 0:  # 异常处理区.
+            elif len(set(self.get_cnfig()['err_text']) & set_view) > 0:  # 异常处理区.
                 logger.info("当前任务上报了异常,异常信息如下:")
                 logger.debug(f"异常信息如下:{self.get_text()}")
                 self.click_view_text("确定")  #
