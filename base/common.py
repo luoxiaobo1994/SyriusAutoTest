@@ -293,6 +293,7 @@ def binlocation(locate=''):
 
 
 def interset(a, b):
+    # 两个迭代序列的交集.列表,元组.
     return set(a) & set(b)
 
 
@@ -309,19 +310,24 @@ def app_screenshot(device=''):
         os.system(f"adb shell mkdir -p {path}")  # 先创建一个文件夹
     except:
         pass
-    if device:
+    if device:  # 多设备的情况下,需要指定设备截图.
         # 指定设备
         os.system(f"adb -s {device} shell screencap -p {path}/{file_name}.png")
         logger.debug(f"截图成功,截图存放位置:{path}/{file_name}.png")
-        time.sleep(2)
+        time.sleep(1)
         os.system(f"adb -s {device} pull {path}/{file_name}.png {dir}")
-        logger.debug(f"截图下载到本机成功,截图存放位置:{dir}/{file_name}.png")
+        logger.debug(f"截图下载到本机成功,截图存放位置:{dir}\\{file_name}.png")  # windows是反斜杠.
     else:
         os.system(f"adb shell screencap -p {path}/{file_name}.png")
         logger.debug(f"截图成功,截图存放位置:{path}/{file_name}.png")
-        time.sleep(2)
+        time.sleep(1)
         os.system(f"adb pull {path}/{file_name}.png {dir}")
-        logger.debug(f"截图下载到本机成功,截图存放位置:{dir}/{file_name}.png")
+        logger.debug(f"截图下载到本机成功,截图存放位置:{dir}\\{file_name}.png")
+
+
+def app_screenrecord():
+    # 录屏
+    pass
 
 
 class just_err(Exception):
