@@ -9,3 +9,5 @@ view_content:2022-03-10 10:03:11  ['39%', '上传机器人日志', 'Robot droidI
 image_content:2022-03-10 10:03:24  ['2 ', '关键部件信息']
 view_content:2022-03-10 10:03:28  ['39%', '关于机器人', 'Droid ID\n10e841e62e3832118b95995373b745a1', 'Robot SN\n182b6277bf849b7d4283d68b6ac7e1b7', 'Workgroup ID\n1646391340007', '固件版本\n1', '机器人软件\n1.0.911', '平板软件\nV 2.0.0.1888sqa_test', 'IP地址\n10.2.11.57', '蓝牙地址\n02:00:00:00:00:00', 'MAC地址\n02:00:00:00:00:00', '平板可用容量\n36.13 GB/56.94 GB']
 上传上位机日志界面，无任何文本属性可以抓取。可能需要切换框架。
+jarvis主界面上的按钮xpath: //android.widget.ImageView[@clickable='true']
+GGR设置里面的文本xpath: //android.view.View[@content-desc!='']
