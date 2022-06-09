@@ -178,7 +178,7 @@ def get_devices():
         if item != "\n":
             all_devices.append(str(item).split("\t")[0])
     # print(get_time(),f"当前连接的设备有：{len(all_devices)}")
-    return all_devices
+    return all_devices  # 设备列表['device113','10.2.8.103:5555',3]
 
 
 def get_android_version(device):
@@ -296,6 +296,34 @@ def interset(a, b):
     return set(a) & set(b)
 
 
+def app_screenshot(device=''):
+    if not get_devices():
+        logger.warning("当前电脑没有连接任何一个Android设备,无法进行截屏操作.请检查设备连接情况.")
+        return
+    dir = "D:\AutomationScreen"  # 创建存放截图的电脑文件夹
+    if not os.path.exists(dir):
+        os.makedirs("D:\AutomationScreen")
+    path = '/sdcard/lxb_shoot'  # 存放截图的平板文件夹
+    file_name = 'ScreenShoot' + file_time()  #
+    try:
+        os.system(f"adb shell mkdir -p {path}")  # 先创建一个文件夹
+    except:
+        pass
+    if device:
+        # 指定设备
+        os.system(f"adb -s {device} shell screencap -p {path}/{file_name}.png")
+        logger.debug(f"截图成功,截图存放位置:{path}/{file_name}.png")
+        time.sleep(2)
+        os.system(f"adb -s {device} pull {path}/{file_name}.png {dir}")
+        logger.debug(f"截图下载到本机成功,截图存放位置:{dir}/{file_name}.png")
+    else:
+        os.system(f"adb shell screencap -p {path}/{file_name}.png")
+        logger.debug(f"截图成功,截图存放位置:{path}/{file_name}.png")
+        time.sleep(2)
+        os.system(f"adb pull {path}/{file_name}.png {dir}")
+        logger.debug(f"截图下载到本机成功,截图存放位置:{dir}/{file_name}.png")
+
+
 class just_err(Exception):
 
     def __init__(self):
@@ -303,6 +331,4 @@ class just_err(Exception):
 
 
 if __name__ == '__main__':
-    a = [1,2,3]
-    b = [2,5,6,3]
-    print(interset(a,b))
+    app_screenshot()
