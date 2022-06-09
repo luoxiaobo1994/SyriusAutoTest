@@ -413,6 +413,8 @@ class SpeedPicker:
             else:
                 logger.debug(f"强点操作,点击[{text}]失败.")
                 count -= 1
+        if count == 0:
+            self.shoot()
 
     def wait_for_time(self, timeout=30, n=0):
         if self.random_trigger(n=n):
