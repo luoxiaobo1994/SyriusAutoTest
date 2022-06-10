@@ -301,7 +301,7 @@ class SpeedPicker:
             self.press_ok(timeout=2)  #
             return
         view_ls = tmp_text[1:]
-        err_type = random.choice(view_ls)
+        err_type = random.choice(view_ls)  # 随机选的一个异常类型
         logger.info(f"本次随机上报的异常是:{err_type}")
         self.driver.click_one(self.driver.find_element((By.XPATH, '//android.view.View[@text="%s"]' % err_type)))
         count = 3
@@ -309,9 +309,9 @@ class SpeedPicker:
             try:
                 view_ls2 = self.get_text()
                 err_type2 = re.findall("确定(.*?)吗", ''.join(view_ls2))[0]  # 拿到的异常
-                logger.info(f"确定上报[{err_type2}]异常吗?")  # 询问弹窗.
-                if err_type2 == err_type or err_type == '其他':  # 确定弹窗起来了. 选择其他异常,询问框不一致.
-                    self.driver.click_one(self.driver.find_elements(self.view)[-1])  # 最后一个view元素是'确定'按钮.
+                logger.info(f"确定上报[{err_type2}]异常吗?")  # 询问弹窗.再次确认弹窗询问的异常和选择的是否一致.
+                if err_type2 == err_type or err_type == '其他' or '确定' in self.get_text():  # 选择[其他]异常,询问框不一致.
+                    # self.driver.click_one(self.driver.find_elements(self.view)[-1])  # 最后一个view元素是'确定'按钮.
                     self.press_ok(timeout=1)  # 这里已经点击了确定，为什么还会卡呢？
                     if '确定' not in self.get_text():  # 跳转流程了.
                         sleep(6)  # 点完确定,会有个长等待.
@@ -492,17 +492,21 @@ class SpeedPicker:
             if "请到此处附近" in before:
                 logger.debug(f"拿到推荐点位了:{before}")
                 try:
+                    if before[-1] == '请到此处附近':
+                        logger.debug(f"这次脚本抓的文本里,没有包含库位信息.再抓一次看看:{self.get_text()}")
+                        break
                     logger.info(f"抓取到推荐点位--->{before[before.index('请到此处附近') + 1]}")
                     self.wait_moment("请到此处附近")
                     break
-                except:
-                    logger.warning(f"抓取推荐点位,超出索引了:{before}")
+                except Exception as e:
+                    logger.warning(f"增加了点位判断,还是出现了异常{e},页面文本:{before}")
                     self.shoot()
                     break  # 不知道为何,这里会超出索引,奇了怪.
             elif '打包绑定区' in before:
                 logger.info("拣货任务完成,已无商品需要拣货.")
                 break
             elif '前往' in before:
+                logger.debug("机器人已继续移动,无推荐点可获取.")
                 break
             elif '输入' in before and before[-1] == '输入':  # 有输入,就是要拣货.
                 logger.info("当前拣货点,仍有商品需要拣货.")
