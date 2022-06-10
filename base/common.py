@@ -297,7 +297,7 @@ def interset(a, b):
     return set(a) & set(b)
 
 
-def app_screenshot(device=''):
+def app_screenshot(device='', file_name=''):
     if not get_devices():
         logger.warning("当前电脑没有连接任何一个Android设备,无法进行截屏操作.请检查设备连接情况.")
         return
@@ -305,7 +305,8 @@ def app_screenshot(device=''):
     if not os.path.exists(dir):
         os.makedirs("D:\AutomationScreen")
     path = '/sdcard/lxb_shoot'  # 存放截图的平板文件夹
-    file_name = 'ScreenShoot' + file_time()  #
+    if not file_name:
+        file_name = 'ScreenShoot' + file_time()  # 没有指定文本名称时,使用时间戳
     try:
         os.system(f"adb shell mkdir -p {path}")  # 先创建一个文件夹
     except:
@@ -332,8 +333,11 @@ def app_screenrecord():
 
 class just_err(Exception):
 
-    def __init__(self):
-        logger("发生了自定义的异常,出现了某些问题,回查一下.")
+    def __init__(self, message=''):
+        if message:
+            logger.warning(f"发生自定义异常:{message},请检查一下.")
+        else:
+            logger.warning("发生了自定义的异常,请检查.")
 
 
 if __name__ == '__main__':

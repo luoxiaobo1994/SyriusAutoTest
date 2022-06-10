@@ -44,7 +44,7 @@ def random_item():
         "name": f"接口订单:{random.choice(goods_ls)}",  # 固定名称池里抓一个
         "barcode": item_code(),  # 随机码
         "quantity": random.choice(range(1, 100)),  # 随机数量
-        "binLocations": binlocation(),  # 随机生成一个.
+        "binLocations": [binlocation()],  # 随机生成一个.
         "imageUrl": f"file:///../sdcard/syrius_guanxi_productImg/{random.choice(img_list)}",
         "attributes": {
             "extensibleAttr0001": "222"
@@ -128,5 +128,6 @@ def send_order(num=0, least=1, most=20, siteid="202"):
 
 
 if __name__ == '__main__':
-    send_order(num=1, siteid="202")
+    print(send_order(num=20, siteid="202"))
+    # print(type(binlocation()))
     # id_num()
