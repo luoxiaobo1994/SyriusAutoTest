@@ -123,6 +123,7 @@ class SpeedPicker:
             self.driver.find_elements(
                 locator=(By.XPATH, '//android.widget.ImageView[contains(@content-desc,"机器人定位丢失")]'),
                 wait=1, raise_except=True)
+            self.shoot()
             return 1  # return True
         except:
             sleep(0.1)
@@ -398,18 +399,19 @@ class SpeedPicker:
         else:
             logger.debug(f"持续检查文本,超过{err}次,都没有跳出检查函数.检查一下页面吧!当前页面:{self.get_text()}")
 
-    def click_view_text(self, text, wait=1, count=3):
+    def click_view_text(self, text, wait=1, count=5):
         # 强点击,保证点到.
         while count > 0:
             if text not in self.get_text():
                 logger.info(f"文本:{text}并不在页面内,退出强点流程.")
-                break
+                return
             self.driver.click_element((By.XPATH, f'//*[@text="{text}"]'), wait=wait)
+            sleep(2)
             tmp_text = self.get_text(wait=1)
             if text not in tmp_text:
                 logger.info(f"强点击文本:[{text}]成功.")
                 sleep(1)
-                break
+                return
             else:
                 logger.debug(f"强点操作,点击[{text}]失败.")
                 count -= 1
@@ -723,7 +725,13 @@ class SpeedPicker:
                 self.click_view_text("关闭")
             else:
                 self.press_ok()  # 这里来点一下
-                logger.debug(f"main主函数里,最后一个else.为什么会走到这一步? 刚才拿到的文本:{view_ls},此时的界面文本:{self.get_text()}")
+                sleep(5)
+                now = self.get_text()
+                logger.debug(f"main主函数里,最后一个else.为什么会走到这一步? 刚才拿到的文本:{view_ls},此时的界面文本:{now}")
+                if view_ls == now and '请到此处附近' in view_ls:
+                    logger.warning("卡在推荐点位了.赶紧去检查一下!")
+                    self.shoot()
+                    exit(-100)
                 self.robot_battery()
 
 
