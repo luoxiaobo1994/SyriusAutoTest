@@ -404,6 +404,8 @@ class SpeedPicker:
             except Exception as e:
                 logger.warning(f"持续获取的文本的流程,发生了一些异常:{e}")  # 暂时先保留,现场这里问题是真的多.
                 self.shoot()
+                if not e:
+                    raise just_err("抓文本,拿到空异常.")
                 err -= 1
                 sleep(1)
         if text == '请到此处附近':
@@ -768,6 +770,6 @@ if __name__ == '__main__':
                 f"发生了其他异常,{timeout}s 后将会重启脚本,异常设备："
                 f"{SpeedPicker().device_num()[0]},{SpeedPicker().device_num()[1]}.注意检查:"
                 f"\n1.Appium 服务起来没有.\n2.Appium端口是否正确.\n3.检查平板是否连接.\n4.检查平板是否掉线了.")
-            logger.warning(f"发生了异常:{e}")
+            logger.warning(f"外主函数发生了异常:{e}")
             logger.info(f"报错信息:{traceback.format_exc()}")
             sleep(timeout)
