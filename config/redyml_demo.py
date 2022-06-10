@@ -11,7 +11,7 @@ from time import  sleep
 # while True:
 file = "speedpicker_config.yaml"
 data = YamlReader(file).data
-print(data)
+print(type(data['order_num']))
     # for i,v in data.items():
     #     print(i,v)
 

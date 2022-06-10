@@ -15,14 +15,13 @@ from utils.file_reader import YamlReader
 from Syrius_API.flagship.res_notify import send_order
 
 
-class ColectLog():
+class CollectLog():
 
     def __init__(self):
         self.driver = self.init_driver()
         # sleep(10)  # 做一个长等待，没办法。加载慢。
         self.view = (By.XPATH, '//android.view.View')
         self.image = (By.XPATH, '//android.widget.ImageView')
-        self.notify()  # 刷新一些提醒，避免遗漏配置。
         # self.config = self.get_cnfig()  # 流程开始之前读取一次配置就行了,不用每次都读取.
 
     def init_driver(self):
@@ -34,12 +33,8 @@ class ColectLog():
         logger.info(f"脚本当前连接的平板:{device},安卓版本：{get_android_version(device)},Appium端口:{appium_port}")
         return browser
 
-    def notify(self):
-        """ 脚本启动的一些注意事项提醒 """
-        logger.debug("注意事项：1.SpeedPicker请开启快速拣货功能。\n2.注意平板连接到此电脑。\n3.注意先启动Appium服务。")
-
     def device_num(self):
-        num = int(__file__.split('\\')[-1].split('.')[0].split('cn')[-1]) - 1  # 序号从0开始
+        num = 0  # 序号从0开始
         devices_ls = get_devices()
         try:
             return devices_ls[num], 4725 + num * 5  # 每个设备之间，间隔5个以上
@@ -61,19 +56,13 @@ class ColectLog():
                         try:
                             tmp_desc = self.driver.app_elements_content_desc()
                             if 'SkillSpace' in ''.join(tmp_desc):
-                                self.open_sp()
+                                logger.debug("当前在Jarvis主界面")
                         except:
                             pass  # The function needs to be improved
                         logger.info("当前页面没抓到文本,如果持续刷新这个日志,请前往检查一下.")
-                        self.is_other_page()  # 检查一下,是否退出了SP界面.
                         return  # 跳出去
             except TypeError:
                 logger.debug("抓取文本发生类型错误异常,检查是否退出SP界面了.")
-                self.is_other_page()
-                if self.random_trigger(n=60):
-                    logger.debug(f"随机刷日志, 脚本仍然在抓取文本中,当前可能拿到了一些不符合要求的:{view_ls}")
-                    sleep(10)
-                    break  # 尝试退出一下,因为总会重复刷这个日志.
                 if raise_except:
                     raise just_err
                 sleep(5)
@@ -85,8 +74,14 @@ class ColectLog():
             sleep(10)  # 这里也要睡眠一下，避免刷日志太快了。
             return  # 跳出去
 
-    def get_content(self,wait=2):
+    def get_content(self, wait=2):
         count = 20  # 有个限制.
         while count > 0:
             count -= 1  # 避免死循环
             view_ls = self.driver.app_elements_content_desc(self.view, wait)
+            if view_ls:
+                return [i for i in view_ls if i]
+            else:
+                count -= 1
+
+

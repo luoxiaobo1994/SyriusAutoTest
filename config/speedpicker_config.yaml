@@ -33,7 +33,8 @@ container_code:
   6A_container: 6A_con-@1
   9A_container: 19910318151 6ccc!@#$
 api_order: True
-order_site: "202"
+order_site: "202"  # 订单场地
+order_num: 20  # 订单个数
 estop_text:
   - 紧急停止
   - 若需恢复工作
@@ -44,7 +45,7 @@ confirm_result:
   - 拣货执行结果
   - 格口名称
   - 单据
-picking_out: 10 # 拣货超时几率 1/10, 1是常开,0是常闭.
+picking_out: 20 # 拣货超时几率 1/10, 1是常开,0是常闭.
 picking_outtime: 20  # 拣货超时时间 30s
 wait_finshed: 15  # 等待点击超时按钮的超时时间,30s
 exit_ggr:

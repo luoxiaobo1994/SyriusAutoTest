@@ -270,7 +270,7 @@ class SpeedPicker:
             sleep(5)  # 一般是干掉GGR了. 刷慢一点.
             if self.non_count >= 5:
                 logger.debug(f"连续5次抓不到文本,可能是Appium通讯断了.当前异常:{e}")
-                raise just_err(message="通讯可能出问题了.")
+                raise just_err(message="通讯可能出问题了")
         try:
             x = self.driver.app_elements_content_desc((By.XPATH, '//*'))
             logger.debug(f"抓到了什么奇怪的content:{x}")
@@ -377,6 +377,11 @@ class SpeedPicker:
                             if '关闭' in view_ls:
                                 logger.debug(f"有可用版本更新,版本信息:{view_ls}")
                                 self.click_view_text("关闭")
+
+                        elif self.islosepos():
+                            logger.warning("机器人丢失定位.")
+                            self.shoot()
+                            return
                         sleep(1)  # 等待时间不能太长。
                         count += timeout  # 持续计时,看看卡界面多久了.
                         minutes = count // 60
@@ -622,8 +627,9 @@ class SpeedPicker:
                 logger.info("发生了一些奇怪的异常,可能需要你自己去检查一下了.")
                 exit(-500)
 
-    def api_order(self, order_num=20):
+    def api_order(self):
         site = self.get_config()['order_site']
+        order_num = self.get_config()['order_num']
         try:
             res = send_order(num=order_num, siteid=site)
             if 'successData' in res:
@@ -647,6 +653,7 @@ class SpeedPicker:
         self.open_sp()
         target_location = ''
         while True:
+            self.non_count = 0  # 只要在正常循环内.重置次数.
             # self.press_ok()  # 应对随时弹出来的需要协助，提示框。有必要保留,可能点掉绑定载具的"完成"
             try:
                 view_ls = self.get_text(wait=15)  # 当前页面文本信息。
@@ -676,7 +683,7 @@ class SpeedPicker:
             elif '等待任务中' in view_ls:
                 logger.info("SpeedPicker当前没有任务,请下单。\n")  # 整两个空行来区分一下任务。
                 if self.get_config()['api_order']:
-                    self.api_order(self.get_config()['order_site'])
+                    self.api_order()
                 self.wait_moment("等待任务中")
             elif '前往' in view_ls:
                 try:
