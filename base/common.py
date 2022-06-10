@@ -333,9 +333,12 @@ def app_screenrecord():
 
 class just_err(Exception):
 
-    def __init__(self):
-        logger("发生了自定义的异常,出现了某些问题,回查一下.")
+    def __init__(self, message=''):
+        if message:
+            logger.warning(f"发生自定义异常:{message},请检查一下.")
+        else:
+            logger.warning("发生了自定义的异常,请检查.")
 
 
 if __name__ == '__main__':
-    app_screenshot(file_name='1')
+    app_screenshot()
