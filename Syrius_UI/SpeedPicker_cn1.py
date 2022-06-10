@@ -635,7 +635,7 @@ class SpeedPicker:
         while True:
             # self.press_ok()  # 应对随时弹出来的需要协助，提示框。有必要保留,可能点掉绑定载具的"完成"
             try:
-                view_ls = self.get_text(wait=15)  # 当前页面文本信息。
+                view_ls = self.get_text(wait=15)  # 当前页面文本信息。  [紧急拣货中,订单ID,请放好扫码枪,完成]
                 # logger.debug(f"view_ls:{view_ls}")
                 ls = ''.join(view_ls)  # 这个是长文本。用来做一些特殊判断。
             except:

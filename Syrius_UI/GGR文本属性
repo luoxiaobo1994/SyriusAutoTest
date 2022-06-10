@@ -11,3 +11,4 @@ view_content:2022-03-10 10:03:28  ['39%', '关于机器人', 'Droid ID\n10e841e6
 上传上位机日志界面，无任何文本属性可以抓取。可能需要切换框架。
 jarvis主界面上的按钮xpath: //android.widget.ImageView[@clickable='true']
 GGR设置里面的文本xpath: //android.view.View[@content-desc!='']
+''
