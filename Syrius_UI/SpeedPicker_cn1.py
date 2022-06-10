@@ -21,6 +21,7 @@ class SpeedPicker:
         self.view = (By.XPATH, '//android.view.View')
         self.image = (By.XPATH, '//android.widget.ImageView')
         self.notify()  # 刷新一些提醒，避免遗漏配置。
+        self.non_count = 0  # 界面抓到异常信息的计数器.
         # self.config = self.get_cnfig()  # 流程开始之前读取一次配置就行了,不用每次都读取.
 
     def init_driver(self):
@@ -238,14 +239,18 @@ class SpeedPicker:
                 sleep(10)
             elif self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"上传机器人日志")]')):
                 logger.info("正在上传机器人日志,请稍后...")
-                self.wait_moment("日志文件上传中")
-                if self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"日志上传完成")]')):
-                    logger.debug("机器人日志已上传完成,请自行前往解决异常,恢复机器人移动.")
-                    app_screenshot(device=self.device_num()[0])
-                    logger.debug("即将通过脚本返回Jarvis主界面,请确保机器人无异常产生.保证业务正常进行.")
-                    for i in range(3):
-                        os.system("adb shell input keyevent 4")  # 连续3次,才能返回到桌面.到桌面,再按一次.也不会到系统桌面
-                        sleep(1)
+                while True:
+                    if self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"日志上传完成")]')):
+                        logger.debug("机器人日志已上传完成,请自行前往解决异常,恢复机器人移动.")
+                        app_screenshot(device=self.device_num()[0])
+                        logger.debug("即将通过脚本返回Jarvis主界面,请确保机器人无异常产生.保证业务正常进行.")
+                        for i in range(3):
+                            os.system("adb shell input keyevent 4")  # 连续3次,才能返回到桌面.到桌面,再按一次.也不会到系统桌面
+                            sleep(1)
+                        break  # 返回完了,退出去
+                    else:
+                        logger.debug("日志仍在上传中.")
+                        sleep(20)
                     # exit(100)
             elif self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"SkillSpace")]')):
                 logger.info("机器人在Javis Launcher主界面,尝试重新打开SpeedPicker.")
@@ -261,8 +266,11 @@ class SpeedPicker:
             else:
                 sleep(5)
         except Exception as e:
-            logger.debug(f"发生了异常:{e}")
+            self.non_count += 1
             sleep(5)  # 一般是干掉GGR了. 刷慢一点.
+            if self.non_count >= 5:
+                logger.debug(f"连续5次抓不到文本,可能是Appium通讯断了.当前异常:{e}")
+                raise just_err(message="通讯可能出问题了.")
         try:
             x = self.driver.app_elements_content_desc((By.XPATH, '//*'))
             logger.debug(f"抓到了什么奇怪的content:{x}")
@@ -480,7 +488,7 @@ class SpeedPicker:
                 break
 
     def go_to(self):
-        self.check_time()  # 放在这里检查一下,页面是否正常退出了.
+        # self.check_time()  # 放在这里检查一下,页面是否正常退出了.
         self.press_ok()  # 和倒计时功能不能共存,会主动点掉. 当然,要是倒计时点不掉,也能发现新BUG.
         logger.info("当前商品拣货完成,检查是否有推荐点.")
         count = 6
