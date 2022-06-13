@@ -439,7 +439,7 @@ class SpeedPicker:
             else:
                 return 1
         logger.warning(f"超过{timeout}s,{pagename}页面文本没有变化.可能卡界面了.")
-        return 0
+        exit(-100)
 
     def click_view_text(self, text, wait=1, count=5):
         # 强点击,保证点到.
