@@ -275,11 +275,23 @@ class SpeedPicker:
             x = self.driver.app_elements_content_desc((By.XPATH, '//*'))
             logger.debug(f"抓到了什么奇怪的content:{x}")
             if len(set(x) & set(self.get_config()['exit_ggr'])) > 1:
-                logger.warning("脚本又导致GoGoReady退出了.准备启动GoGoReady.请等待GoGoReady启动完成.约30s...")
+                logger.warning("GoGoReady没有在运行.准备启动GoGoReady.请等待GoGoReady启动完成.约30s...")
                 os.system(f'adb -s {self.device_num()[0]} shell am start -n '
                           f'"com.syriusrobotics.platform.launcher/com.syriusrobotics.platform.jarvis.SplashActivity"'
                           f' -a android.intent.action.MAIN -c android.intent.category.LAUNCHER')
                 sleep(30)  # 启动加载需要时间,不能直接起脚本.
+                while True:
+                    content = self.driver.app_elements_content_desc(self.image)
+                    for i in content:
+                        if i.endswith('%') and i.split('%')[0].isdigit():
+                            logger.debug(f'获取到机器人电池电量数据,上下位机连接完成.当前机器人电量:{i}')
+                            sleep(5)
+                            break
+                    else:
+                        logger.debug(f'当前仍未获取到机器人电量,机器人与平板未完成连接.')
+                        sleep(10)
+
+
         except Exception as e:
             logger.debug(f"content-desc也没有找到,可能是退出GoGoReady了.发生异常:{e}")
             sleep(5)
@@ -367,8 +379,8 @@ class SpeedPicker:
                             if '恢复' in view_ls:
                                 sleep(3)  # 有时候人要推,给点时间.
                                 self.click_view_text('恢复')
-                        elif '重试' in view_ls:
-                            logger.warning("出现机器人无响应弹窗了.尝试点击重试.")
+                        elif '重试' in view_ls:  # 机器人无响应.结果上传失败.
+                            logger.warning(f"出现了重试按钮,此时的界面文本:{view_ls}")
                             self.driver.tap((By.XPATH, '//*[@text="重试"]'))
                         elif without:
                             # if without text display,break loop
@@ -376,7 +388,8 @@ class SpeedPicker:
                                 logger.debug(f"文本[{without}]刷新. 停止检查[{text}].")
                                 return
                         elif 'version' in text:
-                            if '关闭' in view_ls:
+                            logger.debug("有版本更新提示,脚本不会自动更新.跳过本次更新. 请注意使用版本.")
+                            if '关闭' in self.get_text():
                                 logger.debug(f"有可用版本更新,版本信息:{view_ls}")
                                 self.click_view_text("关闭")
 
@@ -415,6 +428,18 @@ class SpeedPicker:
             self.shoot()
         else:
             logger.debug(f"持续检查文本,超过{err}次,都没有跳出检查函数.检查一下页面吧!当前页面:{self.get_text()}")
+
+    def page_check(self, timeout=30, pagename=''):
+        view_text = self.get_text()
+        # view_content =
+        while timeout:
+            tmp_text = self.get_text()
+            if view_text == tmp_text:
+                sleep(1)
+            else:
+                return 1
+        logger.warning(f"超过{timeout}s,{pagename}页面文本没有变化.可能卡界面了.")
+        return 0
 
     def click_view_text(self, text, wait=1, count=5):
         # 强点击,保证点到.
@@ -475,6 +500,7 @@ class SpeedPicker:
             self.wait_for_time(n=self.get_config()['picking_out'], timeout=self.get_config()['wait_finshed'])  # 超时等待
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
             logger.debug(f"通过点击[完成],快速完成拣货.")
+            self.page_check(timeout=15, pagename='拣货完成')  # 这里比较容易卡. 在这里检查一下.
         elif '异常上报' not in view_ls:
             # 拣货情形2,点开了输入框,但是没有输入商品码
             self.inputcode(code='199103181516')
@@ -755,6 +781,7 @@ class SpeedPicker:
                     logger.warning("卡在推荐点位了.赶紧去检查一下!")
                     self.shoot()
                     exit(-100)
+                self.page_check(timeout=self.get_config()['page_time'])  # 检查是不是半天没变化.
                 self.robot_battery()
 
 
