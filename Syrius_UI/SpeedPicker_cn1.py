@@ -361,7 +361,9 @@ class SpeedPicker:
                             sleep(timeout)
                             if i:
                                 logger.debug(f"调试功能,持续抓取文本:[{text}]中.")
-                        if text == '前往':
+                        elif self.islosepos():
+                            break
+                        elif text == '前往':
                             if '恢复' in view_ls:
                                 sleep(3)  # 有时候人要推,给点时间.
                                 self.click_view_text('恢复')
