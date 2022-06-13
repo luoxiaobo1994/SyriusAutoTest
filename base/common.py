@@ -11,6 +11,8 @@ from utils.log import Logger
 from multiprocessing.dummy import Pool
 from collections.abc import Iterable
 import itertools
+import requests
+import socket
 
 logger = Logger().get_logger()
 
@@ -313,6 +315,10 @@ def app_screenshot(device='', file_name=''):
         pass
     if device:  # 多设备的情况下,需要指定设备截图.
         # 指定设备
+        try:
+            os.system(f"adb -s {device} shell mkdir -p {path}")  # 先创建一个文件夹
+        except:
+            pass
         os.system(f"adb -s {device} shell screencap -p {path}/{file_name}.png")
         logger.debug(f"截图成功,截图存放位置:{path}/{file_name}.png")
         time.sleep(1)
@@ -326,9 +332,49 @@ def app_screenshot(device='', file_name=''):
         logger.debug(f"截图下载到本机成功,截图存放位置:{dir}\\{file_name}.png")
 
 
-def app_screenrecord():
+def app_screenrecord(device='', file_name='', timeout=30):
     # 录屏
-    pass
+    # 注意:部分设备,禁用了录屏命令. screenrecord not found
+    if not get_devices():
+        logger.warning("当前电脑没有连接任何一个Android设备,无法进行截屏操作.请检查设备连接情况.")
+        return
+    dir = "D:\ScreenRecord"  # 创建存放截图的电脑文件夹
+    if not os.path.exists(dir):
+        os.makedirs("D:\ScreenRecord")
+    path = '/sdcard/screenrecord'  # 存放截图的平板文件夹
+    if not file_name:
+        file_name = 'ScreenRecord' + file_time()  # 没有指定文本名称时,使用时间戳
+    if device:  # 多设备的情况下,需要指定设备截图.
+        try:
+            os.system(f"adb -s {device} shell mkdir -p {path}")  # 先创建一个文件夹
+        except:
+            pass
+        os.system(f"adb -s {device} shell screenrecord --time-limit {timeout} {path}/{file_name}.mp4")
+        logger.debug(f"录屏成功,截图存放位置:{path}/{file_name}.mp4")
+        time.sleep(1)
+        os.system(f"adb -s {device} pull {path}/{file_name}.mp4 {dir}")
+        logger.debug(f"录屏文件下载到本机成功,截图存放位置:{dir}\\{file_name}.mp4")  # windows是反斜杠.
+    else:
+        try:
+            os.system(f"adb shell mkdir -p {path}")  # 先创建一个文件夹
+        except:
+            pass
+        os.system(f"adb shell screenrecord --time-limit {timeout} {path}/{file_name}.mp4")
+        logger.debug(f"录屏成功,截图存放位置:{path}/{file_name}.mp4")
+        time.sleep(1)
+        os.system(f"adb pull {path}/{file_name}.mp4 {dir}")
+        logger.debug(f"录屏文件下载到本机成功,截图存放位置:{dir}\\{file_name}.mp4")
+
+
+def get_host_ip():
+    # 获取本机IP地址.
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('10.255.255.255', 1))  # 这里填网关
+        ip = s.getsockname()[0]
+    finally:
+        s.close()
+    return ip
 
 
 class just_err(Exception):
@@ -341,4 +387,5 @@ class just_err(Exception):
 
 
 if __name__ == '__main__':
-    app_screenshot()
+    # app_screenshot()
+    print(get_host_ip())
