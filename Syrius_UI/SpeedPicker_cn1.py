@@ -249,8 +249,11 @@ class SpeedPicker:
                             sleep(1)
                         break  # 返回完了,退出去
                     else:
-                        logger.debug("日志仍在上传中.")
-                        sleep(20)
+                        schedule = self.driver.app_elements_content_desc(self.view)
+                        for i in schedule:
+                            if i.startswith('请稍后'):
+                                logger.debug(f"日志仍在上传中,{i}.")
+                        sleep(30)
                     # exit(100)
             elif self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"SkillSpace")]')):
                 logger.info("机器人在Javis Launcher主界面,尝试重新打开SpeedPicker.")

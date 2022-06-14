@@ -12,4 +12,3 @@ from time import sleep
 import itertools
 from base.common import *
 
-app_screenrecord(timeout=120)

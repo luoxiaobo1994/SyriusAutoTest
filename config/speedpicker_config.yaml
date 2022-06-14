@@ -72,3 +72,7 @@ jarvis_soft:
   - Sputnik
   - GoodsKeeper
   - SpeedPicker
+order_error:  # 是content-desc
+  - 已跳过异常任务
+  - 接收到一个异常订单任务，请联系管理员检查异常订单
+  - 确定   # 这个确定,带有倒计时. 如:确定(2s)
