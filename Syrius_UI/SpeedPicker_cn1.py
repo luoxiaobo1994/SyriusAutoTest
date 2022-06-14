@@ -429,7 +429,7 @@ class SpeedPicker:
         else:
             logger.debug(f"持续检查文本,超过{err}次,都没有跳出检查函数.检查一下页面吧!当前页面:{self.get_text()}")
 
-    def page_check(self, timeout=30, pagename='', is_shoot=False):
+    def page_check(self, timeout=30, pagename='', is_shoot=False, text=''):
         total_time = timeout
         view_text = self.get_text()
         logger.debug(f'进入检查是否卡屏流程,超时时间:{timeout}.')
@@ -439,8 +439,10 @@ class SpeedPicker:
             if view_text == tmp_text:
                 sleep(1)
                 timeout -= 1
+                if text not in tmp_text:
+                    return 1  # 特征文本不在界面内了.也可以跳过了.
             else:
-                return 1
+                return 1  # 页面变化了.
         logger.warning(f"超过{total_time}s,{pagename}页面文本没有变化.可能卡界面了.")
         if is_shoot:
             self.shoot()
@@ -505,7 +507,7 @@ class SpeedPicker:
             self.wait_for_time(n=self.get_config()['picking_out'], timeout=self.get_config()['wait_finshed'])  # 超时等待
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
             logger.debug(f"通过点击[完成],快速完成拣货.")
-            self.page_check(timeout=15, pagename='拣货完成')  # 这里比较容易卡. 在这里检查一下.
+            self.page_check(timeout=15, pagename='拣货完成', is_shoot=True, text='完成')  # 这里比较容易卡. 在这里检查一下.
         elif '异常上报' not in view_ls:
             # 拣货情形2,点开了输入框,但是没有输入商品码
             self.inputcode(code='199103181516')
