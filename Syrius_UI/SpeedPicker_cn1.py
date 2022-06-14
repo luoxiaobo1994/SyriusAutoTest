@@ -429,16 +429,21 @@ class SpeedPicker:
         else:
             logger.debug(f"持续检查文本,超过{err}次,都没有跳出检查函数.检查一下页面吧!当前页面:{self.get_text()}")
 
-    def page_check(self, timeout=30, pagename=''):
+    def page_check(self, timeout=30, pagename='', is_shoot=False):
+        total_time = timeout
         view_text = self.get_text()
+        logger.debug(f'进入检查是否卡屏流程,超时时间:{timeout}.')
         # view_content =
         while timeout:
             tmp_text = self.get_text()
             if view_text == tmp_text:
                 sleep(1)
+                timeout -= 1
             else:
                 return 1
-        logger.warning(f"超过{timeout}s,{pagename}页面文本没有变化.可能卡界面了.")
+        logger.warning(f"超过{total_time}s,{pagename}页面文本没有变化.可能卡界面了.")
+        if is_shoot:
+            self.shoot()
         exit(-100)
 
     def click_view_text(self, text, wait=1, count=5):
