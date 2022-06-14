@@ -12,4 +12,4 @@ from time import sleep
 import itertools
 from base.common import *
 
-ll = '1211221'
+ll = '121221221'
