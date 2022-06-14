@@ -375,8 +375,6 @@ class SpeedPicker:
                             sleep(timeout)
                             if i:
                                 logger.debug(f"调试功能,持续抓取文本:[{text}]中.")
-                        elif self.islosepos():
-                            break
                         elif text == '前往':
                             if '恢复' in view_ls:
                                 sleep(3)  # 有时候人要推,给点时间.
@@ -389,7 +387,7 @@ class SpeedPicker:
                             if self.driver.element_display((By.XPATH, f'//*[@text="{without}"]')):
                                 logger.debug(f"文本[{without}]刷新. 停止检查[{text}].")
                                 return
-                        elif 'version' in text:
+                        elif 'version' in text or '关闭' in view_ls:
                             logger.debug("有版本更新提示,脚本不会自动更新.跳过本次更新. 请注意使用版本.")
                             if '关闭' in self.get_text():
                                 logger.debug(f"有可用版本更新,版本信息:{view_ls}")
