@@ -290,7 +290,9 @@ class SpeedPicker:
                     else:
                         logger.debug(f'当前仍未获取到机器人电量,机器人与平板未完成连接.')
                         sleep(10)
-
+            elif len(interset(self.get_config()['jarvis_soft'], ''.join(x).split('\n'))) > 1:
+                logger.debug('异常返回了Jarvis主界面,脚本重启SpeedPicker.')
+                self.open_sp()
 
         except Exception as e:
             logger.debug(f"content-desc也没有找到,可能是退出GoGoReady了.发生异常:{e}")
@@ -440,6 +442,7 @@ class SpeedPicker:
                 sleep(1)
                 timeout -= 1
                 if text not in tmp_text:
+                    logger.debug(f"特征文本:{text}已经不在当前界面内,判定界面已跳转.程序未卡屏.")
                     return 1  # 特征文本不在界面内了.也可以跳过了.
             else:
                 return 1  # 页面变化了.
@@ -463,6 +466,7 @@ class SpeedPicker:
                 return
             else:
                 logger.debug(f"强点操作,点击[{text}]失败.")
+                self.page_check(timeout=15, text=text)
                 count -= 1
         if count == 0:
             self.shoot()
@@ -755,7 +759,7 @@ class SpeedPicker:
                 self.click_view_text("已取下")  # 强点.
                 logger.info("完成一单,不错!")
                 logger.info('-·' * 30 + '-' + '\n')
-                self.wait_moment('已取下')
+                self.page_check(timeout=60, pagename='卸载载物箱', text='已取下')
             elif '安装载具' in view_ls:
                 logger.debug("处于切换载具流程.")
                 self.click_view_text("完成")

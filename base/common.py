@@ -183,6 +183,24 @@ def get_devices():
     return all_devices  # 设备列表['device113','10.2.8.103:5555',3]
 
 
+def devices_info():
+    cmd = 'adb devices -l'
+    devices = []
+    result = os.popen(cmd).readlines()[1:-1]  # 抬头和最后的换行符去掉.
+    for i in result:
+        info = i.split()
+        # print(info)
+        pad = {}
+        pad['serino'] = info[0]
+        for j in info:
+            # print(j)
+            if ':' in j and j!= info[0]:
+                pad[j.split(':')[0]] = j.split(':')[1]
+        # ['PXC6R18308000548', 'device', 'product:HDN-L09', 'model:HDN_L09', 'device:HWHDN-H', 'transport_id:8']
+        devices.append(pad)
+    print(f"当前电脑,共连接了{len(devices)}个设备.{devices}")
+
+
 def get_android_version(device):
     version = os.popen(f"adb -s {device} shell getprop ro.build.version.release").readline()
     return version
@@ -388,4 +406,4 @@ class just_err(Exception):
 
 if __name__ == '__main__':
     # app_screenshot()
-    print(get_host_ip())
+    devices_info()

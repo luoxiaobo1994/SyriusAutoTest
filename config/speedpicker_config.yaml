@@ -65,3 +65,10 @@ err_text: # 拣货异常时,页面的特殊文本
   - 其他需人工拣取
   - 拣货异常
 page_time: 60  # 检查页面是否变化的超时时间.
+jarvis_soft:
+  - SkillSpace
+  - MeadowMapper
+  - PonyRunner
+  - Sputnik
+  - GoodsKeeper
+  - SpeedPicker
