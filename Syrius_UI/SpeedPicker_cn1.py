@@ -373,7 +373,7 @@ class SpeedPicker:
                 view_ls = self.get_text(wait=2, raise_except=True)  # 不用太频繁.
                 if view_ls:  # 居然还有空的情况，干。
                     if text in view_ls:
-                        if self.random_trigger(n=60):
+                        if self.random_trigger(n=10):
                             err -= 1  # 有时候可能卡流程,这里也做一个跳出检测
                             sleep(timeout)
                             if i:
@@ -382,6 +382,9 @@ class SpeedPicker:
                             if '恢复' in view_ls:
                                 sleep(3)  # 有时候人要推,给点时间.
                                 self.click_view_text('恢复')
+                        elif '关闭' in view_ls:
+                            logger.debug(f"出现关闭按钮,页面信息:{view_ls}")
+                            self.click_view_text("关闭")
                         elif '重试' in view_ls:  # 机器人无响应.结果上传失败.
                             logger.warning(f"出现了重试按钮,此时的界面文本:{view_ls}")
                             self.driver.tap((By.XPATH, '//*[@text="重试"]'))
@@ -390,11 +393,7 @@ class SpeedPicker:
                             if self.driver.element_display((By.XPATH, f'//*[@text="{without}"]')):
                                 logger.debug(f"文本[{without}]刷新. 停止检查[{text}].")
                                 return
-                        elif 'version' in text or '关闭' in view_ls:
-                            logger.debug("有版本更新提示,脚本不会自动更新.跳过本次更新. 请注意使用版本.")
-                            if '关闭' in self.get_text():
-                                logger.debug(f"有可用版本更新,版本信息:{view_ls}")
-                                self.click_view_text("关闭")
+
 
                         elif self.islosepos():
                             logger.warning("机器人丢失定位.")
@@ -712,7 +711,7 @@ class SpeedPicker:
                 logger.warning("出现机器人无响应弹窗了.")
                 self.driver.tap((By.XPATH, '//*[@text="重试"]'))
             elif '关闭' in view_ls:
-                logger.debug("出现了[关闭]弹窗")
+                logger.debug(f"出现了[关闭]弹窗,此时的文本:{view_ls}")
                 self.click_view_text("关闭")
             elif len(set(use_text) & set(view_ls)) == 0:
                 logger.warning(f"页面获取的文本与SP不符。\n现在拿到的是:{view_ls}")
