@@ -34,4 +34,4 @@ class APP():
 # driver = s.browser()
 
 if __name__ == '__main__':
-    d = GGR().browser(devices='10.111.150.31:5555', port=4725)
+    d = APP().browser(devices='10.111.150.31:5555', port='4725')

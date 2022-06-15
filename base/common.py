@@ -202,8 +202,12 @@ def devices_info():
 
 
 def get_android_version(device):
-    version = os.popen(f"adb -s {device} shell getprop ro.build.version.release").readline()
-    return version
+    if device:
+        version = os.popen(f"adb -s {device} shell getprop ro.build.version.release").readline()
+        return version
+    else:
+        version = os.popen(f"adb shell getprop ro.build.version.release").readline()
+        return version
 
 
 def do_something(devices):
