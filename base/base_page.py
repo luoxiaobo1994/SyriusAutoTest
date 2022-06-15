@@ -16,11 +16,12 @@ from selenium.webdriver.support import expected_conditions as EC, select
 from selenium.webdriver.support.wait import WebDriverWait as wdw
 from base.common import *
 from utils.log import Logger
+from appium import webdriver as app_browser
 
 logger = Logger().get_logger()
 
 
-class TestKey:
+class TestKey(app_browser):
 
     # 初始化关键字驱动类
     def __init__(self, driver):  # 传入一个浏览器驱动,至于是网页的还是APP都OK 不能一个动作生成一个浏览器
@@ -108,14 +109,29 @@ class TestKey:
                 raise myerror  # 做一个返回.增加错误判断.
 
     # 定位并点击元素
-    def click_element(self, locator, wait=1, i=False, raise_except=False):
-        try:
-            self.find_element(locator, wait=wait).click()
-            if i:
-                logger.info(f"点击元素:{locator} 成功.")
-        except:
-            if raise_except:
-                raise myerror  # 做一个返回.增加错误判断.
+    def click_element(self, locator, wait=1, i=False, raise_except=False, new_locator=''):
+        if not new_locator:
+            try:
+                self.find_element(locator, wait=wait).click()
+                if i:
+                    logger.info(f"点击元素:{locator} 成功.")
+            except:
+                if raise_except:
+                    raise myerror  # 做一个返回.增加错误判断.
+        else:
+            while True:
+                try:
+                    self.find_element(locator, wait=wait).click()
+                    if i:
+                        logger.info(f"点击元素:{locator} 成功.")
+                    if self.element_display(locator=new_locator, wait=wait):
+                        logger.debug(f"点击后的特征元素:{new_locator}出现.点击操作成功.")
+                        break
+                    else:
+                        sleep(0.5)  # 简单等待一下.
+                except:
+                    if raise_except:
+                        raise myerror  # 做一个返回.增加错误判断.
 
     # 双击元素
     def double_click(self, locator, wait=1, i=False, raise_except=False):
@@ -453,6 +469,9 @@ class TestKey:
         if i:
             logger.info(f"成功按下按键:{key}，等待完成。")
         # sleep(0.5)  # 后面的函数自己有等待时间,不需要这里等了.
+
+    def change_app(self, appname, activity):
+        self.driver.start_activity()
 
 
 class myerror(Exception):

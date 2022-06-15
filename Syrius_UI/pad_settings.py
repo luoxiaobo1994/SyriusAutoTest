@@ -7,12 +7,13 @@ import os
 import re
 import traceback
 from time import sleep
-from selenium.webdriver.common.by import By
 from app import APP
 from base.common import *
 from utils.log import logger
 from utils.file_reader import YamlReader
 from Syrius_API.flagship.res_notify import send_order
+from pages.pad_setings_page import *
+from selenium.webdriver.support.wait import WebDriverWait as wdw
 
 
 class PadSettings():
@@ -30,12 +31,12 @@ class PadSettings():
         # 在这里填入安卓版本,避免跑不起来.
         browser = APP().browser(devices=device, platformversion=get_android_version(device),
                                 port=appium_port, appname='com.android.settings',
-                                activity='com.android.settings/.HWSettings')  # 自己获取安卓版本
+                                activity='com.android.settings startActivity')  # 自己获取安卓版本
         logger.info(f"脚本当前连接的平板:{device},安卓版本：{get_android_version(device)},Appium端口:{appium_port}")
         return browser
 
     def device_num(self):
-        num = int(__file__.split('\\')[-1].split('.')[0].split('cn')[-1]) - 1  # 序号从0开始
+        num = 0  # 序号从0开始
         devices_ls = get_devices()
         try:
             return devices_ls[num], 4725 + num * 5  # 每个设备之间，间隔5个以上
@@ -44,7 +45,10 @@ class PadSettings():
 
     def set_sleep(self):
         # 设置屏幕休眠时间的
-        pass
+        # self.driver.start_activity('com.android.settings', '.Settings$DisplaySettingsActivity')  # 跳转到显示设置界面
+        self.driver.click_element(*display_setting, i=True)
+        self.driver.click_element(*sleep_time, i=True)
+        print(111)
 
     def set_time(self):
         # 设置平板时区
@@ -52,17 +56,28 @@ class PadSettings():
 
     def adb_settings(self):
         # 能用adb设置的部分
+        # 关闭自动旋转.
+        cmd = 'adb shell content insert --uri content://settings/system --bind name:s:accelerometer_rotation --bind value:i:0'
+        os.system(cmd)
         # 卸载智慧语音
-        os.system('adb uninstall ')
-        # 锁定竖屏
-        os.system('adb ')
-        # 安装GGR
+        os.system('adb shell pm uninstall --user 0 com.huawei.vassistant')
+
+    def setting_wallpaper(self):
+        png = 'SyriusLogo.jpeg'
+        os.system(f'adb push {png} /sdcard/Pictures')
+        self.driver.find_element()
 
     def install_ggr(self):
         # 先拿到最新版的生产软件
         pass
         # 通过adb直接安装到平板内.
 
+    def main(self):
+        # 运行主函数
+        self.adb_settings()
+        self.set_sleep()
+
 
 if __name__ == '__main__':
-    pass
+    pad = PadSettings()
+    pad.main()
