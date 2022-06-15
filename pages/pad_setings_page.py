@@ -25,6 +25,7 @@ picture_cancel = (By.XPATH, '//android.widget.ImageButton[@content-desc="取消"
 picture_confirm = (By.XPATH, '//android.widget.ImageButton[@content-desc="确定"]')
 select_picture = (By.XPATH, '//android.view.View[@content-desc="选择图片"]')  # 图片展示页面的标题. 做校验使用.
 first_picture = [100, 240]  # 首张照片的坐标.
+all_set = (By.XPATH, '//android.widget.TextView[@text="同时设置"]')
 
 # 界面activity
 display_page = '.Settings$DisplaySettingsActivity'  # 设置休眠使用

@@ -16,12 +16,11 @@ from selenium.webdriver.support import expected_conditions as EC, select
 from selenium.webdriver.support.wait import WebDriverWait as wdw
 from base.common import *
 from utils.log import Logger
-from appium import webdriver as app_browser
 
 logger = Logger().get_logger()
 
 
-class TestKey(app_browser):
+class TestKey():
 
     # 初始化关键字驱动类
     def __init__(self, driver):  # 传入一个浏览器驱动,至于是网页的还是APP都OK 不能一个动作生成一个浏览器
