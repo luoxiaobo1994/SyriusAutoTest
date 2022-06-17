@@ -8,9 +8,10 @@ from time import sleep
 from appium import webdriver
 from pages.pad_setings_page import *
 from base.common import get_android_version
+from base.base_page import TestKey
 
 os.system(f'adb push {"SyriusLogo.jpeg"} /sdcard/Pictures')
-sleep(3)
+sleep(5)
 
 app_data = {
     "platformName": "Android",  # 平台
@@ -28,6 +29,8 @@ app_data = {
 
 driver = webdriver.Remote('http://127.0.0.1:4725/wd/hub', app_data)
 driver.implicitly_wait(10)
+
+browser = TestKey(driver)
 
 
 def download_ggr():
@@ -49,31 +52,31 @@ def set_sleep(option=''):
     sleep(5)
     driver.start_activity('com.android.settings', '.Settings$DisplaySettingsActivity')
     if not option:
-        driver.find_element(By.XPATH, '//android.widget.TextView[@text="休眠"]').click()
-        sleep(1)
-        driver.find_element(By.XPATH, '//android.widget.CheckedTextView[@text="永不"]').click()
+        browser.click_element(display_setting)
+        browser.click_element(sleep_time)
     else:
         driver.find_element('//android.widget.TextView[@text="10 分钟"]')
 
 
 def set_wallpaper():
     driver.start_activity('com.android.settings', '.Settings$DisplaySettingsActivity')
-    sleep(2)
-    driver.find_element(By.XPATH, '//android.widget.TextView[@text="壁纸"]').click()
-    sleep(1)
-    driver.find_element(By.XPATH, '//android.widget.TextView[@text="设置壁纸"]').click()
-    sleep(1)
-    driver.find_element(By.XPATH, '//android.view.View[@content-desc="图库"]').click()
-    sleep(1)
-    driver.find_element(By.XPATH, '//android.widget.TextView[@text="图片"]').click()
-    sleep(1)
-    driver.tap([(100, 240)])
-    sleep(1)
-    driver.find_element(By.XPATH, '//android.widget.ImageButton[@content-desc="确定"]').click()
-    sleep(1)
-    driver.find_element(By.XPATH, '//android.widget.TextView[@text="同时设置"]').click()
-    sleep(1)
-    os.system('adb shell input keyevent 3')
+    browser.click_element(locator=wallpaper_setting, new_locator=select_wallpaper)  # 点击壁纸
+    browser.click_element(locator=select_wallpaper, new_locator=photo_album)  # 点击设置壁纸
+    browser.click_element(locator=photo_album, new_locator=pictures)  # 点击图片 --进入图片选择
+    driver.tap([(100, 240)])  # 通过坐标选取首张
+    browser.click_element(locator=picture_confirm, new_locator=all_set)  # 确定
+    browser.click_element(locator=all_set)  # 设置完成
+    os.system('adb shell input keyevent 3')  # 返回桌面
+
+
+def set_time():
+    os.system('adb shell am start com.android.settings startActivity')
+    while True:
+        driver.tap([(200, 1650)])
+        if browser.element_display(time_zone):
+            break
+        else:
+            sleep(0.5)
 
 
 def debug():
@@ -90,7 +93,8 @@ def debug():
 
 
 if __name__ == '__main__':
-    download_ggr()
-    # adb_setting()
-    # set_sleep()
-    # set_wallpaper()
+    # download_ggr()
+    adb_setting()
+    set_time()
+    set_sleep()
+    set_wallpaper()

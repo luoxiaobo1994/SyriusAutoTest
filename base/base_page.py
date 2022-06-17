@@ -16,7 +16,6 @@ from selenium.webdriver.support import expected_conditions as EC, select
 from selenium.webdriver.support.wait import WebDriverWait as wdw
 from base.common import *
 from utils.log import Logger
-from appium import webdriver as app_browser
 
 logger = Logger().get_logger()
 
