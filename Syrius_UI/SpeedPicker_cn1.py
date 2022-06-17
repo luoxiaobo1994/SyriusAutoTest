@@ -292,7 +292,7 @@ class SpeedPicker:
                             sleep(5)
                             break
                     else:
-                        logger.debug(f'当前仍未获取到机器人电量,机器人与平板未完成连接.')
+                        logger.debug(f'当前仍未获取到机器人电量,机器人与平板未完成连接.文本：{content}')
                         sleep(10)
             elif len(interset(self.get_config()['jarvis_soft'], ''.join(x).split('\n'))) > 1:
                 logger.debug('异常返回了Jarvis主界面,脚本重启SpeedPicker.')
@@ -452,8 +452,8 @@ class SpeedPicker:
             if view_text == tmp_text:
                 sleep(1)
                 timeout -= 1
-                if text not in tmp_text:
-                    logger.debug(f"特征文本:{text}已经不在当前界面内,判定界面已跳转.程序未卡屏.")
+                if text not in tmp_text and text:
+                    logger.debug(f"特征文本:[{text}]已经不在{pagename}页面,判定界面已跳转.程序未卡屏.")
                     return 1  # 特征文本不在界面内了.也可以跳过了.
             else:
                 return 1  # 页面变化了.
