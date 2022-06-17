@@ -82,6 +82,7 @@ class SpeedPicker:
                                 if item in new_text and '退出' in new_text:
                                     logger.warning(f"发生了一些异常,SpeedPicker不能正常启动:{new_text}")
                                     exit(-404)
+                                return
                         # 想办法在启动的时候,走一下更新流程.
                         if self.driver.element_display((By.XPATH, '//*[starts-with(@text,"更新")]')):
                             break
@@ -509,6 +510,7 @@ class SpeedPicker:
                 self.shoot()
             self.inputcode(code=good_code)  # 输入了商品码。
             self.wait_for_time(n=self.get_config()['picking_out'], timeout=self.get_config()['wait_finshed'])  # 超时等待
+            # 如果有相同商品需要拣货，则要点击“继续”. 不过接口下的订单，必不会有相同商品。倒也不用管。
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
             logger.debug(f"通过点击[完成],快速完成拣货.")
             self.page_check(timeout=15, pagename='拣货完成', is_shoot=True, text='完成')  # 这里比较容易卡. 在这里检查一下.

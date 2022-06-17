@@ -108,7 +108,7 @@ class TestKey():
                 raise myerror  # 做一个返回.增加错误判断.
 
     # 定位并点击元素
-    def click_element(self, locator, wait=1, i=False, raise_except=False, new_locator=''):
+    def click_element(self, locator, wait=1, i=False, raise_except=False, new_locator='', count=5):
         if not new_locator:
             try:
                 self.find_element(locator, wait=wait).click()
@@ -118,16 +118,15 @@ class TestKey():
                 if raise_except:
                     raise myerror  # 做一个返回.增加错误判断.
         else:
-            while True:
+            while count:
                 try:
                     self.find_element(locator, wait=wait).click()
-                    if i:
-                        logger.info(f"点击元素:{locator} 成功.")
                     if self.element_display(locator=new_locator, wait=wait):
                         logger.debug(f"点击后的特征元素:{new_locator}出现.点击操作成功.")
                         break
                     else:
-                        sleep(0.5)  # 简单等待一下.
+                        count -= 1
+                        sleep(1)  # 简单等待一下.
                 except:
                     if raise_except:
                         raise myerror  # 做一个返回.增加错误判断.
