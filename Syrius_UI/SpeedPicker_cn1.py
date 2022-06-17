@@ -297,6 +297,16 @@ class SpeedPicker:
             elif len(interset(self.get_config()['jarvis_soft'], ''.join(x).split('\n'))) > 1:
                 logger.debug('异常返回了Jarvis主界面,脚本重启SpeedPicker.')
                 self.open_sp()
+            elif '正在同步场地配置' in x:
+                logger.debug("正在同步场地配置,请等待")
+                while True:
+                    if self.driver.element_display((By.XPATH, '//*[@starts-with(@content-desc,"完成")]')):
+                        logger.debug("云端配置同步完成.")
+                        self.driver.click_element((By.XPATH, '//*[@starts-with(@content-desc,"完成")]'))
+                        break
+                    else:
+                        sleep(3)
+
 
         except Exception as e:
             logger.debug(f"content-desc也没有找到,可能是退出GoGoReady了.发生异常:{e}")
@@ -343,7 +353,7 @@ class SpeedPicker:
                         sleep(6)  # 点完确定,会有个长等待.
                         # self.wait_moment(err_type)  # 用这个方法应该可以,需要验证一下.
                         logger.info(f"上报异常:[{err_type}]成功.")
-                        break
+                        self.page_check(timeout=15, pagename='异常上报', is_shoot=True)
                     else:
                         logger.warning(f"上报异常流程,好像发生了什么异常,去看看吧.此时的页面:{self.get_text()}")
                         self.shoot()
