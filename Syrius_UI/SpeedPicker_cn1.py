@@ -795,14 +795,18 @@ class SpeedPicker:
                 sleep(5)
             elif '立即更新' in view_ls:
                 self.click_view_text("关闭")
-            elif self.get_config()['manual_task'] == view_ls:
-                logger.debug("当前是手动派单模式，脚本暂不支持此流程。")
-                exit(-102)
+            elif interset(self.get_config()['manual_task'], view_ls):
+                if self.get_config()['manual_mode']:
+                    logger.debug("手动派单模式，等待扫码生成任务中。")
+                    self.wait_moment('开始任务')
+                else:
+                    logger.debug("当前配置不支持手动派单模式，退出脚本，若要启动脚本，请调整配置。")
+                    exit(-102)
             else:
                 self.press_ok()  # 这里来点一下
                 sleep(5)
                 now = self.get_text()
-                logger.debug(f"main主函数里,最后一个else.为什么会走到这一步? 刚才拿到的文本:{view_ls},此时的界面文本:{now}")
+                logger.debug(f"main主函数里，最后一个else。为什么会走到这一步？ 刚才拿到的文本:{view_ls},此时的界面文本:{now}")
                 if view_ls == now and '请到此处附近' in view_ls:
                     logger.warning("卡在推荐点位了.赶紧去检查一下!")
                     self.shoot()
