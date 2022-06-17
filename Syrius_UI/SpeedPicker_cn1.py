@@ -795,6 +795,9 @@ class SpeedPicker:
                 sleep(5)
             elif '立即更新' in view_ls:
                 self.click_view_text("关闭")
+            elif self.get_config()['manual_task'] == view_ls:
+                logger.debug("当前是手动派单模式，脚本暂不支持此流程。")
+                exit(-102)
             else:
                 self.press_ok()  # 这里来点一下
                 sleep(5)
