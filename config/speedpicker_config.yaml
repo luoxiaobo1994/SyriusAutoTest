@@ -4,10 +4,10 @@ bind_err: True  # 绑定载物箱时上报找不到载物箱.
 err_code: True  # 输入错误的商品码.
 more_good: True # 输入更多的商品数值.
 pasue_move: True # 是否暂停移动.
-pasue_psb: 2  # 暂停移动的概率 1/2
-pick_psb: 15  # 拣货上报异常的概率.1/15
-more_psb: 15  # 多输入几个商品数量的概率.1/15
-err_code_psb: 15 # 输入错误商品码的概率.1/15
+pasue_psb: 10  # 暂停移动的概率 1/2
+pick_psb: 30  # 拣货上报异常的概率.1/15
+more_psb: 1000  # 多输入几个商品数量的概率.1/15
+err_code_psb: 30 # 输入错误商品码的概率.1/15
 sp_text:
   - 等待任务中
   - 紧急拣货中
@@ -26,6 +26,8 @@ sp_text:
   - 新建任务
   - 请扫描拣货单
   - 开始任务
+  - 当前任务被取消
+  - 好
 manual_task:
   - 新建任务
   - 请扫描拣货单
@@ -53,7 +55,7 @@ confirm_result:
   - 拣货执行结果
   - 格口名称
   - 单据
-picking_out: 20 # 拣货超时几率 1/10, 1是常开,0是常闭.
+picking_out: 30 # 拣货超时几率 1/10, 1是常开,0是常闭.
 picking_outtime: 20  # 拣货超时时间 30s
 wait_finshed: 15  # 等待点击超时按钮的超时时间,30s
 exit_ggr:

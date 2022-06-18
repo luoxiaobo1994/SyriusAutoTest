@@ -7,14 +7,13 @@ import time, csv
 import traceback
 import sys, os, wcwidth
 import threading
-from utils.log import Logger
+from utils.log import logger
 from multiprocessing.dummy import Pool
 from collections.abc import Iterable
 import itertools
 import requests
 import socket
 
-logger = Logger().get_logger()
 
 """
 封装一些基础方法,公共使用.

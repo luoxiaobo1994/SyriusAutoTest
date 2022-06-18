@@ -5,14 +5,14 @@
 import os, logging
 from logging.handlers import TimedRotatingFileHandler
 from utils.config import LOG_PATH
-from base.common import *
+
 
 class Logger(object):
 
     def __init__(self, log_name="Syrius", file='log.txt'):
         self.logger = logging.getLogger(log_name)
         logging.root.setLevel(logging.NOTSET)  # 日志级别,NOTEST是比DEBUG还低一级的级别,就是全部输出了.
-        self.logger_file_name = file_time()+file  # 生成的文件名称,取脚本名称来区分.应对多机测试.
+        self.logger_file_name = file  # 生成的文件名称,取脚本名称来区分.应对多机测试.
         self.backup_count = 30  # 备份的最大数量,多保存几份.
         # 日志输出级别
         self.console_output_level = "DEBUG"  # 控制台输出所有信息,实际调试的时候,脚本有控制,这里不一定生效.

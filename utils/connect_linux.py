@@ -21,6 +21,7 @@ def ssh(ip, cmds=[], username='syrius', password="syrius", port=22, i=False, tim
         # 互信方式远程连接，没用到过，暂时屏蔽了。先保留代码,以后也许会用上.
         # key_file = paramiko.RSAKey.from_private_key_file('输入你的文件路径')
         # ssh.connect(syr_ip)
+        out = []  # 返回的结果
         # 执行命令
         if cmds:  # 有时候不执行命令.
             for command in cmds:
@@ -34,7 +35,7 @@ def ssh(ip, cmds=[], username='syrius', password="syrius", port=22, i=False, tim
                     for m in out:
                         logger.debug(f"执行命令结果:{m}")
                 time.sleep(1)  # 执行一条命令,等待一下,多线程,倒是无所谓了.
-        return 1
+        return out
     except Exception as e:
         logger.warning(f"{ip} {e}")
         return 0
