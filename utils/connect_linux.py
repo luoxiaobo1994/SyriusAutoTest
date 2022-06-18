@@ -35,7 +35,7 @@ def ssh(ip, cmds=[], username='syrius', password="syrius", port=22, i=False, tim
                     for m in out:
                         logger.debug(f"执行命令结果:{m}")
                 time.sleep(1)  # 执行一条命令,等待一下,多线程,倒是无所谓了.
-        return out
+        return 1
     except Exception as e:
         logger.warning(f"{ip} {e}")
         return 0

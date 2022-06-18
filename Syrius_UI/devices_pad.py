@@ -27,10 +27,8 @@ def all_connect(ip):
     # for i in devices.keys():
     res = ssh(ip=ip, cmds=cmds)  # 正常返回成功与否..
     if res:
-        new_cmds = ['adb devices', 'adb shell ip addr show wlan0']
-        pad_ip = re.findall(r'inet (.*?)/', ''.join(ssh(ip=ip, cmds=new_cmds)))
         # 这里面,命令执行会有长时间连接不上的情况.平板连接了其他WIFI,导致IP不对.
-        info = os.popen(f"adb connect {pad_ip}").readlines()  # 连接对应的平板.
+        info = os.popen(f"adb connect {devices[ip]}").readlines()  # 连接对应的平板.
         logger.debug(info[0])
     else:
         logger.warning(f"设备:{ip},连接失败!!!")
