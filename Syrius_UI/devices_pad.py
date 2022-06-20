@@ -10,14 +10,14 @@ from utils.log import logger
 
 devices = {
     # 填写你的机器人IP和机器人对应平板的IP.可以通过脚本,快速连接机器人,打开平板远程连接功能.
-    # '10.2.8.65': '10.2.10.229',  # device_ip : pad_ip
+    '10.2.8.65': '10.2.10.229',  # device_ip : pad_ip
     # '10.2.9.39': '10.2.10.35',  # 高版梁龙
     # '10.2.8.57': '10.2.11.51',  # MLDM2449011108
     # '10.2.9.181': '10.2.11.119',
     # '10.2.8.118': '10.2.16.137',
     # '10.2.8.242': '10.2.11.107'  # 梁龙
     # '10.2.8.103': '10.2.10.9'  # 梁龙
-    '10.2.9.18': '10.2.16.163'  # 雷龙1604
+    # '10.2.9.18': '10.2.16.163'  # 雷龙1604
 
 }
 
@@ -33,13 +33,13 @@ def all_connect(ip):
             # 能抓到机器人平板IP的情况下。
             try:
                 pad_ip = re.findall(r'inet (.*?)/', text)[0]  # 兜底抓到空的情况下
-                logger.debug(f"当前机器人：{ip},连接的平板IP为：{pad_ip}.")
+                logger.debug(f"当前机器人：{ip},实时连接的平板IP为：{pad_ip}.")
                 info = os.popen(f"adb connect {pad_ip}").readlines()
                 logger.debug(info[0])
             except:
                 pass
         else:
-            # 这里面,命令执行会有长时间连接不上的情况.平板连接了其他WIFI,导致IP不对.
+            # 抓不到实时的IP，就按默认的去连接。
             info = os.popen(f"adb connect {devices[ip]}").readlines()  # 连接对应的平板.
             logger.debug(info[0])
     else:
