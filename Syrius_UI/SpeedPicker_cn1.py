@@ -520,7 +520,12 @@ class SpeedPicker:
                 self.shoot()
             self.inputcode(code=good_code)  # 输入了商品码。
             self.wait_for_time(n=self.get_config()['picking_out'], timeout=self.get_config()['wait_finshed'])  # 超时等待
-            # 如果有相同商品需要拣货，则要点击“继续”. 不过接口下的订单，必不会有相同商品。倒也不用管。
+            # 万一有相同商品同时拣货，需要做一下处理。
+            while True:
+                if self.driver.element_display((By.XPATH, '//*[@text="继续"]'), wait=1):
+                    self.driver.click_element((By.XPATH, '//*[@text="继续"]'))
+                else:
+                    break
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
             logger.debug(f"通过点击[完成],快速完成拣货.")
             self.page_check(timeout=15, pagename='拣货完成', is_shoot=True, text='完成')  # 这里比较容易卡. 在这里检查一下.
