@@ -12,4 +12,8 @@ from time import sleep
 import itertools
 from base.common import *
 
-ll = '121221221'
+def x():
+    return 1,[1]
+a = x()
+if a:
+    print(a[1])

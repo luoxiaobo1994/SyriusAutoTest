@@ -30,12 +30,12 @@ def ssh(ip, cmds=[], username='syrius', password="syrius", port=22, i=False, tim
                 stdin, stdout, stderr = client.exec_command(command, bufsize=-1,
                                                             timeout=timeout, get_pty=False, environment=None)
                 # 读取执行命令后输出的内容
-                out = stdout.readlines()  # 不执行输出,有些命令居然执行不成功,妈的.
+                out.extend(stdout.readlines())  # 不执行输出,有些命令居然执行不成功,妈的.
                 if i:  # 控制一下,是否打印消息.
                     for m in out:
                         logger.debug(f"执行命令结果:{m}")
                 time.sleep(1)  # 执行一条命令,等待一下,多线程,倒是无所谓了.
-        return 1
+        return 1, out
     except Exception as e:
         logger.warning(f"{ip} {e}")
         return 0
@@ -44,9 +44,6 @@ def ssh(ip, cmds=[], username='syrius', password="syrius", port=22, i=False, tim
 
 
 if __name__ == '__main__':
-    # cmds = ["adb devices", "adb tcpip 5555"]
-    # cmdss = ['killall navigation_skill',"adb devices", "adb tcpip 5555"]
-    cmdss = ['tar xvf /etc/syrius/config_tree.tar.gz']
-    # for i in devices.keys():
-    for i in devices.keys():
-        ssh(ip=i, cmds=[])
+    cmds = ["adb devices", "adb shell ip addr show wlan0"]
+    res = ssh(ip='10.2.9.18', cmds=cmds)
+    print(res)

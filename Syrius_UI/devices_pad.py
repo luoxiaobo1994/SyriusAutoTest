@@ -23,17 +23,29 @@ devices = {
 
 
 def all_connect(ip):
-    cmds = ['adb devices', "adb tcpip 5555"]  # 连上机器人需要执行的命令。
+    cmds = ['adb devices', "adb shell ip addr show wlan0", "adb tcpip 5555"]  # 连上机器人需要执行的命令。
     # for i in devices.keys():
     res = ssh(ip=ip, cmds=cmds)  # 正常返回成功与否..
+    # print(res)
     if res:
-        # 这里面,命令执行会有长时间连接不上的情况.平板连接了其他WIFI,导致IP不对.
-        info = os.popen(f"adb connect {devices[ip]}").readlines()  # 连接对应的平板.
-        logger.debug(info[0])
+        if res[-1]:
+            text = ''.join([str(i) for i in res])
+            # 能抓到机器人平板IP的情况下。
+            try:
+                pad_ip = re.findall(r'inet (.*?)/', text)[0]  # 兜底抓到空的情况下
+                logger.debug(f"当前机器人：{ip},连接的平板IP为：{pad_ip}.")
+                info = os.popen(f"adb connect {pad_ip}").readlines()
+                logger.debug(info[0])
+            except:
+                pass
+        else:
+            # 这里面,命令执行会有长时间连接不上的情况.平板连接了其他WIFI,导致IP不对.
+            info = os.popen(f"adb connect {devices[ip]}").readlines()  # 连接对应的平板.
+            logger.debug(info[0])
     else:
         logger.warning(f"设备:{ip},连接失败!!!")
 
-    # print(f"共连接成功:{len(get_devices())}个设备.")  # 多线程会重复打印.
+        # print(f"共连接成功:{len(get_devices())}个设备.")  # 多线程会重复打印.
 
 
 def is_alive(ip):
@@ -62,3 +74,4 @@ if __name__ == '__main__':
     # res = ssh('10.2.8.103', cmds=['adb devices', 'adb shell ip addr show wlan0'])
     # # print(type(res))
     # print(re.findall(r'inet (.*?)/', ''.join(res)))
+    # all_connect('10.2.9.18')
