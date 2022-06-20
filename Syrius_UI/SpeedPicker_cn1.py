@@ -130,14 +130,14 @@ class SpeedPicker:
         except:
             sleep(0.1)
 
-    def random_trigger(self, israndom=True, n=30):  # Probability value
+    def random_trigger(self, israndom=True, n=30, process=''):  # Probability value
         if not israndom:  # 默认开启随机事件
             return 0
         # 获取一个随机数值，选中了，就触发随机事件。
         if n == 0:  # 设置为0，关闭随机事件。
             return 0
         elif n == 1:  # 设置为1，必中事件。
-            logger.debug(f"当前所上报的异常流程,被设置为常开.注意使用.")
+            logger.debug(f"{process}流程,随机事件被设置为常开.注意使用.")
             return 1
         elif n >= 2:
             num = random.randint(2, n + 2)  # 1和0被排除，得多加两个。
@@ -209,7 +209,7 @@ class SpeedPicker:
             except TypeError:
                 logger.debug("抓取文本发生类型错误异常,检查是否退出SP界面了.")
                 self.is_other_page()
-                if self.random_trigger(n=60):
+                if self.random_trigger(n=60, process='主线程日志打印'):
                     logger.debug(f"随机刷日志, 脚本仍然在抓取文本中,当前可能拿到了一些不符合要求的:{view_ls}")
                     sleep(10)
                     break  # 尝试退出一下,因为总会重复刷这个日志.
@@ -384,7 +384,7 @@ class SpeedPicker:
                 view_ls = self.get_text(wait=2, raise_except=True)  # 不用太频繁.
                 if view_ls:  # 居然还有空的情况，干。
                     if text in view_ls:
-                        if self.random_trigger(n=10):
+                        if self.random_trigger(n=10, process='持续抓文本'):
                             err -= 1  # 有时候可能卡流程,这里也做一个跳出检测
                             sleep(timeout)
                             if i:
@@ -422,7 +422,7 @@ class SpeedPicker:
                     else:
                         return  # 抓不到重复的文本了。跳出循环。不能是break,会执行后面的if else
                 else:
-                    if self.random_trigger(n=60):
+                    if self.random_trigger(n=60, process='抓文本异常捕捉'):
                         logger.info(f"获取到了None文本,为什么?")
                         self.shoot()
                     err -= 1  # 这种情况,也给他跳出循环.
@@ -483,8 +483,8 @@ class SpeedPicker:
             self.shoot()
 
     def wait_for_time(self, timeout=30, n=0):
-        if self.random_trigger(n=n):
-            logger.debug(f"进入超时等待函数,模拟超时未操作.等待时间:{timeout}")
+        if self.random_trigger(n=n, process='超时等待'):
+            logger.debug(f"进入超时等待,模拟超时未操作.等待时间:{timeout}")
             for i in range(timeout):
                 view_text = self.get_text()  # 这里是耗时操作,所以,实际等待时间会比设置的长一点.
                 if '超时' in ''.join(view_text):
@@ -505,12 +505,12 @@ class SpeedPicker:
         self.wait_for_time(n=self.get_config()['picking_out'], timeout=self.get_config()['picking_outtime'])
         if '输入' in view_ls:  # 1.还没扫码，有输入按钮。
             logger.info("拣货情形1,还未扫码.")
-            if self.random_trigger(n=self.get_config()['pick_psb']):  # 概率，上报异常。
+            if self.random_trigger(n=self.get_config()['pick_psb'], process='输入商品码'):  # 概率，上报异常。
                 self.report_err()
                 return  # 结束拣货流程.
             self.click_view_text("输入")  # 点击输入按钮
             # total = view_ls[-4]  # 单独的最大拣货数量。  从输入开始走,可以这么拿.
-            if self.random_trigger(n=self.get_config()['err_code_psb']):  # 随机触发,输入错误商品码的概率
+            if self.random_trigger(n=self.get_config()['err_code_psb'], process='输入错误商品码'):  # 随机触发,输入错误商品码的概率
                 self.input_error(random.randint(1, 564313112131))  # 随机取一个,取对了,就可以买彩票了。
             try:
                 good_code = view_ls[view_ls.index('×') - 1]  # 有什么办法,准确拿到商品码.
@@ -593,7 +593,7 @@ class SpeedPicker:
         except:
             logger.warning(f"正则获取载物箱数量出了异常,当前页面文本:{self.get_text()}")
             self.shoot()
-        if self.random_trigger(n=0):  # 上报异常，就不用做了。
+        if self.random_trigger(n=0, process='切换载具'):  # 上报异常，就不用做了。
             self.report_err('载具不合适')
             return  # 确保流程跳出去。
         if '输入' in tt:
@@ -731,7 +731,7 @@ class SpeedPicker:
                 sleep(5)
                 if ['紧急停止', '若需恢复工作', '请解除急停状态'] == view_ls:
                     break
-                elif self.random_trigger(n=3):  # 有时候只是卡一下界面,并不需要一直检查是不是发生了异常.
+                elif self.random_trigger(n=3, process='检查是否进入其他页面'):  # 有时候只是卡一下界面,并不需要一直检查是不是发生了异常.
                     self.other_situation()
             elif '等待任务中' in view_ls:
                 logger.info("SpeedPicker当前没有任务,请下单。\n")  # 整两个空行来区分一下任务。
@@ -747,7 +747,7 @@ class SpeedPicker:
                 logger.info(f"机器人正在前往:{locate},请等待。")
                 if locate.startswith('A0'):
                     logger.debug(f"前往目标的拣货点信息：{self.get_text()}")
-                if self.random_trigger(n=self.get_config()['pasue_psb']):  # 触发随机。
+                if self.random_trigger(n=self.get_config()['pasue_psb'], process='暂停移动'):  # 触发随机。
                     self.pause_move()  # 暂停移动。
                 self.wait_moment("前往")
             elif any_one(self.get_config()['bind_text'], view_ls):
