@@ -524,6 +524,7 @@ class SpeedPicker:
             while True:
                 if self.driver.element_display((By.XPATH, '//*[@text="继续"]'), wait=1):
                     self.driver.click_element((By.XPATH, '//*[@text="继续"]'))
+                    logger.debug(f"当前商品还有其他订单需要捡取，点击继续捡取成功。")
                 else:
                     break
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
