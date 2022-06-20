@@ -408,5 +408,5 @@ class just_err(Exception):
 
 
 if __name__ == '__main__':
-    # app_screenshot()
+    app_screenshot()
     devices_info()

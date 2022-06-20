@@ -4,7 +4,6 @@
 
 import os, logging
 from logging.handlers import TimedRotatingFileHandler
-from utils.config import LOG_PATH
 
 
 class Logger(object):
@@ -53,5 +52,4 @@ class Logger(object):
 logger = Logger().get_logger()  # 直接生成日志器, 给其他文件再次调用即可.
 
 if __name__ == '__main__':
-    filename = os.path.join("D:\AutomationLog", 'SpeedPicker_test.txt')
-    print(filename)
+    logger.debug("简单调试一下.")

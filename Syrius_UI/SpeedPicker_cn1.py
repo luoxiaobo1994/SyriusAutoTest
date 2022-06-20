@@ -1,9 +1,9 @@
 # -*- coding:utf-8 -*-
 # Author: luoxiaobo
 # TIME: 2021/12/9 19:17
-import os
+
+
 import re
-import traceback
 from time import sleep
 from selenium.webdriver.common.by import By
 from GGR import GGR
