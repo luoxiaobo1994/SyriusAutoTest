@@ -2,7 +2,7 @@
 # Author: luoxiaobo
 # TIME: 2021/12/9 19:17
 
-
+import copy
 import re
 from time import sleep
 from selenium.webdriver.common.by import By
@@ -353,7 +353,8 @@ class SpeedPicker:
                         sleep(6)  # 点完确定,会有个长等待.
                         # self.wait_moment(err_type)  # 用这个方法应该可以,需要验证一下.
                         logger.info(f"上报异常:[{err_type}]成功.")
-                        self.page_check(timeout=15, pagename='异常上报', is_shoot=True)
+                        # 页面检查需要检查特征文本,原因:上报[载物箱类型不符]后,15s内,要是刷到了异常区.可能有部分文本重叠.
+                        self.page_check(timeout=6, pagename='异常上报', is_shoot=True, text='异常上报')
                     else:
                         logger.warning(f"上报异常流程,好像发生了什么异常,去看看吧.此时的页面:{self.get_text()}")
                         self.shoot()
@@ -443,9 +444,9 @@ class SpeedPicker:
             logger.debug(f"持续检查文本,超过{err}次,都没有跳出检查函数.检查一下页面吧!当前页面:{self.get_text()}")
 
     def page_check(self, timeout=30, pagename='', is_shoot=False, text=''):
-        total_time = timeout
-        view_text = self.get_text()
-        logger.debug(f'进入检查是否卡屏流程,超时时间:{timeout}.')
+        total_time = copy.copy(timeout)
+        view_text = self.get_text()  # 先抓一个当前页面文本.
+        logger.debug(f'{pagename}进入检查是否卡屏流程,超时时间:{timeout}.')
         # view_content =
         while timeout:
             tmp_text = self.get_text()
