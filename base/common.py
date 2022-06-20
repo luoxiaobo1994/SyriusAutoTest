@@ -31,7 +31,7 @@ def get_time():
 def file_time():
     now_time = time.localtime()  # [2020, 11, 30, 12, 3, 5, 0, 335, 0]
     date_1 = '-'.join(str(i).zfill(2) for i in now_time[:3])
-    time_1 = '_'.join(str(i).zfill(2) for i in now_time[3:6])
+    time_1 = '-'.join(str(i).zfill(2) for i in now_time[3:6])
     return date_1 + '_' + time_1
 
 

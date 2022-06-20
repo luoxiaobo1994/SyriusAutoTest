@@ -4,6 +4,7 @@
 
 import os, logging
 from logging.handlers import TimedRotatingFileHandler
+import time
 
 
 class Logger(object):
@@ -11,7 +12,7 @@ class Logger(object):
     def __init__(self, log_name="Syrius", file='log.txt'):
         self.logger = logging.getLogger(log_name)
         logging.root.setLevel(logging.NOTSET)  # 日志级别,NOTEST是比DEBUG还低一级的级别,就是全部输出了.
-        self.logger_file_name = file  # 生成的文件名称,取脚本名称来区分.应对多机测试.
+        self.logger_file_name = self.file_time() + file  # 生成的文件名称,取脚本名称来区分.应对多机测试.
         self.backup_count = 30  # 备份的最大数量,多保存几份.
         # 日志输出级别
         self.console_output_level = "DEBUG"  # 控制台输出所有信息,实际调试的时候,脚本有控制,这里不一定生效.
@@ -25,6 +26,12 @@ class Logger(object):
         dir = "D:\AutomationLog"
         if not os.path.exists(dir):
             os.makedirs("D:\AutomationLog")
+
+    def file_time(self):
+        # 按天生成文件.
+        now_time = time.localtime()  # [2020, 11, 30, 12, 3, 5, 0, 335, 0]
+        date_1 = '-'.join(str(i).zfill(2) for i in now_time[:3])
+        return date_1 + '_'
 
     def get_logger(self):
         """在logger中添加日志句柄并返回,如果logger已有句柄,则直接返回"""
