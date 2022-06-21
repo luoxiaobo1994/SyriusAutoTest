@@ -5,12 +5,14 @@
 import copy
 import re
 from time import sleep
+
 from selenium.webdriver.common.by import By
+
 from GGR import GGR
-from base.common import *
-from utils.log import logger
-from utils.file_reader import YamlReader
 from Syrius_API.flagship.res_notify import send_order
+from base.common import *
+from utils.file_reader import YamlReader
+from utils.log import logger
 
 
 class SpeedPicker:
@@ -354,7 +356,7 @@ class SpeedPicker:
                         # self.wait_moment(err_type)  # 用这个方法应该可以,需要验证一下.
                         logger.info(f"上报异常:[{err_type}]成功.")
                         # 页面检查需要检查特征文本,原因:上报[载物箱类型不符]后,15s内,要是刷到了异常区.可能有部分文本重叠.
-                        self.page_check(timeout=6, pagename='异常上报', is_shoot=True, text='异常上报')
+                        self.page_check(timeout=8, pagename='异常上报', is_shoot=True, text='异常上报')
                     else:
                         logger.warning(f"上报异常流程,好像发生了什么异常,去看看吧.此时的页面:{self.get_text()}")
                         self.shoot()
@@ -591,7 +593,12 @@ class SpeedPicker:
     def bind_container(self):
         # 绑定载物箱。
         self.press_ok()
-        logger.info(f"绑定载物箱流程,请给机器人绑定载物箱.载物箱信息:{self.get_text()}")
+        bind_info = self.get_text()
+        logger.info(f"绑定载物箱流程,请给机器人绑定载物箱.载物箱信息:{bind_info}")
+        if '当前作业被取消' in bind_info:
+            logger.debug('当前作业被取消了，注意订单，检查一下。')
+            self.click_view_text('好')
+            return
         tt = self.get_text()
         str_txt = ''.join(tt)  # 转成字符串
         try:
@@ -797,9 +804,14 @@ class SpeedPicker:
                 logger.debug("当前作业被取消.")
                 self.click_view_text('好')
             elif len(view_ls) == 1:  # 拣货执行结果,紧急拣货中,拣货中.  有可能只拿到这三个之一.
-                logger.debug("界面文本不正常的流程.")
-                self.shoot()
-                sleep(5)
+                now_text = self.get_text()
+                logger.debug(f"界面文本不正常的流程.之前抓到的异常文本：{view_ls},现在抓到的：{now_text}")
+                if now_text != view_ls:
+                    logger.debug("界面已跳转，产生了过程异常。")
+                else:
+                    logger.debug("界面没有跳转，截图保存一下，注意查看。")
+                    self.shoot()
+                    sleep(5)
             elif '立即更新' in view_ls:
                 self.click_view_text("关闭")
             elif interset(self.get_config()['manual_task'], view_ls):
