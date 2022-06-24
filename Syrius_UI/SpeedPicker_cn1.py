@@ -279,6 +279,10 @@ class SpeedPicker:
                 raise just_err(message="通讯可能出问题了")
         try:
             x = self.driver.app_elements_content_desc((By.XPATH, '//*'))
+            view_text = self.get_text()
+            if len(interset(view_text, self.get_text())) == 0:
+                logger.warning("SpeedPicker可能白屏了。或者进入别的界面了。请检查。")
+                self.shoot()
             logger.debug(f"抓到了什么奇怪的content:{x}")
             if len(set(x) & set(self.get_config()['exit_ggr'])) > 1:
                 logger.warning("GoGoReady没有在运行.准备启动GoGoReady.请等待GoGoReady启动完成.约30s...")
@@ -308,6 +312,9 @@ class SpeedPicker:
                         break
                     else:
                         sleep(3)
+            elif len(interset(['机器人定位丢失', '收起'], x)) == 2:
+                logger.warning("机器人丢失定位。")
+                self.shoot()
 
 
         except Exception as e:
@@ -458,6 +465,10 @@ class SpeedPicker:
                 if text not in tmp_text and text:
                     logger.debug(f"特征文本:[{text}]已经不在{pagename}页面,判定界面已跳转.程序未卡屏.")
                     return 1  # 特征文本不在界面内了.也可以跳过了.
+                elif '当前作业被取消' in tmp_text:
+                    logger.info("当前作业被取消了。")
+                    self.click_view_text('好')
+                    return 1
             else:
                 return 1  # 页面变化了.
         logger.warning(f"超过{total_time}s,{pagename}页面文本没有变化.可能卡界面了.")
@@ -512,8 +523,8 @@ class SpeedPicker:
                 self.report_err()
                 return  # 结束拣货流程.
             self.click_view_text("输入")  # 点击输入按钮
-            # total = view_ls[-4]  # 单独的最大拣货数量。  从输入开始走,可以这么拿.
-            if self.random_trigger(n=self.get_config()['err_code_psb'], process='输入错误商品码'):  # 随机触发,输入错误商品码的概率
+            # 随机触发,输入错误商品码的概率
+            if self.random_trigger(n=self.get_config()['err_code_psb'], process='输入错误商品码'):
                 self.input_error(random.randint(1, 564313112131))  # 随机取一个,取对了,就可以买彩票了。
             try:
                 good_code = view_ls[view_ls.index('×') - 1]  # 有什么办法,准确拿到商品码.
@@ -529,9 +540,10 @@ class SpeedPicker:
                     self.driver.click_element((By.XPATH, '//*[@text="继续"]'))
                     logger.debug(f"当前商品还有其他订单需要捡取，点击继续捡取成功。")
                 else:
+                    # logger.debug(f"相同商品连续捡取完毕。")
                     break
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
-            logger.debug(f"通过点击[完成],快速完成拣货.")
+            logger.debug(f"通过点击[完成]，完成拣货。")
             self.page_check(timeout=15, pagename='拣货完成', is_shoot=True, text='完成')  # 这里比较容易卡. 在这里检查一下.
         elif '异常上报' not in view_ls:
             # 拣货情形2,点开了输入框,但是没有输入商品码
@@ -785,7 +797,7 @@ class SpeedPicker:
                 self.click_view_text("已取下")  # 强点.
                 logger.info("完成一单,不错!")
                 logger.info('-·' * 30 + '-' + '\n')
-                self.page_check(timeout=60, pagename='卸载载物箱', text='已取下')
+                self.page_check(timeout=60, pagename='卸载载物箱', text='已取下', is_shoot=True)
             elif '安装载具' in view_ls:
                 logger.debug("处于切换载具流程.")
                 self.click_view_text("完成")
