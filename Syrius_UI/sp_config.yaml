@@ -1,3 +1,0 @@
-pasue_move: True  # 暂停移动的操作。
-report_err: True  # 上报异常。
-scan_err_code: True  # 扫描错误的商品码。
