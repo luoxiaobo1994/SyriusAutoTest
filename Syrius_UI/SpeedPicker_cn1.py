@@ -363,10 +363,15 @@ class SpeedPicker:
                         # self.wait_moment(err_type)  # 用这个方法应该可以,需要验证一下.
                         logger.info(f"上报异常:[{err_type}]成功。")
                         # 页面检查需要检查特征文本,原因:上报[载物箱类型不符]后,15s内,要是刷到了异常区.可能有部分文本重叠.
+                        # 上报完异常，两个状态：1.原地继续拣货--特征文本，‘异常上报’还在。2.移动了。
                         self.page_check(timeout=8, pagename='异常上报', is_shoot=True, text='异常上报', new_text='输入')
                     else:
-                        logger.warning(f"上报异常流程，好像发生了什么异常，去看看吧。此时的页面:{self.get_text()}")
-                        self.shoot()
+                        tmp_text = self.get_text()
+                        logger.warning(f"上报异常流程，好像发生了什么异常，去看看吧。此时的页面:{tmp_text}")
+                        if '拣货异常' in tmp_text:
+                            logger.debug(f"到达了异常点，异常上报流程正常流转。")
+                        else:
+                            self.shoot()
                 sleep(1)  # 暂停一下.
                 count -= 1
             except:
