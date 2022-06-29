@@ -1,0 +1,27 @@
+python3 route_ui.py [map_folder]
+e.g. python3 route_marker.py test_map
+1.To Generate new rules, you need to prepare location_seed.csv & route_seed.csv
+  if locations.yaml is present, modify will be based on locations.yaml
+
+  *** location_seed.csv: single point to add single point, [start, end] to interpolate
+  start/point	               end
+  STANDBY_0001
+  CONTAINER_BIND_0001
+  PICKING_0001	               PICKING_0005
+  MAIN_0001	               MAIN_0005
+  CONTAINER_UNBIND_0001
+
+  *** route_seed.csv: [start, target] as simple pair, repeat to add [start + i, target + i] n pairs
+  start	                  target	                increment	  crossing(In Dev)
+  STANDBY_0001	          CONTAINER_BIND_0001
+  CONTAINER_BIND_0001     MAIN_0001
+  PICKING_0001	          MAIN_0001	                5
+  MAIN_0001               MAIN_0002	                4
+  MAIN_0001               PICKING_0002	                4
+  MAIN_0005               CONTAINER_UNBIND_0001
+  CONTAINER_UNBIND_0001	  STANDBY_0001
+
+2. three modes : 'a' for Add Point, 'z' for UpdatePoint , 'c' for Route connections(left add, right delete)
+3. shortcut: 'v' for save , 'l' for reload
+
+

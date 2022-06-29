@@ -1,0 +1,2 @@
+Home:
+  btnAddDevice: (By.ID, 'com.afar.gncc:id/btnAddDevice')
