@@ -491,7 +491,7 @@ class SpeedPicker:
                 return
             else:
                 logger.debug(f"强点操作,点击[{text}]失败.")
-                self.page_check(timeout=15, text=text)
+                self.page_check(timeout=15, text=text, is_shoot=True)
                 count -= 1
         if count == 0:
             self.shoot()
@@ -842,7 +842,8 @@ class SpeedPicker:
                     logger.warning("卡在推荐点位了.赶紧去检查一下!")
                     self.shoot()
                     exit(-100)
-                self.page_check(timeout=self.get_config()['page_time'])  # 检查是不是半天没变化.
+                self.page_check(timeout=self.get_config()['page_time'], is_shoot=True,
+                                pagename="推荐点位检查界面")  # 检查是不是半天没变化.
                 self.robot_battery()
 
 
