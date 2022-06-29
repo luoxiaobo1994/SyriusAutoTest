@@ -3,9 +3,9 @@
 # TIME: 2022/1/4 20:11
 import os
 import re
+from multiprocessing.dummy import Pool
 
 from utils.connect_linux import ssh
-from multiprocessing.dummy import Pool
 from utils.log import logger
 
 devices = {
@@ -16,7 +16,7 @@ devices = {
     # '10.2.9.181': '10.2.11.119',
     # '10.2.8.118': '10.2.16.137',
     # '10.2.8.242': '10.2.11.107'  # 梁龙
-    # '10.2.8.103': '10.2.10.9'  # 梁龙
+    '10.2.8.103': '10.2.10.9'  # 梁龙
     # '10.2.9.18': '10.2.16.163'  # 雷龙1604
 
 }

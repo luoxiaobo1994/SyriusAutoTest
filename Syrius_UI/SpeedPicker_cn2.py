@@ -1,16 +1,18 @@
 # -*- coding:utf-8 -*-
 # Author: luoxiaobo
 # TIME: 2021/12/9 19:17
-import os
+
+import copy
 import re
-import traceback
 from time import sleep
+
 from selenium.webdriver.common.by import By
+
 from GGR import GGR
-from base.common import *
-from utils.log import logger
-from utils.file_reader import YamlReader
 from Syrius_API.flagship.res_notify import send_order
+from base.common import *
+from utils.file_reader import YamlReader
+from utils.log import logger
 
 
 class SpeedPicker:
@@ -21,10 +23,11 @@ class SpeedPicker:
         self.view = (By.XPATH, '//android.view.View')
         self.image = (By.XPATH, '//android.widget.ImageView')
         self.notify()  # 刷新一些提醒，避免遗漏配置。
+        self.non_count = 0  # 界面抓到异常信息的计数器.
         # self.config = self.get_cnfig()  # 流程开始之前读取一次配置就行了,不用每次都读取.
 
     def init_driver(self):
-        device = self.device_num()[0]  # 10.111.150.202 这种格式.
+        device = self.device_num()[0]  # 10.111.150.202:5555 这种格式.
         appium_port = self.device_num()[1]
         # 在这里填入安卓版本,避免跑不起来.
         browser = GGR().browser(devices=device, platformversion=get_android_version(device),
@@ -81,6 +84,7 @@ class SpeedPicker:
                                 if item in new_text and '退出' in new_text:
                                     logger.warning(f"发生了一些异常,SpeedPicker不能正常启动:{new_text}")
                                     exit(-404)
+                                return
                         # 想办法在启动的时候,走一下更新流程.
                         if self.driver.element_display((By.XPATH, '//*[starts-with(@text,"更新")]')):
                             break
@@ -123,18 +127,19 @@ class SpeedPicker:
             self.driver.find_elements(
                 locator=(By.XPATH, '//android.widget.ImageView[contains(@content-desc,"机器人定位丢失")]'),
                 wait=1, raise_except=True)
+            self.shoot()
             return 1  # return True
         except:
             sleep(0.1)
 
-    def random_trigger(self, israndom=True, n=30):  # Probability value
+    def random_trigger(self, israndom=True, n=30, process=''):  # Probability value
         if not israndom:  # 默认开启随机事件
             return 0
         # 获取一个随机数值，选中了，就触发随机事件。
         if n == 0:  # 设置为0，关闭随机事件。
             return 0
         elif n == 1:  # 设置为1，必中事件。
-            logger.debug(f"当前所上报的异常流程,被设置为常开.注意使用.")
+            logger.debug(f"{process}流程,随机事件被设置为常开.注意使用.")
             return 1
         elif n >= 2:
             num = random.randint(2, n + 2)  # 1和0被排除，得多加两个。
@@ -169,11 +174,6 @@ class SpeedPicker:
                 break
             except:
                 count -= 1
-            # try:
-            #     self.driver.click_element((By.XPATH, '//*[@text="重试"]'), wait=timeout)  # 这个不可点击.
-            #     break
-            # except:
-            #     count -= 1
             try:
                 self.driver.click_element((By.XPATH, '//*[@text="完成"]'), wait=timeout)
                 break
@@ -211,7 +211,7 @@ class SpeedPicker:
             except TypeError:
                 logger.debug("抓取文本发生类型错误异常,检查是否退出SP界面了.")
                 self.is_other_page()
-                if self.random_trigger(n=60):
+                if self.random_trigger(n=60, process='主线程日志打印'):
                     logger.debug(f"随机刷日志, 脚本仍然在抓取文本中,当前可能拿到了一些不符合要求的:{view_ls}")
                     sleep(10)
                     break  # 尝试退出一下,因为总会重复刷这个日志.
@@ -242,11 +242,22 @@ class SpeedPicker:
                 sleep(10)
             elif self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"上传机器人日志")]')):
                 logger.info("正在上传机器人日志,请稍后...")
-                # self.wait_moment("上传机器人日志")
-                sleep(30)
-                if self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"日志上传完成")]')):
-                    logger.debug("机器人日志已上传完成,请自行前往解决异常,恢复机器人移动.")
-                    exit(100)
+                while True:
+                    if self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"日志上传完成")]')):
+                        logger.debug("机器人日志已上传完成,请自行前往解决异常,恢复机器人移动.")
+                        app_screenshot(device=self.device_num()[0])
+                        logger.debug("即将通过脚本返回Jarvis主界面,请确保机器人无异常产生.保证业务正常进行.")
+                        for i in range(3):
+                            os.system("adb shell input keyevent 4")  # 连续3次,才能返回到桌面.到桌面,再按一次.也不会到系统桌面
+                            sleep(1)
+                        break  # 返回完了,退出去
+                    else:
+                        schedule = self.driver.app_elements_content_desc(self.view)
+                        for i in schedule:
+                            if i.startswith('请稍后'):
+                                logger.debug(f"日志仍在上传中,{i}.")
+                        sleep(30)
+                    # exit(100)
             elif self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"SkillSpace")]')):
                 logger.info("机器人在Javis Launcher主界面,尝试重新打开SpeedPicker.")
                 if self.err_notify():
@@ -261,17 +272,51 @@ class SpeedPicker:
             else:
                 sleep(5)
         except Exception as e:
-            logger.debug(f"发生了异常:{e}")
+            self.non_count += 1
             sleep(5)  # 一般是干掉GGR了. 刷慢一点.
+            if self.non_count >= 5:
+                logger.debug(f"连续5次抓不到文本,可能是Appium通讯断了.当前异常:{e}")
+                raise just_err(message="通讯可能出问题了")
         try:
             x = self.driver.app_elements_content_desc((By.XPATH, '//*'))
+            view_text = self.get_text()
+            if len(interset(view_text, self.get_text())) == 0:
+                logger.warning("SpeedPicker可能白屏了。或者进入别的界面了。请检查。")
+                self.shoot()
             logger.debug(f"抓到了什么奇怪的content:{x}")
-            if len(set(x) & set(self.get_cnfig()['exit_ggr'])) > 1:
-                logger.warning("脚本又导致GoGoReady退出了.准备启动GoGoReady.请等待GoGoReady启动完成.约30s...")
+            if len(set(x) & set(self.get_config()['exit_ggr'])) > 1:
+                logger.warning("GoGoReady没有在运行.准备启动GoGoReady.请等待GoGoReady启动完成.约30s...")
                 os.system(f'adb -s {self.device_num()[0]} shell am start -n '
                           f'"com.syriusrobotics.platform.launcher/com.syriusrobotics.platform.jarvis.SplashActivity"'
                           f' -a android.intent.action.MAIN -c android.intent.category.LAUNCHER')
                 sleep(30)  # 启动加载需要时间,不能直接起脚本.
+                while True:
+                    content = self.driver.app_elements_content_desc(self.image)
+                    for i in content:
+                        if i.endswith('%') and i.split('%')[0].isdigit():
+                            logger.debug(f'获取到机器人电池电量数据,上下位机连接完成.当前机器人电量:{i}')
+                            sleep(5)
+                            break
+                    else:
+                        logger.debug(f'当前仍未获取到机器人电量,机器人与平板未完成连接.文本：{content}')
+                        sleep(10)
+            elif len(interset(self.get_config()['jarvis_soft'], ''.join(x).split('\n'))) > 1:
+                logger.debug('异常返回了Jarvis主界面,脚本重启SpeedPicker.')
+                self.open_sp()
+            elif '正在同步场地配置' in x:
+                logger.debug("正在同步场地配置,请等待")
+                while True:
+                    if self.driver.element_display((By.XPATH, '//*[@starts-with(@content-desc,"完成")]')):
+                        logger.debug("云端配置同步完成.")
+                        self.driver.click_element((By.XPATH, '//*[@starts-with(@content-desc,"完成")]'))
+                        break
+                    else:
+                        sleep(3)
+            elif len(interset(['机器人定位丢失', '收起'], x)) == 2:
+                logger.warning("机器人丢失定位。")
+                self.shoot()
+
+
         except Exception as e:
             logger.debug(f"content-desc也没有找到,可能是退出GoGoReady了.发生异常:{e}")
             sleep(5)
@@ -301,7 +346,7 @@ class SpeedPicker:
             self.press_ok(timeout=2)  #
             return
         view_ls = tmp_text[1:]
-        err_type = random.choice(view_ls)
+        err_type = random.choice(view_ls)  # 随机选的一个异常类型
         logger.info(f"本次随机上报的异常是:{err_type}")
         self.driver.click_one(self.driver.find_element((By.XPATH, '//android.view.View[@text="%s"]' % err_type)))
         count = 3
@@ -309,17 +354,19 @@ class SpeedPicker:
             try:
                 view_ls2 = self.get_text()
                 err_type2 = re.findall("确定(.*?)吗", ''.join(view_ls2))[0]  # 拿到的异常
-                logger.info(f"确定上报[{err_type2}]异常吗?")  # 询问弹窗.
-                if err_type2 == err_type or err_type == '其他':  # 确定弹窗起来了. 选择其他异常,询问框不一致.
-                    self.driver.click_one(self.driver.find_elements(self.view)[-1])  # 最后一个view元素是'确定'按钮.
+                logger.info(f"确定上报[{err_type2}]异常吗?")  # 询问弹窗.再次确认弹窗询问的异常和选择的是否一致.
+                if err_type2 == err_type or err_type == '其他' or '确定' in self.get_text():  # 选择[其他]异常,询问框不一致.
+                    # self.driver.click_one(self.driver.find_elements(self.view)[-1])  # 最后一个view元素是'确定'按钮.
                     self.press_ok(timeout=1)  # 这里已经点击了确定，为什么还会卡呢？
                     if '确定' not in self.get_text():  # 跳转流程了.
                         sleep(6)  # 点完确定,会有个长等待.
                         # self.wait_moment(err_type)  # 用这个方法应该可以,需要验证一下.
                         logger.info(f"上报异常:[{err_type}]成功.")
-                        break
+                        # 页面检查需要检查特征文本,原因:上报[载物箱类型不符]后,15s内,要是刷到了异常区.可能有部分文本重叠.
+                        self.page_check(timeout=8, pagename='异常上报', is_shoot=True, text='异常上报')
                     else:
                         logger.warning(f"上报异常流程,好像发生了什么异常,去看看吧.此时的页面:{self.get_text()}")
+                        self.shoot()
                 sleep(1)  # 暂停一下.
                 count -= 1
             except:
@@ -347,26 +394,32 @@ class SpeedPicker:
                 view_ls = self.get_text(wait=2, raise_except=True)  # 不用太频繁.
                 if view_ls:  # 居然还有空的情况，干。
                     if text in view_ls:
-                        if self.random_trigger(n=60):
+                        if self.random_trigger(n=10, process='持续抓文本'):
                             err -= 1  # 有时候可能卡流程,这里也做一个跳出检测
                             sleep(timeout)
                             if i:
                                 logger.debug(f"调试功能,持续抓取文本:[{text}]中.")
-                        if text == '前往':
+                        elif text == '前往':
                             if '恢复' in view_ls:
+                                sleep(3)  # 有时候人要推,给点时间.
                                 self.click_view_text('恢复')
-                        elif '重试' in view_ls:
-                            logger.warning("出现机器人无响应弹窗了.尝试点击重试.")
+                        elif '关闭' in view_ls:
+                            logger.debug(f"出现关闭按钮,页面信息:{view_ls}")
+                            self.click_view_text("关闭")
+                        elif '重试' in view_ls:  # 机器人无响应.结果上传失败.
+                            logger.warning(f"出现了重试按钮,此时的界面文本:{view_ls}")
                             self.driver.tap((By.XPATH, '//*[@text="重试"]'))
                         elif without:
                             # if without text display,break loop
                             if self.driver.element_display((By.XPATH, f'//*[@text="{without}"]')):
                                 logger.debug(f"文本[{without}]刷新. 停止检查[{text}].")
                                 return
-                        elif 'version' in text:
-                            if '关闭' in view_ls:
-                                logger.debug(f"有可用版本更新,版本信息:{view_ls}")
-                                self.click_view_text("关闭")
+
+
+                        elif self.islosepos():
+                            logger.warning("机器人丢失定位.")
+                            self.shoot()
+                            return
                         sleep(1)  # 等待时间不能太长。
                         count += timeout  # 持续计时,看看卡界面多久了.
                         minutes = count // 60
@@ -379,40 +432,73 @@ class SpeedPicker:
                     else:
                         return  # 抓不到重复的文本了。跳出循环。不能是break,会执行后面的if else
                 else:
-                    if self.random_trigger(n=60):
+                    if self.random_trigger(n=60, process='抓文本异常捕捉'):
                         logger.info(f"获取到了None文本,为什么?")
+                        self.shoot()
                     err -= 1  # 这种情况,也给他跳出循环.
                     sleep(timeout)
             except TypeError:
                 pass  # 类型错误,前提是已经抓到元素,那么就是空文本问题,这种情况,不要跳出去.继续抓.
             except Exception as e:
                 logger.warning(f"持续获取的文本的流程,发生了一些异常:{e}")  # 暂时先保留,现场这里问题是真的多.
+                self.shoot()
+                if not e:
+                    raise just_err("抓文本,拿到空异常.")
                 err -= 1
                 sleep(1)
         if text == '请到此处附近':
             logger.warning("卡在推荐点位界面了,去检查一下吧!!!!!!")
+            self.shoot()
         else:
             logger.debug(f"持续检查文本,超过{err}次,都没有跳出检查函数.检查一下页面吧!当前页面:{self.get_text()}")
 
-    def click_view_text(self, text, wait=1, count=3):
+    def page_check(self, timeout=30, pagename='', is_shoot=False, text=''):
+        total_time = copy.copy(timeout)
+        view_text = self.get_text()  # 先抓一个当前页面文本.
+        logger.debug(f'{pagename}进入检查是否卡屏流程,超时时间:{timeout}.')
+        # view_content =
+        while timeout:
+            tmp_text = self.get_text()
+            if view_text == tmp_text:
+                sleep(1)
+                timeout -= 1
+                if text not in tmp_text and text:
+                    logger.debug(f"特征文本:[{text}]已经不在{pagename}页面,判定界面已跳转.程序未卡屏.")
+                    return 1  # 特征文本不在界面内了.也可以跳过了.
+                elif '当前作业被取消' in tmp_text:
+                    logger.info("当前作业被取消了。")
+                    self.click_view_text('好')
+                    return 1
+            else:
+                return 1  # 页面变化了.
+        logger.warning(f"超过{total_time}s,{pagename}页面文本没有变化.可能卡界面了.")
+        if is_shoot:
+            self.shoot()
+        exit(-100)
+
+    def click_view_text(self, text, wait=1, count=5):
         # 强点击,保证点到.
         while count > 0:
             if text not in self.get_text():
                 logger.info(f"文本:{text}并不在页面内,退出强点流程.")
-                break
+                return
             self.driver.click_element((By.XPATH, f'//*[@text="{text}"]'), wait=wait)
+            sleep(2)
             tmp_text = self.get_text(wait=1)
             if text not in tmp_text:
                 logger.info(f"强点击文本:[{text}]成功.")
                 sleep(1)
-                break
+                return
             else:
                 logger.debug(f"强点操作,点击[{text}]失败.")
+                self.page_check(timeout=15, text=text)
                 count -= 1
+        if count == 0:
+            self.shoot()
 
     def wait_for_time(self, timeout=30, n=0):
-        if self.random_trigger(n=n):
-            logger.debug(f"进入超时等待函数,模拟超时未操作.等待时间:{timeout}")
+        if self.random_trigger(n=n, process='超时等待'):
+            logger.debug(f"进入超时等待,模拟超时未操作.等待时间:{timeout}")
             for i in range(timeout):
                 view_text = self.get_text()  # 这里是耗时操作,所以,实际等待时间会比设置的长一点.
                 if '超时' in ''.join(view_text):
@@ -430,25 +516,35 @@ class SpeedPicker:
         elif target and target not in view_ls:
             logger.warning(f"注意检查一下，移动中指示的目标点{target}与当前拣货页面的不一致。")
         logger.info(f"SpeedPicker处于拣货流程,页面信息:{view_ls}")  # 需要记录一下进入拣货流程.
-        self.wait_for_time(n=self.get_cnfig()['picking_out'], timeout=self.get_cnfig()['picking_outtime'])
+        self.wait_for_time(n=self.get_config()['picking_out'], timeout=self.get_config()['picking_outtime'])
         if '输入' in view_ls:  # 1.还没扫码，有输入按钮。
             logger.info("拣货情形1,还未扫码.")
-            if self.random_trigger(n=self.get_cnfig()['pick_psb']):  # 概率，上报异常。
+            if self.random_trigger(n=self.get_config()['pick_psb'], process='输入商品码'):  # 概率，上报异常。
                 self.report_err()
                 return  # 结束拣货流程.
             self.click_view_text("输入")  # 点击输入按钮
-            # total = view_ls[-4]  # 单独的最大拣货数量。  从输入开始走,可以这么拿.
-            if self.random_trigger(n=self.get_cnfig()['err_code_psb']):  # 随机触发,输入错误商品码的概率
+            # 随机触发,输入错误商品码的概率
+            if self.random_trigger(n=self.get_config()['err_code_psb'], process='输入错误商品码'):
                 self.input_error(random.randint(1, 564313112131))  # 随机取一个,取对了,就可以买彩票了。
             try:
                 good_code = view_ls[view_ls.index('×') - 1]  # 有什么办法,准确拿到商品码.
             except:
                 good_code = '199103181516'
                 logger.debug('没有获取到商品编码,检查一下,是不是页面排版又变化了.')
+                self.shoot()
             self.inputcode(code=good_code)  # 输入了商品码。
-            self.wait_for_time(n=self.get_cnfig()['picking_out'], timeout=self.get_cnfig()['wait_finshed'])  # 超时等待
+            self.wait_for_time(n=self.get_config()['picking_out'], timeout=self.get_config()['wait_finshed'])  # 超时等待
+            # 万一有相同商品同时拣货，需要做一下处理。
+            while True:
+                if self.driver.element_display((By.XPATH, '//*[@text="继续"]'), wait=1):
+                    self.driver.click_element((By.XPATH, '//*[@text="继续"]'))
+                    logger.debug(f"当前商品还有其他订单需要捡取，点击继续捡取成功。")
+                else:
+                    # logger.debug(f"相同商品连续捡取完毕。")
+                    break
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
-            logger.debug(f"通过点击[完成],快速完成拣货.")
+            logger.debug(f"通过点击[完成]，完成拣货。")
+            self.page_check(timeout=15, pagename='拣货完成', is_shoot=True, text='完成')  # 这里比较容易卡. 在这里检查一下.
         elif '异常上报' not in view_ls:
             # 拣货情形2,点开了输入框,但是没有输入商品码
             self.inputcode(code='199103181516')
@@ -471,7 +567,7 @@ class SpeedPicker:
                 break
 
     def go_to(self):
-        self.check_time()  # 放在这里检查一下,页面是否正常退出了.
+        # self.check_time()  # 放在这里检查一下,页面是否正常退出了.
         self.press_ok()  # 和倒计时功能不能共存,会主动点掉. 当然,要是倒计时点不掉,也能发现新BUG.
         logger.info("当前商品拣货完成,检查是否有推荐点.")
         count = 6
@@ -483,16 +579,21 @@ class SpeedPicker:
             if "请到此处附近" in before:
                 logger.debug(f"拿到推荐点位了:{before}")
                 try:
+                    if before[-1] == '请到此处附近':
+                        logger.debug(f"这次脚本抓的文本里,没有包含库位信息.再抓一次看看:{self.get_text()}")
+                        break
                     logger.info(f"抓取到推荐点位--->{before[before.index('请到此处附近') + 1]}")
                     self.wait_moment("请到此处附近")
                     break
-                except:
-                    logger.warning(f"抓取推荐点位,超出索引了:{before}")
+                except Exception as e:
+                    logger.warning(f"增加了点位判断,还是出现了异常{e},页面文本:{before}")
+                    self.shoot()
                     break  # 不知道为何,这里会超出索引,奇了怪.
             elif '打包绑定区' in before:
                 logger.info("拣货任务完成,已无商品需要拣货.")
                 break
             elif '前往' in before:
+                logger.debug("机器人已继续移动,无推荐点可获取.")
                 break
             elif '输入' in before and before[-1] == '输入':  # 有输入,就是要拣货.
                 logger.info("当前拣货点,仍有商品需要拣货.")
@@ -504,15 +605,21 @@ class SpeedPicker:
     def bind_container(self):
         # 绑定载物箱。
         self.press_ok()
-        logger.info(f"绑定载物箱流程,请给机器人绑定载物箱.载物箱信息:{self.get_text()}")
+        bind_info = self.get_text()
+        logger.info(f"绑定载物箱流程,请给机器人绑定载物箱.载物箱信息:{bind_info}")
+        if '当前作业被取消' in bind_info:
+            logger.debug('当前作业被取消了，注意订单，检查一下。')
+            self.click_view_text('好')
+            return
         tt = self.get_text()
         str_txt = ''.join(tt)  # 转成字符串
         try:
-            container_num = re.findall(r'0/(\d)', str_txt)[0]  # 找到需要绑定的载物箱的个数.
+            container_num = re.findall(r'\d/(\d)', str_txt)[0]  # 找到需要绑定的载物箱的个数.
             logger.info(f"当前订单需要绑定:{container_num}个载物箱.")
         except:
             logger.warning(f"正则获取载物箱数量出了异常,当前页面文本:{self.get_text()}")
-        if self.random_trigger(n=0):  # 上报异常，就不用做了。
+            self.shoot()
+        if self.random_trigger(n=0, process='切换载具'):  # 上报异常，就不用做了。
             self.report_err('载具不合适')
             return  # 确保流程跳出去。
         if '输入' in tt:
@@ -521,7 +628,7 @@ class SpeedPicker:
             self.driver.tap((By.XPATH, '//*[@text="重试"]'))  # 通过元素的坐标进行点击.
         if '完成' in tt:
             self.click_view_text('完成')
-        container_code = self.get_cnfig()['container_code']
+        container_code = self.get_config()['container_code']
         barcode = '19910318151 6ccc!@#$'
         # 获取载物箱类型
         for i in tt:
@@ -599,8 +706,9 @@ class SpeedPicker:
                 logger.info("发生了一些奇怪的异常,可能需要你自己去检查一下了.")
                 exit(-500)
 
-    def api_order(self, order_num=20):
-        site = self.get_cnfig()['order_site']
+    def api_order(self):
+        site = self.get_config()['order_site']
+        order_num = self.get_config()['order_num']
         try:
             res = send_order(num=order_num, siteid=site)
             if 'successData' in res:
@@ -612,22 +720,27 @@ class SpeedPicker:
             logger.warning(f"通过接口下发订单的流程出现了一些异常,请注意检查.异常信息:{e}\n错误行:{traceback.format_exc()}")
             sleep(10)
 
-    def get_cnfig(self):
+    def get_config(self):
         return YamlReader('../config/speedpicker_config.yaml').data
+
+    def shoot(self):
+        # 截图
+        app_screenshot(device=self.device_num()[0])
 
     def main(self):
         """主业务流程，通过不断的抓取页面信息。去确定当前SpeedPicker运行状态"""
         self.open_sp()
         target_location = ''
         while True:
+            self.non_count = 0  # 只要在正常循环内.重置次数.
             # self.press_ok()  # 应对随时弹出来的需要协助，提示框。有必要保留,可能点掉绑定载具的"完成"
             try:
-                view_ls = self.get_text(wait=15)  # 当前页面文本信息。
+                view_ls = self.get_text(wait=15)  # 当前页面文本信息。  [紧急拣货中,订单ID,请放好扫码枪,完成]
                 # logger.debug(f"view_ls:{view_ls}")
                 ls = ''.join(view_ls)  # 这个是长文本。用来做一些特殊判断。
             except:
                 continue
-            use_text = self.get_cnfig()['sp_text']  # 通过配置文件读取
+            use_text = self.get_config()['sp_text']  # 通过配置文件读取
             set_view = set(view_ls)
             if self.random_trigger(n=60):
                 logger.debug(f"主流程调试日志view_ls：{view_ls}")  # 调试打印的，后面不用了
@@ -636,19 +749,20 @@ class SpeedPicker:
                 logger.warning("出现机器人无响应弹窗了.")
                 self.driver.tap((By.XPATH, '//*[@text="重试"]'))
             elif '关闭' in view_ls:
-                logger.debug("出现了[关闭]弹窗")
+                logger.debug(f"出现了[关闭]弹窗,此时的文本:{view_ls}")
                 self.click_view_text("关闭")
             elif len(set(use_text) & set(view_ls)) == 0:
                 logger.warning(f"页面获取的文本与SP不符。\n现在拿到的是:{view_ls}")
+                self.shoot()
                 sleep(5)
                 if ['紧急停止', '若需恢复工作', '请解除急停状态'] == view_ls:
                     break
-                elif self.random_trigger(n=3):  # 有时候只是卡一下界面,并不需要一直检查是不是发生了异常.
+                elif self.random_trigger(n=3, process='检查是否进入其他页面'):  # 有时候只是卡一下界面,并不需要一直检查是不是发生了异常.
                     self.other_situation()
             elif '等待任务中' in view_ls:
                 logger.info("SpeedPicker当前没有任务,请下单。\n")  # 整两个空行来区分一下任务。
-                if self.get_cnfig()['api_order']:
-                    self.api_order(self.get_cnfig()['order_site'])
+                if self.get_config()['api_order']:
+                    self.api_order()
                 self.wait_moment("等待任务中")
             elif '前往' in view_ls:
                 try:
@@ -659,10 +773,10 @@ class SpeedPicker:
                 logger.info(f"机器人正在前往:{locate},请等待。")
                 if locate.startswith('A0'):
                     logger.debug(f"前往目标的拣货点信息：{self.get_text()}")
-                if self.random_trigger(n=self.get_cnfig()['pasue_psb']):  # 触发随机。
+                if self.random_trigger(n=self.get_config()['pasue_psb'], process='暂停移动'):  # 触发随机。
                     self.pause_move()  # 暂停移动。
                 self.wait_moment("前往")
-            elif any_one(self.get_cnfig()['bind_text'], view_ls):
+            elif any_one(self.get_config()['bind_text'], view_ls):
                 self.bind_container()
             elif len(set_view.difference(use_text)) > 4 and '×' in view_ls:  # 储位,商品名称/编码,数量,x
                 # logger.debug("走拣货流程.")
@@ -683,11 +797,11 @@ class SpeedPicker:
                 self.click_view_text("已取下")  # 强点.
                 logger.info("完成一单,不错!")
                 logger.info('-·' * 30 + '-' + '\n')
-                self.wait_moment('已取下')
+                self.page_check(timeout=60, pagename='卸载载物箱', text='已取下', is_shoot=True)
             elif '安装载具' in view_ls:
                 logger.debug("处于切换载具流程.")
                 self.click_view_text("完成")
-            elif len(set(self.get_cnfig()['err_text']) & set_view) > 0:  # 异常处理区.
+            elif len(set(self.get_config()['err_text']) & set_view) > 0:  # 异常处理区.
                 logger.info("当前任务上报了异常,异常信息如下:")
                 logger.debug(f"异常信息如下:{self.get_text()}")
                 self.click_view_text("确定")  #
@@ -702,13 +816,33 @@ class SpeedPicker:
                 logger.debug("当前作业被取消.")
                 self.click_view_text('好')
             elif len(view_ls) == 1:  # 拣货执行结果,紧急拣货中,拣货中.  有可能只拿到这三个之一.
-                logger.debug("界面文本不正常的流程.")
-                sleep(5)
+                now_text = self.get_text()
+                logger.debug(f"界面文本不正常的流程.之前抓到的异常文本：{view_ls},现在抓到的：{now_text}")
+                if now_text != view_ls:
+                    logger.debug("界面已跳转，产生了过程异常。")
+                else:
+                    logger.debug("界面没有跳转，截图保存一下，注意查看。")
+                    self.shoot()
+                    sleep(5)
             elif '立即更新' in view_ls:
                 self.click_view_text("关闭")
+            elif interset(self.get_config()['manual_task'], view_ls):
+                if self.get_config()['manual_mode']:
+                    logger.debug("手动派单模式，等待扫码生成任务中。")
+                    self.wait_moment('开始任务')
+                else:
+                    logger.debug("当前配置不支持手动派单模式，退出脚本，若要启动脚本，请调整配置。")
+                    exit(-102)
             else:
                 self.press_ok()  # 这里来点一下
-                logger.debug(f"main主函数里,最后一个else.为什么会走到这一步? 刚才拿到的文本:{view_ls},此时的界面文本:{self.get_text()}")
+                sleep(5)
+                now = self.get_text()
+                logger.debug(f"main主函数里，最后一个else。为什么会走到这一步？ 刚才拿到的文本:{view_ls},此时的界面文本:{now}")
+                if view_ls == now and '请到此处附近' in view_ls:
+                    logger.warning("卡在推荐点位了.赶紧去检查一下!")
+                    self.shoot()
+                    exit(-100)
+                self.page_check(timeout=self.get_config()['page_time'])  # 检查是不是半天没变化.
                 self.robot_battery()
 
 
@@ -726,6 +860,6 @@ if __name__ == '__main__':
                 f"发生了其他异常,{timeout}s 后将会重启脚本,异常设备："
                 f"{SpeedPicker().device_num()[0]},{SpeedPicker().device_num()[1]}.注意检查:"
                 f"\n1.Appium 服务起来没有.\n2.Appium端口是否正确.\n3.检查平板是否连接.\n4.检查平板是否掉线了.")
-            logger.warning(f"发生了异常:{e}")
+            logger.warning(f"外主函数发生了异常:{e}")
             logger.info(f"报错信息:{traceback.format_exc()}")
             sleep(timeout)
