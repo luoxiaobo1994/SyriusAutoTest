@@ -355,7 +355,7 @@ class SpeedPicker:
                 view_ls2 = self.get_text()
                 err_type2 = re.findall("确定(.*?)吗", ''.join(view_ls2))[0]  # 拿到的异常
                 logger.info(f"确定上报[{err_type2}]异常吗?")  # 询问弹窗.再次确认弹窗询问的异常和选择的是否一致.
-                if err_type2 == err_type or err_type == '其他' or '确定' in self.get_text():  # 选择[其他]异常,询问框不一致.
+                if err_type2 == err_type or err_type == '其他' or '确定' in self.get_text():  # [其他]异常,询问框不一致.
                     # self.driver.click_one(self.driver.find_elements(self.view)[-1])  # 最后一个view元素是'确定'按钮.
                     self.press_ok(timeout=1)  # 这里已经点击了确定，为什么还会卡呢？
                     if '确定' not in self.get_text():  # 跳转流程了.
@@ -363,7 +363,7 @@ class SpeedPicker:
                         # self.wait_moment(err_type)  # 用这个方法应该可以,需要验证一下.
                         logger.info(f"上报异常:[{err_type}]成功.")
                         # 页面检查需要检查特征文本,原因:上报[载物箱类型不符]后,15s内,要是刷到了异常区.可能有部分文本重叠.
-                        self.page_check(timeout=8, pagename='异常上报', is_shoot=True, text='异常上报')
+                        self.page_check(timeout=8, pagename='异常上报', is_shoot=True, text='异常上报', new_text='输入')
                     else:
                         logger.warning(f"上报异常流程,好像发生了什么异常,去看看吧.此时的页面:{self.get_text()}")
                         self.shoot()
@@ -452,7 +452,7 @@ class SpeedPicker:
         else:
             logger.debug(f"持续检查文本,超过{err}次,都没有跳出检查函数.检查一下页面吧!当前页面:{self.get_text()}")
 
-    def page_check(self, timeout=30, pagename='', is_shoot=False, text=''):
+    def page_check(self, timeout=30, pagename='', is_shoot=False, text='', new_text=''):
         total_time = copy.copy(timeout)
         view_text = self.get_text()  # 先抓一个当前页面文本.
         logger.debug(f'{pagename}进入检查是否卡屏流程,超时时间:{timeout}.')
@@ -463,8 +463,10 @@ class SpeedPicker:
                 sleep(1)
                 timeout -= 1
                 if text not in tmp_text and text:
-                    logger.debug(f"特征文本:[{text}]已经不在{pagename}页面,判定界面已跳转.程序未卡屏.")
+                    logger.debug(f"特征文本：[{text}]已经不在{pagename}页面，判定界面已跳转，程序未卡屏。")
                     return 1  # 特征文本不在界面内了.也可以跳过了.
+                elif new_text and new_text in tmp_text:
+                    logger.debug(f"特征文本：[{new_text}],出现在当前界面。判定界面已跳转，程序未卡屏。")
                 elif '当前作业被取消' in tmp_text:
                     logger.info("当前作业被取消了。")
                     self.click_view_text('好')
