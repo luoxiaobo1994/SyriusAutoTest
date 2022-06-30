@@ -41,7 +41,7 @@ def main():
         # print()
         myfund = GetFundJsonInfo(data[fund]['code'])
         table.add_row([myfund['name'], myfund['dwjz'], myfund['gsz'], myfund['gszzl']])
-        sum += int(data[fund]['money']) * float((myfund['gszzl'])) / 100
+        sum += int(data[fund]['money']) * float((myfund['gszzl'])) / 100 * 0.9  # 这边估值偏高
     print(table)
     print(f"预计收益：{sum:.2f}元。")
     # time.sleep(5)

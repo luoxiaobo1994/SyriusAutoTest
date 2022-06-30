@@ -13,5 +13,6 @@ for i in con:
     # print(ku)
     try:
         os.system(f"pip install {ku}")
+        # 导出来的文件，应该是命令： pip install -r piplist.txt
     except Exception as e:
         print(e)

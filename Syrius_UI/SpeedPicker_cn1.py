@@ -364,7 +364,7 @@ class SpeedPicker:
                         logger.info(f"上报异常:[{err_type}]成功。")
                         # 页面检查需要检查特征文本,原因:上报[载物箱类型不符]后,15s内,要是刷到了异常区.可能有部分文本重叠.
                         # 上报完异常，两个状态：1.原地继续拣货--特征文本，‘异常上报’还在。2.移动了。
-                        self.page_check(timeout=8, pagename='异常上报', is_shoot=True, text='异常上报', new_text='输入')
+                        self.page_check(timeout=5, pagename='异常上报', is_shoot=True, text='异常上报', new_text='输入')
                     else:
                         tmp_text = self.get_text()
                         logger.warning(f"上报异常流程，好像发生了什么异常，去看看吧。此时的页面:{tmp_text}")
@@ -461,7 +461,7 @@ class SpeedPicker:
     def page_check(self, timeout=30, pagename='', is_shoot=False, text='', new_text=''):
         total_time = copy.copy(timeout)
         view_text = self.get_text()  # 先抓一个当前页面文本.
-        logger.debug(f'{pagename}进入检查是否卡屏流程，超时时间:{timeout}。')
+        logger.debug(f'{pagename}进入检查是否卡屏流程，超时时间:{timeout}s。')
         # view_content =
         while timeout:
             tmp_text = self.get_text()
@@ -473,6 +473,7 @@ class SpeedPicker:
                     return 1  # 特征文本不在界面内了.也可以跳过了.
                 elif new_text and new_text in tmp_text:
                     logger.debug(f"特征文本：[{new_text}],出现在当前界面。判定界面已跳转，程序未卡屏。")
+                    return 1  # 也要跳出去。
                 elif '当前作业被取消' in tmp_text:
                     logger.info("当前作业被取消了。")
                     self.click_view_text('好')
@@ -499,7 +500,7 @@ class SpeedPicker:
                 return
             else:
                 logger.debug(f"强点操作，点击[{text}]失败。")
-                self.page_check(timeout=15, text=text, is_shoot=True)
+                self.page_check(timeout=5, text=text, is_shoot=True)
                 count -= 1
         if count == 0:
             self.shoot()
@@ -551,7 +552,7 @@ class SpeedPicker:
                     break
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
             logger.debug(f"通过点击[完成]，完成拣货。")
-            self.page_check(timeout=15, pagename='拣货完成', is_shoot=True, text='完成')  # 这里比较容易卡. 在这里检查一下.
+            self.page_check(timeout=5, pagename='拣货完成', is_shoot=True, text='完成')  # 这里比较容易卡. 在这里检查一下.
         elif '异常上报' not in view_ls:
             # 拣货情形2,点开了输入框,但是没有输入商品码
             self.inputcode(code='199103181516')
@@ -805,7 +806,7 @@ class SpeedPicker:
                 self.click_view_text("已取下")  # 强点.
                 logger.info("完成一单，不错!")
                 logger.info('-·' * 30 + '-' + '\n')
-                self.page_check(timeout=60, pagename='卸载载物箱', text='已取下', is_shoot=True)
+                self.page_check(timeout=30, pagename='卸载载物箱', text='已取下', is_shoot=True)
             elif '安装载具' in view_ls:
                 logger.debug("处于切换载具流程。")
                 self.click_view_text("完成")
