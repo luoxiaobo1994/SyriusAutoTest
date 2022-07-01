@@ -400,6 +400,13 @@ def get_host_ip():
     return ip
 
 
+def check_app(device='', appname='com.syriusrobotics.platform.launcher'):
+    # 检查安卓设备上指定设备是否在运行。
+    info = f'-s {device}' if device else ''
+    data = os.popen(f'adb {info} shell ps | findstr {appname}').readline()
+    return 1 if data else 0
+
+
 class just_err(Exception):
 
     def __init__(self, message=''):
@@ -410,5 +417,4 @@ class just_err(Exception):
 
 
 if __name__ == '__main__':
-    app_screenshot()
-    devices_info()
+    print(check_app())
