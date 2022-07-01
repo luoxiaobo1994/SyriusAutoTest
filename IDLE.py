@@ -2,16 +2,23 @@
 # Author:Luoxiaobo
 # Time: 2021/7/6 23:09
 
-import os
+from multiprocessing.dummy import Pool
 
-file = "D:\SoftData\Feishu\piplist.txt"
-with open(file) as f:
-    con = f.readlines()
-for i in con:
-    ku = i.split()[0]
-    try:
-        os.system(f"pip install {ku}")
-    except Exception as e:
-        print(e)
+total = 0
 
-print('2334')
+
+def func(a, b):
+    global total
+    print(f"a:{a},b:{b}")
+    total += b
+    # return a + b
+
+
+def wraper(args):
+    func(*args)
+
+
+d = {'甲': 1, '已': 2, '丙': 3}
+p = Pool()
+p.map(wraper, d.items())
+print(total)

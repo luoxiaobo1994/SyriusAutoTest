@@ -5,16 +5,16 @@
 
 import json
 import re
+from multiprocessing.dummy import Pool
 
 import requests
-from prettytable import PrettyTable
 
 from utils.file_reader import YamlReader
 
-data = YamlReader('../../config/found_data.yaml').data
+data = YamlReader('../../config/found_data.yaml').data  # 需要爬取的数据
 
-fundlist = ['012414', '007301', '014143', '005940', '009163', '014605']
-sum = 0  # 当日收益
+total = 0  # 当日收益
+result = []  # 结果集合
 headers = {
     'content-type': 'application/json',
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36"
@@ -33,46 +33,45 @@ def GetFundJsonInfo(fundcode):
     return fundDataInfo
 
 
-# os.system("cls")
-def main():
-    sum = 0  # 预计收益
-    table = PrettyTable(["名称", "昨日净值", "实时估值", "涨跌幅"])
-    for fund in data:
-        # print()
-        myfund = GetFundJsonInfo(data[fund]['code'])
-        table.add_row([myfund['name'], myfund['dwjz'], myfund['gsz'], myfund['gszzl']])
-        sum += int(data[fund]['money']) * float((myfund['gszzl'])) / 100 * 0.9  # 这边估值偏高
-    print(table)
-    print(f"预计收益：{sum:.2f}元。")
-    # time.sleep(5)
-    # os.system("cls")
-
-
-def get_found(code='009163', money='0'):
-    global sum
+def get_found(code='012414', money='0'):
+    global total
     url = "https://fundgz.1234567.com.cn/js/" + str(code) + ".js"
     response = requests.get(url, headers=headers)
     # print(type(response.text))
     # print(response.text)
     res = re.findall(r'jsonpgz\((.*?)\);', response.text)[0]  # 获取到字符串的字典。
     res = eval(res)  # 转化为字典。
-    income = float(res['gszzl']) * float(money) / 100
-    sum += income
-    print(f"{res['fundcode']:<10}{res['name']:^30}{res['gszzl']:^10}{income:^10.2f}")
+    amplitude = 0.9 if float(res['gszzl']) > 0 else 1.1  # 跌了多跌一点，涨了少涨一点。
+    income = float(res['gszzl']) * float(money) / 100 * amplitude
+    total += income  # 本基金收益
+    name = re.sub(r'[A-Za_z() ]', '', res['name'])
+    # name = res['name']
+    # 一个中文站2个显示长度，中文名称长度不一致，补的空格长度，会影响排版。
+    # name = name.split()[0] + ' ' * (30 - len(name)*2)
+    found_data = f"{code:{chr(12288)}<10}{name:{chr(12288)}<15}{res['gszzl']:{chr(12288)}<10}{income:{chr(12288)}<10.2f}"
+    result.append(found_data)
+    # print(f"这个基金的信息长度：{len(found_data)}")  # 文本长度都是没问题的：50
 
 
-def main2():
-    print(f"{'代码':<10}{'名称':^30}{'实时估值':^10}{'预估收益':^10}")
-    # print(data)
-    for fund in data:
-        # print(fund,fund['money'])
-        # print(type(fund['money']),data[fund]['money'])
-        get_found(code=fund, money=data[fund]['money'])
-    print(f"预计收益：{sum:.2f}")
+def wraper(args):
+    get_found(*args)
+
+
+def main():
+    print(f"{'基金代码':{chr(12288)}<10}{'基金名称':{chr(12288)}<13}{'实时估值':{chr(12288)}<8}{'预计收益':{chr(12288)}<10}")
+    p = Pool()
+    p.map(wraper, dict(data).items())
+    result.sort()  # 保证每次打印的顺序是一致的，避免多线程导致的顺序不一样。
+    for i in result:
+        if '-' in i:
+            print(f"\033[1;36m{i}\033[0m")
+        else:
+            print(f"\033[1;31m{i}\033[0m")
+    print(f"今日预计收益：{total:.2f}元。")
 
 
 if __name__ == '__main__':
-    # main()
-    # get_found()
-    # print(data)
-    main2()
+    main()
+    # get_found(code='014605')
+    # print(dict(data).items())
+    # main2()
