@@ -235,8 +235,8 @@ class SpeedPicker:
 
     def is_other_page(self):
         logger.debug("检查是否进入其他界面了.")
-        if check_app(self.device_num()[0], appname='com.syriusrobotics.platform.launcher'):
-            logger.warning("设备的GoGoReady似乎闪退了，准备重启。")
+        if not check_app(device=self.device_num()[0], appname='com.syriusrobotics.platform.launcher'):
+            logger.warning("设备的GoGoReady似乎闪退了。")
             self.start_GGR()
         try:
             if self.driver.element_display((By.XPATH, '//*[contains(content-desc,"配置信息")]')):
