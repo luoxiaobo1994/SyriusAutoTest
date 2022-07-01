@@ -235,6 +235,9 @@ class SpeedPicker:
 
     def is_other_page(self):
         logger.debug("检查是否进入其他界面了.")
+        if check_app(self.device_num()[0], appname='com.syriusrobotics.platform.launcher'):
+            logger.warning("设备的GoGoReady似乎闪退了，准备重启。")
+            self.start_GGR()
         try:
             if self.driver.element_display((By.XPATH, '//*[contains(content-desc,"配置信息")]')):
                 logger.info("机器人正在同步配置信息,请稍后...")
@@ -291,13 +294,7 @@ class SpeedPicker:
                 logger.warning("SpeedPicker可能白屏了。或者进入别的界面了。请检查。")
                 self.shoot()
             logger.debug(f"抓到了什么奇怪的content:{x}")
-            if len(set(x) & set(self.get_config()['exit_ggr'])) > 1:
-                self.start_GGR()
-            elif str(get_android_version(self.device_num()[0])) == '10':
-                if len(interset(self.K11_text(), self.get_config()['k11_text'])):
-                    logger.warning("K11平板，出现GGR闪退现象。")
-                    self.start_GGR()
-            elif len(interset(self.get_config()['jarvis_soft'], ''.join(x).split('\n'))) > 1:
+            if len(interset(self.get_config()['jarvis_soft'], ''.join(x).split('\n'))) > 1:
                 logger.debug('异常返回了Jarvis主界面,脚本重启SpeedPicker。')
                 self.open_sp()
             elif '正在同步场地配置' in x:
