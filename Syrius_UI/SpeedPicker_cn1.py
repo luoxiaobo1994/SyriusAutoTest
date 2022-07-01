@@ -22,6 +22,7 @@ class SpeedPicker:
         # sleep(10)  # 做一个长等待，没办法。加载慢。
         self.view = (By.XPATH, '//android.view.View')
         self.image = (By.XPATH, '//android.widget.ImageView')
+        self.widget_text = (By.XPATH, '//android.widget.TextView')  # K11桌面的组件
         self.notify()  # 刷新一些提醒，避免遗漏配置。
         self.non_count = 0  # 界面抓到异常信息的计数器.
         # self.config = self.get_cnfig()  # 流程开始之前读取一次配置就行了,不用每次都读取.
@@ -226,6 +227,12 @@ class SpeedPicker:
             sleep(10)  # 这里也要睡眠一下，避免刷日志太快了。
             return  # 跳出去
 
+    def K11_text(self):
+        while True:
+            text = self.driver.app_elements_text(self.widget_text)
+            if text:
+                return text
+
     def is_other_page(self):
         logger.debug("检查是否进入其他界面了.")
         try:
@@ -285,21 +292,11 @@ class SpeedPicker:
                 self.shoot()
             logger.debug(f"抓到了什么奇怪的content:{x}")
             if len(set(x) & set(self.get_config()['exit_ggr'])) > 1:
-                logger.warning("GoGoReady没有在运行.准备启动GoGoReady.请等待GoGoReady启动完成.约30s...")
-                os.system(f'adb -s {self.device_num()[0]} shell am start -n '
-                          f'"com.syriusrobotics.platform.launcher/com.syriusrobotics.platform.jarvis.SplashActivity"'
-                          f' -a android.intent.action.MAIN -c android.intent.category.LAUNCHER')
-                sleep(30)  # 启动加载需要时间,不能直接起脚本.
-                while True:
-                    content = self.driver.app_elements_content_desc(self.image)
-                    for i in content:
-                        if i.endswith('%') and i.split('%')[0].isdigit():
-                            logger.debug(f'获取到机器人电池电量数据，上下位机连接完成。当前机器人电量:{i}')
-                            sleep(5)
-                            break
-                    else:
-                        logger.debug(f'当前仍未获取到机器人电量，机器人与平板未完成连接。文本：{content}')
-                        sleep(10)
+                self.start_GGR()
+            elif str(get_android_version(self.device_num()[0])) == '10':
+                if len(interset(self.K11_text(), self.get_config()['k11_text'])):
+                    logger.warning("K11平板，出现GGR闪退现象。")
+                    self.start_GGR()
             elif len(interset(self.get_config()['jarvis_soft'], ''.join(x).split('\n'))) > 1:
                 logger.debug('异常返回了Jarvis主界面,脚本重启SpeedPicker。')
                 self.open_sp()
@@ -320,6 +317,23 @@ class SpeedPicker:
         except Exception as e:
             logger.debug(f"content-desc也没有找到，可能是退出GoGoReady了。发生异常:{e}")
             sleep(5)
+
+    def start_GGR(self):
+        logger.warning("GoGoReady没有在运行.准备启动GoGoReady.请等待GoGoReady启动完成.约30s...")
+        os.system(f'adb -s {self.device_num()[0]} shell am start -n '
+                  f'"com.syriusrobotics.platform.launcher/com.syriusrobotics.platform.jarvis.SplashActivity"'
+                  f' -a android.intent.action.MAIN -c android.intent.category.LAUNCHER')
+        sleep(30)  # 启动加载需要时间,不能直接起脚本.
+        while True:
+            content = self.driver.app_elements_content_desc(self.image)
+            for i in content:
+                if i.endswith('%') and i.split('%')[0].isdigit():
+                    logger.debug(f'获取到机器人电池电量数据，上下位机连接完成。当前机器人电量:{i}')
+                    sleep(5)
+                    break
+            else:
+                logger.debug(f'当前仍未获取到机器人电量，机器人与平板未完成连接。文本：{content}')
+                sleep(10)
 
     def report_err(self, err=''):
         view_ls = self.get_text()
