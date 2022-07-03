@@ -6,10 +6,9 @@
 import json
 import re
 from multiprocessing.dummy import Pool
-
 import requests
-
 from utils.file_reader import YamlReader
+from base.common import get_date
 
 data = YamlReader('../../config/found_data.yaml').data  # 需要爬取的数据
 
@@ -44,7 +43,7 @@ def get_found(code='012414', money='0'):
     amplitude = 0.9 if float(res['gszzl']) > 0 else 1.1  # 跌了多跌一点，涨了少涨一点。
     income = float(res['gszzl']) * float(money) / 100 * amplitude
     total += income  # 本基金收益
-    name = re.sub(r'[A-Za_z() ]', '', res['name'])
+    name = re.sub(r'[A-Za_z() ]', '', res['name']).replace('发起式','')
     # name = res['name']
     # 一个中文站2个显示长度，中文名称长度不一致，补的空格长度，会影响排版。
     # name = name.split()[0] + ' ' * (30 - len(name)*2)
@@ -67,7 +66,7 @@ def main():
             print(f"\033[1;36m{i}\033[0m")
         else:
             print(f"\033[1;31m{i}\033[0m")
-    print(f"今日预计收益：{total:.2f}元。")
+    print(f"{get_date()} 预计收益：{total:.2f}元。")
 
 
 if __name__ == '__main__':
