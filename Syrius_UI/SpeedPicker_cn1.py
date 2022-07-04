@@ -491,7 +491,15 @@ class SpeedPicker:
                     return 1
             else:
                 return 1  # 页面变化了.
-        logger.warning(f"超过{total_time}s，{pagename}页面文本没有变化。可能卡界面了。")
+        if pagename == "拣货完成":
+            tmp_text = self.get_text()
+            if '/' in tmp_text:
+                index_1 = tmp_text.index('/')
+                if tmp_text[index_1 - 1].isdigit() and tmp_text[index_1 + 1].isdigit():
+                    logger.warning(f"没有开启快速拣货，脚本不能顺利执行。请开启快速拣货，退出脚本。")
+                    self.shoot()
+                    exit(-100)
+        logger.warning(f"超过[{total_time}]s，[{pagename}]页面文本没有变化。可能卡界面了。")
         if is_shoot:
             self.shoot()
         exit(-100)
@@ -537,7 +545,7 @@ class SpeedPicker:
         logger.info(f"SpeedPicker处于拣货流程，页面信息:{view_ls}")  # 需要记录一下进入拣货流程.
         self.wait_for_time(n=self.get_config()['picking_out'], timeout=self.get_config()['picking_outtime'])
         if '输入' in view_ls:  # 1.还没扫码，有输入按钮。
-            logger.info("拣货情形1，还未扫码。")
+            logger.info("拣货场景1，SpeedPicker处于拣货流程，尚未开始拣货。")
             if self.random_trigger(n=self.get_config()['pick_psb'], process='输入商品码'):  # 概率，上报异常。
                 self.report_err()
                 return  # 结束拣货流程.
@@ -563,15 +571,17 @@ class SpeedPicker:
                     break
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
             logger.debug(f"通过点击[完成]，完成拣货。")
+            # 页面检查函数，页面名称是拣货完成，有单独判断。这里名称不要随便改。 会校验：是否开启了快速拣货。
             self.page_check(timeout=5, pagename='拣货完成', is_shoot=True, text='完成')  # 这里比较容易卡. 在这里检查一下.
         elif '异常上报' not in view_ls:
             # 拣货情形2,点开了输入框,但是没有输入商品码
+            logger.debug(f"拣货场景2，点击了输入按钮，弹出输入框，但未输入商品码。本次输入万能码。")
             self.inputcode(code='199103181516')
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
         else:
             # 拣货情形3,都捡完了,只是没点完成.
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
-            logger.debug(f"情形3，通过点击[完成]，快速完成拣货。")
+            logger.debug(f"拣货场景3，商品已捡取，未点击[完成]，通过点击[完成]，快速完成拣货。")
         self.go_to()
 
     def check_time(self):
