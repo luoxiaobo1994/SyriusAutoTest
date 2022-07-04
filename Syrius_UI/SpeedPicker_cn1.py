@@ -33,7 +33,7 @@ class SpeedPicker:
         # 在这里填入安卓版本,避免跑不起来.
         browser = GGR().browser(devices=device, platformversion=get_android_version(device),
                                 port=appium_port)  # 自己获取安卓版本
-        logger.info(f"脚本当前连接的平板:{device},安卓版本：{get_android_version(device)},Appium端口:{appium_port}")
+        logger.info(f"脚本当前连接的平板:{device}，安卓版本：{get_android_version(device)}，Appium端口:{appium_port}")
         return browser
 
     def notify(self):
@@ -46,7 +46,7 @@ class SpeedPicker:
         try:
             return devices_ls[num], 4725 + num * 5  # 每个设备之间，间隔5个以上
         except:
-            logger.warning("获取设备UDID失败了,检查一下.")
+            logger.warning("获取设备UDID失败了，检查一下。")
 
     def robot_battery(self):
         tmp_text = self.driver.app_elements_content_desc(self.view)
@@ -64,7 +64,7 @@ class SpeedPicker:
         try:
             desc = self.driver.app_elements_content_desc(self.view)  # if find element faile,will except,restart script
             if 'SkillSpace' not in ''.join(desc):
-                logger.debug("当前不在Jarvis Launcher主界面.")
+                logger.debug("当前不在Jarvis Launcher主界面。")
                 return
             else:
                 image = self.driver.find_elements(self.image)
@@ -74,7 +74,7 @@ class SpeedPicker:
                         x = i.split('\n')[::-1]
                         sp_index = x.index('SpeedPicker') + 1  # 因为反过来了.从0开始.
                         self.driver.click_one(image[-sp_index])
-                        logger.info("尚未启动SpeedPicker,即将自动启动SpeedPicker.")
+                        logger.info("尚未启动SpeedPicker，即将自动启动SpeedPicker。")
                         sleep(1)
                         tmp_text = self.get_text()
                         for item in tmp_text:
@@ -83,14 +83,14 @@ class SpeedPicker:
                                 self.wait_moment(item, i=False, without="退出")
                                 new_text = self.get_text()
                                 if item in new_text and '退出' in new_text:
-                                    logger.warning(f"发生了一些异常,SpeedPicker不能正常启动:{new_text}")
+                                    logger.warning(f"发生了一些异常，SpeedPicker不能正常启动:{new_text}")
                                     exit(-404)
                                 return
                         # 想办法在启动的时候,走一下更新流程.
                         if self.driver.element_display((By.XPATH, '//*[starts-with(@text,"更新")]')):
                             break
                 else:
-                    logger.warning(f"这个设备{self.device_num()[0]}还没有安装SpeedPicker, 请先安装.")
+                    logger.warning(f"这个设备{self.device_num()[0]}还没有安装SpeedPicker，请先安装。")
         except:
             return
 
@@ -105,7 +105,7 @@ class SpeedPicker:
             if notify:
                 for i in notify:
                     if (len(i) > 3 and '机器人' in i) or (len(i) > 3 and '平板' in i):
-                        logger.info(f"这个设备发生了一些异常:[{i}] ,请先恢复异常.")
+                        logger.info(f"这个设备发生了一些异常:[{i}]，请先恢复异常。")
                         return 1
             else:
                 return 0  # 跳出循环
@@ -116,7 +116,7 @@ class SpeedPicker:
         """ 输入条形码的函数 """
         try:
             self.driver.input_text(locator=(By.XPATH, '//android.widget.EditText'), text=str(code))
-            logger.info(f"条形码[{code}]输入成功.")
+            logger.info(f"条形码[{code}]输入成功。")
             self.driver.click_element((By.XPATH, '//android.widget.EditText'))  # 再点击一次输入框,才能按回车
             self.driver.press_keyboard()
         except:
@@ -140,7 +140,7 @@ class SpeedPicker:
         if n == 0:  # 设置为0，关闭随机事件。
             return 0
         elif n == 1:  # 设置为1，必中事件。
-            logger.debug(f"{process}流程,随机事件被设置为常开.注意使用.")
+            logger.debug(f"{process}流程,随机事件被设置为常开，注意使用。")
             return 1
         elif n >= 2:
             num = random.randint(2, n + 2)  # 1和0被排除，得多加两个。
@@ -155,14 +155,14 @@ class SpeedPicker:
         wait_time = random.randint(5, time_out)
         if '暂停' in view_text:
             self.driver.click_element((By.XPATH, '//android.view.View[@text="暂停"]'))
-            logger.info(f"移动过程中,暂停移动[{wait_time}]秒钟。")
+            logger.info(f"移动过程中，暂停移动[{wait_time}]秒钟。")
             sleep(wait_time)
             try:
                 self.driver.click_element((By.XPATH, '//android.view.View[@text="恢复"]'))
-                logger.info(f"暂停结束, 恢复移动。")
+                logger.info(f"暂停结束， 恢复移动。")
                 return
             except:
-                logger.info("恢复按钮消失了,可能是人为点击了.")
+                logger.info("恢复按钮消失了，可能是人为点击了。")
                 return
 
     def press_ok(self, num=3, timeout=0.2):
@@ -186,7 +186,7 @@ class SpeedPicker:
         # Used to verify the input error barcode. The premise of execution is that the input box pops up.
         err_num = str(random.randint(0, 1000))
         self.inputcode(code=str(code) + err_num)  # Add a random number to form an error barcode.
-        logger.info("随机事件,输入一个[错误的]条码.")
+        logger.info("随机事件，输入一个[错误的]条码。")
 
     def get_text(self, wait=3, raise_except=False):  # 3s左右合理,有些流程跳转时,会转圈一会儿.
         count = 20  # 有个限制.
@@ -206,14 +206,14 @@ class SpeedPicker:
                                 self.open_sp()
                         except:
                             pass  # The function needs to be improved
-                        logger.info("当前页面没抓到文本,如果持续刷新这个日志,请前往检查一下.")
+                        logger.info("当前页面没抓到文本，如果持续刷新这个日志，请前往检查一下。")
                         self.is_other_page()  # 检查一下,是否退出了SP界面.
                         return  # 跳出去
             except TypeError:
-                logger.debug("抓取文本发生类型错误异常,检查是否退出SP界面了.")
+                logger.debug("抓取文本发生类型错误异常，检查是否退出SP界面了。")
                 self.is_other_page()
                 if self.random_trigger(n=60, process='主线程日志打印'):
-                    logger.debug(f"随机刷日志, 脚本仍然在抓取文本中,当前可能拿到了一些不符合要求的:{view_ls}")
+                    logger.debug(f"随机刷日志， 脚本仍然在抓取文本中，当前可能拿到了一些不符合要求的:{view_ls}")
                     sleep(10)
                     break  # 尝试退出一下,因为总会重复刷这个日志.
                 if raise_except:
@@ -234,16 +234,16 @@ class SpeedPicker:
                 return text
 
     def is_other_page(self):
-        logger.debug("检查是否进入其他界面了.")
+        logger.debug("检查是否进入其他界面了。")
         if not check_app(device=self.device_num()[0], appname='com.syriusrobotics.platform.launcher'):
             logger.warning("设备的GoGoReady似乎闪退了。")
             self.start_GGR()
         try:
             if self.driver.element_display((By.XPATH, '//*[contains(content-desc,"配置信息")]')):
-                logger.info("机器人正在同步配置信息,请稍后...")
+                logger.info("机器人正在同步配置信息，请稍后...")
                 sleep(10)
             elif self.driver.element_display((By.XPATH, '//*[starts-with(@text,"/sdcard/log/")]')):
-                logger.info("机器人正在收集GoGoReady日志,请稍等...")
+                logger.info("机器人正在收集GoGoReady日志，请稍等...")
                 while True:
                     if self.driver.element_display((By.XPATH, '//*[starts-with(@text,"/sdcard/log/")]')):
                         sleep(3)
@@ -251,12 +251,12 @@ class SpeedPicker:
                         break
                 sleep(10)
             elif self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"上传机器人日志")]')):
-                logger.info("正在上传机器人日志,请稍后...")
+                logger.info("正在上传机器人日志，请稍后...")
                 while True:
                     if self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"日志上传完成")]')):
-                        logger.debug("机器人日志已上传完成,请自行前往解决异常,恢复机器人移动.")
+                        logger.debug("机器人日志已上传完成，请自行前往解决异常，恢复机器人移动。")
                         app_screenshot(device=self.device_num()[0])
-                        logger.debug("即将通过脚本返回Jarvis主界面,请确保机器人无异常产生.保证业务正常进行.")
+                        logger.debug("即将通过脚本返回Jarvis主界面，请确保机器人无异常产生。保证业务正常进行。")
                         for i in range(3):
                             os.system("adb shell input keyevent 4")  # 连续3次,才能返回到桌面.到桌面,再按一次.也不会到系统桌面
                             sleep(1)
@@ -264,20 +264,20 @@ class SpeedPicker:
                     else:
                         schedule = self.driver.app_elements_content_desc(self.view)
                         for i in schedule:
-                            if i.startswith('请稍后'):
+                            if i.startswith('请稍后...'):
                                 logger.debug(f"日志仍在上传中，{i}。")
                         sleep(30)
                     # exit(100)
             elif self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"SkillSpace")]')):
-                logger.info("机器人在Javis Launcher主界面,尝试重新打开SpeedPicker.")
+                logger.info("机器人在Javis Launcher主界面，尝试重新打开SpeedPicker。")
                 if self.err_notify():
                     return
                 self.open_sp()
             elif self.driver.app_elements_content_desc((By.XPATH, '//*[contains(@content-desc,"完成")]')):
                 self.driver.click_element((By.XPATH, '//*[contains(@content-desc,"完成")]'))
-                logger.debug("同步配置完成,点击完成按钮.")
+                logger.debug("同步配置完成，点击完成按钮。")
             elif self.driver.app_elements_content_desc((By.XPATH, '//*[@content-desc="设置"]')):
-                logger.debug("在GoGoReady的设置界面.")
+                logger.debug("在GoGoReady的设置界面。")
                 sleep(5)
             else:
                 sleep(5)
@@ -285,7 +285,7 @@ class SpeedPicker:
             self.non_count += 1
             sleep(5)  # 一般是干掉GGR了. 刷慢一点.
             if self.non_count >= 5:
-                logger.debug(f"连续5次抓不到文本,可能是Appium通讯断了。当前异常:{e}")
+                logger.debug(f"连续5次抓不到文本，可能是Appium通讯断了。当前异常:{e}")
                 raise just_err(message="通讯可能出问题了")
         try:
             x = self.driver.app_elements_content_desc((By.XPATH, '//*'))
@@ -301,7 +301,7 @@ class SpeedPicker:
                 logger.debug("正在同步场地配置，请等待")
                 while True:
                     if self.driver.element_display((By.XPATH, '//*[@starts-with(@content-desc,"完成")]')):
-                        logger.debug("云端配置同步完成.")
+                        logger.debug("云端配置同步完成。")
                         self.driver.click_element((By.XPATH, '//*[@starts-with(@content-desc,"完成")]'))
                         break
                     else:
@@ -335,7 +335,7 @@ class SpeedPicker:
     def report_err(self, err=''):
         view_ls = self.get_text()
         if view_ls[0] == '异常上报':
-            logger.info("当前在异常上报流程.")
+            logger.info("当前在异常上报流程。")
             self.do_err(err)
         else:
             try:
@@ -350,7 +350,7 @@ class SpeedPicker:
         # 上报异常的冗余函数.
         tmp_text = self.get_text()
         if tmp_text[0] != '异常上报':
-            logger.warning("当前在异常上报流程,但是不在异常上报界面了。去检查一下。")
+            logger.warning("当前在异常上报流程，但是不在异常上报界面了。去检查一下。")
             return
         if err:
             self.driver.click_one(self.driver.find_element((By.XPATH, f'//android.view.View[@text="{err}"]')))
@@ -365,7 +365,7 @@ class SpeedPicker:
             try:
                 view_ls2 = self.get_text()
                 err_type2 = re.findall("确定(.*?)吗", ''.join(view_ls2))[0]  # 拿到的异常
-                logger.info(f"确定上报[{err_type2}]异常吗?")  # 询问弹窗.再次确认弹窗询问的异常和选择的是否一致.
+                logger.info(f"确定上报[{err_type2}]异常吗？")  # 询问弹窗.再次确认弹窗询问的异常和选择的是否一致.
                 if err_type2 == err_type or err_type == '其他' or '确定' in self.get_text():  # [其他]异常,询问框不一致.
                     # self.driver.click_one(self.driver.find_elements(self.view)[-1])  # 最后一个view元素是'确定'按钮.
                     self.press_ok(timeout=1)  # 这里已经点击了确定，为什么还会卡呢？
@@ -414,7 +414,7 @@ class SpeedPicker:
                             err -= 1  # 有时候可能卡流程,这里也做一个跳出检测
                             sleep(timeout)
                             if i:
-                                logger.debug(f"调试功能，持续抓取文本:[{text}]中.")
+                                logger.debug(f"调试功能，持续抓取文本:[{text}]中。")
                         elif text == '前往':
                             if '恢复' in view_ls:
                                 sleep(3)  # 有时候人要推,给点时间.
@@ -441,7 +441,7 @@ class SpeedPicker:
                         minutes = count // 60
                         if minutes >= 5:  # 每5分钟上报一次.
                             logger.warning(
-                                f"当前页面超过{minutes}分钟没有变化了, 请检查是否发生了什么异常情况。")
+                                f"当前页面超过{minutes}分钟没有变化了，请检查是否发生了什么异常情况。")
                             self.err_notify()
                             return  # 出问题了，也跳出流程，等着回来吧。
 
@@ -717,7 +717,7 @@ class SpeedPicker:
 
         elif '日志' in ''.join(view_content[:3]):
             # 收集日志的情况
-            logger.info("机器人正在收集下位机日志.")
+            logger.info("机器人正在收集下位机日志。")
             exit(-404)
         elif self.driver.element_display(
                 locator=(By.XPATH, '//android.widget.CheckBox[contains(@text,"/sdcard/log")]')):
@@ -888,7 +888,7 @@ if __name__ == '__main__':
         except Exception as e:
             timeout = 10
             logger.error(
-                f"发生了其他异常,{timeout}s 后将会重启脚本,异常设备："
+                f"发生了其他异常,{timeout}s 后将会重启脚本，异常设备："
                 f"{SpeedPicker().device_num()[0]},{SpeedPicker().device_num()[1]}.注意检查:"
                 f"\n1.Appium 服务起来没有。\n2.Appium端口是否正确。\n3.检查平板是否连接。\n4.检查平板是否掉线了。")
             logger.warning(f"外主函数发生了异常:{e}")
