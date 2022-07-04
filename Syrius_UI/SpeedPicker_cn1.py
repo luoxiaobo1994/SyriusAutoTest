@@ -531,6 +531,7 @@ class SpeedPicker:
                 view_text = self.get_text(wait=1)  # 这里是耗时操作,所以,实际等待时间会比设置的长一点.
                 if '超时' in ''.join(view_text):
                     logger.warning("出现超时弹窗了，注意检查一下!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                sleep(0.2)  # 抓取文本，耗时不足1s，导致超时等待，实际不足设定时间。
 
     def picking(self, target=''):
         if not target.startswith('A0') and target != '':  # 在拣货点开脚本，目标点是空的。

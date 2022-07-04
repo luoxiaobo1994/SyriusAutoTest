@@ -7,5 +7,6 @@ from utils.file_reader import YamlReader
 
 file = "yaml_demo.yaml"
 data = YamlReader(file).data
-print(data)
-print(type(data['dic2']))
+for i in data:
+    x = str(type(data[i]))
+    print(f"type:{x:<23}{i}: {data[i]}")
