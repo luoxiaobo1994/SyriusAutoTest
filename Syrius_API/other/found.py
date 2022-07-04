@@ -6,12 +6,14 @@
 import json
 import re
 from multiprocessing.dummy import Pool
+
 import requests
-from utils.file_reader import YamlReader
+
 from base.common import get_date
+from utils.file_reader import YamlReader
 
 data = YamlReader('../../config/found_data.yaml').data  # 需要爬取的数据
-
+space = chr(12288)
 total = 0  # 当日收益
 result = []  # 结果集合
 headers = {
@@ -47,7 +49,7 @@ def get_found(code='012414', money='0'):
     # name = res['name']
     # 一个中文站2个显示长度，中文名称长度不一致，补的空格长度，会影响排版。
     # name = name.split()[0] + ' ' * (30 - len(name)*2)
-    found_data = f"{code:{chr(12288)}<10}{name:{chr(12288)}<15}{res['gszzl']:{chr(12288)}<10}{income:{chr(12288)}<10.2f}"
+    found_data = f"{code:{space}<10}{name:{space}<15}{res['gszzl']:{space}<10}{income:{space}<10.2f}"
     result.append(found_data)
     # print(f"这个基金的信息长度：{len(found_data)}")  # 文本长度都是没问题的：50
 
@@ -57,7 +59,7 @@ def wraper(args):
 
 
 def main():
-    print(f"{'基金代码':{chr(12288)}<10}{'基金名称':{chr(12288)}<13}{'实时估值':{chr(12288)}<8}{'预计收益':{chr(12288)}<10}")
+    print(f"{'基金代码':{space}<10}{'基金名称':{space}<13}{'实时估值':{space}<8}{'预计收益':{space}<10}")
     p = Pool()
     p.map(wraper, dict(data).items())
     result.sort()  # 保证每次打印的顺序是一致的，避免多线程导致的顺序不一样。
