@@ -546,7 +546,7 @@ class SpeedPicker:
         logger.info(f"SpeedPicker处于拣货流程，页面信息:{view_ls}")  # 需要记录一下进入拣货流程.
         self.wait_for_time(n=self.get_config()['picking_out'], timeout=self.get_config()['picking_outtime'])
         if '输入' in view_ls:  # 1.还没扫码，有输入按钮。
-            logger.info("拣货场景1，SpeedPicker处于拣货流程，尚未开始拣货。")
+            logger.info("拣货场景1，SpeedPicker尚未开始捡取当前商品。")
             if self.random_trigger(n=self.get_config()['pick_psb'], process='输入商品码'):  # 概率，上报异常。
                 self.report_err()
                 return  # 结束拣货流程.
