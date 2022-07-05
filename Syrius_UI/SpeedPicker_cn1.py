@@ -502,7 +502,7 @@ class SpeedPicker:
                     exit(-100)
         elif text == "已取下":
             if '上传结果失败' in self.get_text():
-                count = 5
+                count = self.get_config()['res_report_times']  # 配置化。
                 seq = 1
                 logger.warning(f"当前订单上传结果失败了。尝试重新上传结果[{count}]次。")
                 retry_btn = (By.XPATH, '//*[@text="重试"]')

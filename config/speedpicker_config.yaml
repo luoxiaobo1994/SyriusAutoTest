@@ -58,6 +58,7 @@ confirm_result:
 picking_out: 20 # 拣货超时几率 1/10, 1是常开,0是常闭.
 picking_outtime: 20  # 拣货超时时间 30s
 wait_finshed: 20  # 等待点击超时按钮的超时时间,30s
+res_report_times: 5  # 订单执行结果上传失败后的重试次数。
 exit_ggr:
   - '第 1 屏，共 2 屏'
   - '天气小工具'
