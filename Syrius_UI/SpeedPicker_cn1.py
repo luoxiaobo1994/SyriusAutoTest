@@ -526,12 +526,12 @@ class SpeedPicker:
 
     def wait_for_time(self, timeout=30, n=0):
         if self.random_trigger(n=n, process='超时等待'):
-            logger.debug(f"进入超时等待，模拟超时未操作。等待时间:{timeout}")
-            for i in range(timeout):
-                view_text = self.get_text(wait=1)  # 这里是耗时操作,所以,实际等待时间会比设置的长一点.
+            logger.debug(f"进入超时等待，模拟超时未操作。等待时间:{timeout}s。")
+            start = time.time()
+            while time.time() - start < timeout:  # 用实际时间差来控制这个等待时间。
+                view_text = self.get_text(wait=2)  # 这有实际时间做对比，这里无所谓。
                 if '超时' in ''.join(view_text):
-                    logger.warning("出现超时弹窗了，注意检查一下!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                sleep(0.2)  # 抓取文本，耗时不足1s，导致超时等待，实际不足设定时间。
+                    logger.warning("出现超时弹窗了，注意检查一下！！！")
 
     def picking(self, target=''):
         if not target.startswith('A0') and target != '':  # 在拣货点开脚本，目标点是空的。

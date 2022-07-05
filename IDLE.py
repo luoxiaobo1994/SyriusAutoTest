@@ -2,23 +2,15 @@
 # Author:Luoxiaobo
 # Time: 2021/7/6 23:09
 
-from multiprocessing.dummy import Pool
-
-total = 0
+import time
 
 
-def func(a, b):
-    global total
-    print(f"a:{a},b:{b}")
-    total += b
-    # return a + b
+def tt(timeout=5):
+    start = time.time()
+    while time.time() - start < timeout:
+        pass
+    else:
+        print("结束了")
 
 
-def wraper(args):
-    func(*args)
-
-
-d = {'甲': 1, '已': 2, '丙': 3}
-p = Pool()
-p.map(wraper, d.items())
-print(total)
+tt()
