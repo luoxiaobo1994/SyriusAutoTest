@@ -405,6 +405,7 @@ class SpeedPicker:
         logger.info(f"持续检查文本[{text}]是否还在当前页面。")
         count = 0
         err = 20
+        err_num = copy.copy(err)  # err 一直在自减，这里要拷贝一下。
         while err > 0:
             try:
                 view_ls = self.get_text(wait=2, raise_except=True)  # 不用太频繁.
@@ -467,7 +468,7 @@ class SpeedPicker:
             logger.warning("卡在推荐点位界面了，去检查一下吧!!!!!!")
             self.shoot()
         else:
-            logger.debug(f"持续检查文本，超过{err}次，都没有跳出检查函数。检查一下页面吧!当前页面:{self.get_text()}")
+            logger.debug(f"持续检查文本，超过{err_num}次，都没有跳出检查函数。检查一下页面吧!当前页面:{self.get_text()}")
 
     def page_check(self, timeout=30, pagename='', is_shoot=False, text='', new_text=''):
         total_time = copy.copy(timeout)
@@ -499,6 +500,28 @@ class SpeedPicker:
                     logger.warning(f"没有开启快速拣货，脚本不能顺利执行。请开启快速拣货，退出脚本。")
                     self.shoot()
                     exit(-100)
+        elif text == "已取下":
+            if '上传结果失败' in self.get_text():
+                count = 5
+                seq = 1
+                logger.warning(f"当前订单上传结果失败了。尝试重新上传结果[{count}]次。")
+                retry_btn = (By.XPATH, '//*[@text="重试"]')
+                skip_btn = (By.XPATH, '//*[@text="暂时跳过"]')
+                while count:
+                    self.driver.click_element(retry_btn)
+                    if self.driver.element_display(retry_btn):
+                        logger.debug(f"第{seq}次重试失败。")
+                        seq += 1
+                        count -= 1
+                    else:
+                        logger.debug(f"第{seq}次重试上传拣货结果成功，拣货流程正常流转。")
+                        return 1
+                else:
+                    logger.debug(f"连续{count}次重试上传均失败，本次尝试暂时跳过本次结果上传。")
+                    self.driver.click_element(skip_btn)
+                    # 调用自身，可能有点问题。先看看。
+                    self.page_check(timeout=10, pagename="拣货结果上报", text="暂时跳过", is_shoot=True, new_text="前往")
+
         logger.warning(f"超过[{total_time}]s，[{pagename}]页面文本没有变化。可能卡界面了。")
         if is_shoot:
             self.shoot()
