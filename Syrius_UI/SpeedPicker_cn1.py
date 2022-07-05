@@ -364,7 +364,7 @@ class SpeedPicker:
         while count > 0:
             try:
                 view_ls2 = self.get_text()
-                err_type2 = re.findall("确定(.*?)吗", ''.join(view_ls2))[0]  # 拿到的异常
+                err_type2 = '其他' if err_type == '其他' else re.findall("确定(.*?)吗", ''.join(view_ls2))[0]  # 拿到的异常
                 logger.info(f"确定上报[{err_type2}]异常吗？")  # 询问弹窗.再次确认弹窗询问的异常和选择的是否一致.
                 if err_type2 == err_type or err_type == '其他' or '确定' in self.get_text():  # [其他]异常,询问框不一致.
                     # self.driver.click_one(self.driver.find_elements(self.view)[-1])  # 最后一个view元素是'确定'按钮.
