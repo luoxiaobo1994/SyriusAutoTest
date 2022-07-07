@@ -375,7 +375,8 @@ class SpeedPicker:
                         logger.info(f"上报异常:[{err_type}]成功。")
                         # 页面检查需要检查特征文本,原因:上报[载物箱类型不符]后,15s内,要是刷到了异常区.可能有部分文本重叠.
                         # 上报完异常，两个状态：1.原地继续拣货--特征文本，‘异常上报’还在。2.移动了。
-                        self.page_check(timeout=5, pagename='异常上报', is_shoot=True, text='异常上报', new_text='输入')
+                        if self.page_check(timeout=5, pagename='异常上报', is_shoot=True, text='异常上报', new_text='输入'):
+                            return 1
                     else:
                         tmp_text = self.get_text()
                         logger.warning(f"上报异常流程，好像发生了什么异常，去看看吧。此时的页面:{tmp_text}")
