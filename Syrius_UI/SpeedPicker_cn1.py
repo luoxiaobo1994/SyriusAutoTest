@@ -371,6 +371,7 @@ class SpeedPicker:
                         reason = random.choice(self.get_config()['other_err_reason'])  # 随机选一个异常理由。
                         if self.random_trigger(n=5):  # 这里就不用配置化了。
                             reason = (reason * 10)[:128]  # 长度加长一下,也截取前128位。
+                            logger.debug(f"本次上报的[其他]类型异常原因是：{reason}")
                         self.inputcode(code=reason)
                         self.click_view_text("上报")
                         if self.page_check(timeout=6, pagename='上报其他异常', text='上报', new_text='前往', is_shoot=True):
