@@ -40,9 +40,9 @@ def random_item():
                 '这个名称很长-超过100个字符-看看怎么显 示 的 ' * 3,
                 ]
     item = {
-        "name": f"接口订单:{random.choice(goods_ls)}",  # 固定名称池里抓一个
+        "name": f"接口订单:{random.choice(goods_ls)}{random_string(3)}",  # 固定名称池里抓一个
         "barcode": item_code(),  # 随机码
-        "quantity": random.choice(range(1, 100)),  # 随机数量
+        "quantity": random.choice(range(1, 10)),  # 随机数量，填少一点。贴合实际一些。
         "binLocations": [binlocation()],  # 随机生成一个.
         "imageUrl": f"file:///../sdcard/syrius_guanxi_productImg/{random.choice(img_list)}",
         "attributes": {
