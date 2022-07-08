@@ -90,6 +90,8 @@ class SpeedPicker:
                         if self.driver.element_display((By.XPATH, '//*[starts-with(@text,"更新")]')):
                             break
                 else:
+                    if len(interset(self.get_text(), self.get_config()['sp_text'])) > 1:
+                        return
                     logger.warning(f"这个设备{self.device_num()[0]}还没有安装SpeedPicker，请先安装。")
         except:
             return
@@ -116,11 +118,11 @@ class SpeedPicker:
         """ 输入条形码的函数 """
         try:
             self.driver.input_text(locator=(By.XPATH, '//android.widget.EditText'), text=str(code))
-            logger.info(f"条形码[{code}]输入成功。")
+            logger.info(f"文本[{code}]输入成功。")
             self.driver.click_element((By.XPATH, '//android.widget.EditText'))  # 再点击一次输入框,才能按回车
             self.driver.press_keyboard()
         except:
-            pass
+            logger.warning(f"输入功能，输入{code}失败，请检查。")
 
     def islosepos(self):
         """检查机器人是否丢失定位,但是重复了."""
