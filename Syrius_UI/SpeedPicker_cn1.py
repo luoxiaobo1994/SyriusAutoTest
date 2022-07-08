@@ -367,15 +367,22 @@ class SpeedPicker:
                 err_type2 = '其他' if err_type == '其他' else re.findall("确定(.*?)吗", ''.join(view_ls2))[0]  # 拿到的异常
                 logger.info(f"确定上报[{err_type2}]异常吗？")  # 询问弹窗.再次确认弹窗询问的异常和选择的是否一致.
                 if err_type2 == err_type or err_type == '其他' or '确定' in self.get_text():  # [其他]异常,询问框不一致.
+                    if '上报' in self.get_text():  # 其他异常，要走其他流程了。
+                        reason = random.choice(self.get_config()['other_err_reason'])  # 随机选一个异常理由。
+                        if self.random_trigger(n=5):  # 这里就不用配置化了。
+                            reason = (reason * 10)[:128]  # 长度加长一下,也截取前128位。
+                        self.inputcode(code=reason)
+                        self.click_view_text("上报")
+                        if self.page_check(timeout=6, pagename='上报其他异常', text='上报', new_text='前往', is_shoot=True):
+                            return 1
                     # self.driver.click_one(self.driver.find_elements(self.view)[-1])  # 最后一个view元素是'确定'按钮.
                     self.press_ok(timeout=1)  # 这里已经点击了确定，为什么还会卡呢？
                     if '确定' not in self.get_text():  # 跳转流程了.
-                        sleep(6)  # 点完确定,会有个长等待.
                         # self.wait_moment(err_type)  # 用这个方法应该可以,需要验证一下.
                         logger.info(f"上报异常:[{err_type}]成功。")
                         # 页面检查需要检查特征文本,原因:上报[载物箱类型不符]后,15s内,要是刷到了异常区.可能有部分文本重叠.
                         # 上报完异常，两个状态：1.原地继续拣货--特征文本，‘异常上报’还在。2.移动了。
-                        if self.page_check(timeout=5, pagename='异常上报', is_shoot=True, text='异常上报', new_text='输入'):
+                        if self.page_check(timeout=6, pagename='异常上报', is_shoot=True, text='异常上报', new_text='输入'):
                             return 1
                     else:
                         tmp_text = self.get_text()
