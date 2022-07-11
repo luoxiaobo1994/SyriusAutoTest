@@ -70,7 +70,7 @@ def random_id(siteid="202"):
         # "type": 'ORDER_PICKING',  # 指定类型时,把注释去掉,并去掉下面的随机选择.
         # "type": 'TOTAL_PICKING',  # 指定类型时,把注释去掉,并去掉下面的随机选择.
         "type": random.choice(['ORDER_PICKING', 'TOTAL_PICKING']),  # 随机选一个.
-        "priority": 1,
+        "priority": random.randint(0, 1),  # 应该随机生成1,2 。让订单多样化。
         "notifyUrl": "https://peach-sqa-test.flexgalaxy.com/peach/notify",
         "timestamp": timestamp,  # 上传时间
         "expectedExecutionTime": timestamp,  # 期望开始时间,暂时无用
