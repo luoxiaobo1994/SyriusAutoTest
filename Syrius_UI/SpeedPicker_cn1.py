@@ -410,16 +410,17 @@ class SpeedPicker:
                     count -= 1
                     sleep(1)
 
-    def wait_moment(self, text, timeout=2, i=True, without=None):
+    def wait_moment(self, text, wait=3, timeout=2, i=True, without=None):
         # 持续去抓某个文本，直到这个文本不再这个页面了。说明流程变了。
         # 这里可能是影响效率的地方，想办法怎么优化一下。
         logger.info(f"持续检查文本[{text}]是否还在当前页面。")
-        count = 0
+        start = time.time()
+        count = [0]
         err = 20
         err_num = copy.copy(err)  # err 一直在自减，这里要拷贝一下。
         while err > 0:
             try:
-                view_ls = self.get_text(wait=2, raise_except=True)  # 不用太频繁.
+                view_ls = self.get_text(wait=wait, raise_except=True)  # 不用太频繁.
                 if view_ls:  # 居然还有空的情况，干。
                     if text in view_ls:
                         if self.random_trigger(n=10, process='持续抓文本'):
@@ -443,15 +444,14 @@ class SpeedPicker:
                                 logger.debug(f"文本[{without}]刷新。 停止检查[{text}]。")
                                 return
 
-
                         elif self.islosepos():
                             logger.warning("机器人丢失定位。")
                             self.shoot()
                             return
                         sleep(1)  # 等待时间不能太长。
-                        count += timeout  # 持续计时,看看卡界面多久了.
-                        minutes = count // 60
-                        if minutes >= 5:  # 每5分钟上报一次.
+                        minutes = (time.time() - start) // 60
+                        if minutes % 5 == 0 and minutes not in count:  # 每5分钟上报一次.
+                            count.append(minutes)
                             logger.warning(
                                 f"当前页面超过{minutes}分钟没有变化了，请检查是否发生了什么异常情况。")
                             self.err_notify()
