@@ -484,6 +484,7 @@ class SpeedPicker:
             logger.debug(f"持续检查文本，超过{err_num}次，都没有跳出检查函数。检查一下页面吧!当前页面:{self.get_text()}")
 
     def page_check(self, timeout=30, pagename='', is_shoot=False, text='', new_text='', new_text2=''):
+        # 暂时就这么设计，如果跳转的文本过多，则使用**kwargs，代替多参数。
         total_time = copy.copy(timeout)
         start = time.time()
         view_text = self.get_text()  # 先抓一个当前页面文本.
@@ -496,12 +497,9 @@ class SpeedPicker:
                 if text not in tmp_text and text:
                     logger.debug(f"特征文本：[{text}]已经不在{pagename}页面，判定界面已跳转，程序未卡屏。")
                     return 1  # 特征文本不在界面内了.也可以跳过了.
-                elif new_text and new_text in tmp_text:
-                    logger.debug(f"特征文本1：[{new_text}],出现在当前界面。判定界面已跳转，程序未卡屏。")
-                    return 1  # 也要跳出去。
-                elif new_text2 and new_text2 in tmp_text:
-                    logger.debug(f"特征文本2：[{new_text2}],出现在当前界面。判定界面已跳转，程序未卡屏。")
-                    return 1  # 也要跳出去。
+                elif (new_text, new_text2) and interset((new_text, new_text2), tmp_text):
+                    logger.debug(f"特征文本：[{new_text, new_text2}],出现在当前界面。判定界面已跳转，程序未卡屏。")
+                    return 1
                 elif '当前作业被取消' in tmp_text:
                     logger.info("当前作业被取消了。")
                     self.click_view_text('好')
