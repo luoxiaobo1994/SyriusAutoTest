@@ -481,21 +481,24 @@ class SpeedPicker:
         else:
             logger.debug(f"持续检查文本，超过{err_num}次，都没有跳出检查函数。检查一下页面吧!当前页面:{self.get_text()}")
 
-    def page_check(self, timeout=30, pagename='', is_shoot=False, text='', new_text=''):
+    def page_check(self, timeout=30, pagename='', is_shoot=False, text='', new_text='', new_text2=''):
         total_time = copy.copy(timeout)
+        start = time.time()
         view_text = self.get_text()  # 先抓一个当前页面文本.
         logger.debug(f'{pagename}进入检查是否卡屏流程，超时时间:{timeout}s。')
         # view_content =
-        while timeout:
+        while time.time() - start < timeout:
             tmp_text = self.get_text()
             if view_text == tmp_text:
                 sleep(1)
-                timeout -= 1
                 if text not in tmp_text and text:
                     logger.debug(f"特征文本：[{text}]已经不在{pagename}页面，判定界面已跳转，程序未卡屏。")
                     return 1  # 特征文本不在界面内了.也可以跳过了.
                 elif new_text and new_text in tmp_text:
-                    logger.debug(f"特征文本：[{new_text}],出现在当前界面。判定界面已跳转，程序未卡屏。")
+                    logger.debug(f"特征文本1：[{new_text}],出现在当前界面。判定界面已跳转，程序未卡屏。")
+                    return 1  # 也要跳出去。
+                elif new_text2 and new_text2 in tmp_text:
+                    logger.debug(f"特征文本2：[{new_text2}],出现在当前界面。判定界面已跳转，程序未卡屏。")
                     return 1  # 也要跳出去。
                 elif '当前作业被取消' in tmp_text:
                     logger.info("当前作业被取消了。")
@@ -908,7 +911,7 @@ class SpeedPicker:
                     self.shoot()
                     exit(-100)
                 self.page_check(timeout=self.get_config()['page_time'], is_shoot=True,
-                                pagename="推荐点位检查界面")  # 检查是不是半天没变化.
+                                pagename="推荐点位检查界面", new_text='前往', new_text2='输入')  # 检查是不是半天没变化.
                 self.robot_battery()
 
 
