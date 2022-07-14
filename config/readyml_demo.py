@@ -8,7 +8,12 @@ from utils.file_reader import YamlReader
 file = "yaml_demo.yaml"
 data = YamlReader(file).data
 print(f"全部数据：{data}")
-print("-*"*20)
+print("-*" * 20)
 for i in data:
     x = str(type(data[i]))
     print(f"type:{x:<23}{i}: {data[i]}")
+
+if data['yes11']:
+    print('yes11')
+if data['no22']:  # 正确读取为False的.
+    print('no22')

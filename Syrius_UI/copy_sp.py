@@ -10,7 +10,7 @@ from base.common import get_devices
 
 """快速生成SpeedPicker多个副本的文件。"""
 
-file = "./SpeedPicker_cn1.py"  # 确保这个脚本和SpeedPicker1.py在同级目录下.
+file = "./SpeedPicker_cn1.py"  # 确保这个脚本和SpeedPicker_cn1.py在同级目录下.
 devices = len(get_devices())
 
 
@@ -33,6 +33,5 @@ def del_sp(num=30):
     time.sleep(1)
 
 
-# del_sp()  # 删除speedpicker.py
-# time.sleep(2)
-add_sp(devices)  # 复制speedpicker.py
+# del_sp()  # 删除speedpicker_cnx.py
+add_sp(devices)  # 复制speedpicker_cnx.py

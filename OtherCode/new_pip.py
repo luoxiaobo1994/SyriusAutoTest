@@ -5,7 +5,7 @@
 
 import os
 
-file = "D:\SoftData\Feishu\piplist.txt"
+file = "D:\SoftData\Feishu\piplist.txt"  # 填写下载下来的requirment.txt的正确绝对路径
 with open(file) as f:
     con = f.readlines()
 for i in con:

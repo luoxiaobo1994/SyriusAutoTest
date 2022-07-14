@@ -7,7 +7,7 @@ import requests
 
 from base.common import *
 
-base_url = 'https://flagship-sqa-test.flexgalaxy.com'
+base_url = 'https://flagship-sqa-test.flexgalaxy.com'  # 填写你当前环境的场地. 这个是SQA的,不是这个环境的,一定要改.
 
 
 def get_token():
@@ -16,8 +16,8 @@ def get_token():
     data = {
         "authFlow": "AK_SK_AUTH_FLOW",
         "attributes": {
-            "clientKey": "4otid7tu3lfu05p118ia7hvknq",  # 找ops要
-            "clientSecret": "1ac4pmokjnuu4kc8rjq5ajcm6bcol1jls2n3cnqh84ssknqvulgi"  # 找ops要
+            "clientKey": "4otid7tu3lfu05p118ia7hvknq",  # 一定要找ops要
+            "clientSecret": "1ac4pmokjnuu4kc8rjq5ajcm6bcol1jls2n3cnqh84ssknqvulgi"  # 一定要找ops要
         }
     }
     res = requests.post(url=url, json=data)

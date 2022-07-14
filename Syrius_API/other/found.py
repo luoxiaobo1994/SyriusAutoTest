@@ -28,9 +28,8 @@ def GetFundJsonInfo(fundcode):
     fundDataInfo = response.text.split('({')[1]
     fundDataInfo = '{' + fundDataInfo.split('})')[0] + '}'
     fundDataInfo = json.loads(fundDataInfo)
-    # fundDataInfo['income'] = money * float(fundDataInfo['gszzl']) / 100  # 收益
     # {'fundcode': '012414', 'name': '招商中证白酒指数(LOF)C', 'jzrq': '2022-06-27', 'dwjz': '1.2430',
-    # 'gsz': '1.2425', 'gszzl': '-0.04', 'gztime': '2022-06-28 10:43', 'income': -4.0}
+    # 'gsz': '1.2425', 'gszzl': '-0.04', 'gztime': '2022-06-28 10:43'}
     return fundDataInfo
 
 
@@ -38,7 +37,6 @@ def get_found(code='012414', money='0'):
     global total
     url = "https://fundgz.1234567.com.cn/js/" + str(code) + ".js"
     response = requests.get(url, headers=headers)
-    # print(type(response.text))
     # print(response.text)
     res = re.findall(r'jsonpgz\((.*?)\);', response.text)[0]  # 获取到字符串的字典。
     res = eval(res)  # 转化为字典。
@@ -46,12 +44,8 @@ def get_found(code='012414', money='0'):
     income = float(res['gszzl']) * float(money) / 100 * amplitude
     total += income  # 本基金收益
     name = re.sub(r'[A-Za_z() ]', '', res['name']).replace('发起式','')
-    # name = res['name']
-    # 一个中文站2个显示长度，中文名称长度不一致，补的空格长度，会影响排版。
-    # name = name.split()[0] + ' ' * (30 - len(name)*2)
     found_data = f"{code:{space}<10}{name:{space}<15}{res['gszzl']:{space}<10}{income:{space}<10.2f}"
     result.append(found_data)
-    # print(f"这个基金的信息长度：{len(found_data)}")  # 文本长度都是没问题的：50
 
 
 def wraper(args):
@@ -73,6 +67,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    # get_found(code='014605')
-    # print(dict(data).items())
-    # main2()
