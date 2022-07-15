@@ -5,12 +5,17 @@
 import time
 
 
-def tt(timeout=5):
+def xx():
+    global x
+    x = 5
+
+
+def tt(timeout=0):
     start = time.time()
     while time.time() - start < timeout:
         pass
     else:
-        print("结束了")
+        print(f"结束了:{x}")
 
 
 tt()
