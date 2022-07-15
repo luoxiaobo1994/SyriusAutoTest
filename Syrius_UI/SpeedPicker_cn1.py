@@ -922,15 +922,8 @@ if __name__ == '__main__':
             sp = SpeedPicker()
             sp.main()
         except KeyboardInterrupt:
-            def reset_key():
-                import threading
-                reset_func = threading.Thread(target=reset_keyboard, args=(SpeedPicker().device_num()[0]))
-                reset_func.daemon  # 守护进程去实现这个功能.
-                reset_func.start()  # 为什么这个后面会空两行?
-
-
             logger.info("手动停止脚本。")
-            # reset_keyboard(SpeedPicker().device_num()[0])  # 重置键盘.
+            reset_keyboard(SpeedPicker().device_num()[0])  # 重置键盘.
         except Exception as e:
             timeout = 10
             logger.error(
