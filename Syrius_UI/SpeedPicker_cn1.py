@@ -483,7 +483,7 @@ class SpeedPicker:
         else:
             logger.debug(f"持续检查文本，超过{err_num}次，都没有跳出检查函数。检查一下页面吧!当前页面:{self.get_text()}")
 
-    def page_check(self, timeout=30, pagename='', is_shoot=False, text='', new_text='', new_text2=''):
+    def page_check(self, timeout=30, pagename='', is_shoot=False, text='', new_text='', new_text2='', is_quit=True):
         # 暂时就这么设计，如果跳转的文本过多，则使用**kwargs，代替多参数。
         total_time = copy.copy(timeout)
         start = time.time()
@@ -539,7 +539,8 @@ class SpeedPicker:
         logger.warning(f"超过[{total_time}]s，[{pagename}]页面文本没有变化。可能卡界面了。")
         if is_shoot:
             self.shoot()
-        exit(-100)
+        if is_quit:
+            exit(-100)
 
     def click_view_text(self, text, wait=1, count=5):
         # 强点击,保证点到.
@@ -736,7 +737,7 @@ class SpeedPicker:
         # 开另一个线程来检测是否发生异常.持续检测的线程,就不要经常刷新日志了.
         view_text = self.get_text()  # 可能会空.
         view_content = self.driver.app_elements_content_desc(self.view)
-        if len({'紧急停止', '若需恢复工作', '请解除急停状态'} & set(view_text)) >= 3:
+        if len({'紧急停止', '若需恢复工作', '请解除急停状态'} & set(view_text)) >= 2:
             # 急停的情况.
             logger.info("机器人被按下急停按钮。停止脚本。")
             exit(-104)
