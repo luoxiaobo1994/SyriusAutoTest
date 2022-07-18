@@ -736,7 +736,7 @@ class SpeedPicker:
         # 开另一个线程来检测是否发生异常.持续检测的线程,就不要经常刷新日志了.
         view_text = self.get_text()  # 可能会空.
         view_content = self.driver.app_elements_content_desc(self.view)
-        if len({'紧急停止', '若需恢复工作', '请解除急停状态'} & set(view_text)) >= 3:
+        if len({'紧急停止', '若需恢复工作', '请解除急停状态'} & set(view_text)) >= 2:
             # 急停的情况.
             logger.info("机器人被按下急停按钮。停止脚本。")
             exit(-104)
