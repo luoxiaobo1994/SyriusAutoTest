@@ -5,9 +5,7 @@
 import copy
 import re
 from time import sleep
-
 from selenium.webdriver.common.by import By
-
 from GGR import GGR
 from Syrius_API.flagship.res_notify import send_order
 from base.common import *
@@ -25,7 +23,7 @@ class SpeedPicker:
         self.widget_text = (By.XPATH, '//android.widget.TextView')  # K11桌面的组件
         self.notify()  # 刷新一些提醒，避免遗漏配置。
         self.non_count = 0  # 界面抓到异常信息的计数器.
-        # self.config = self.get_cnfig()  # 流程开始之前读取一次配置就行了,不用每次都读取.
+        # self.config = self.get_cnfig()  # 流程开始之前读取一次配置就行了,不用每次都读取. 每次都读一下,应对实时修改
 
     def init_driver(self):
         device = self.device_num()[0]  # 10.111.150.202:5555 这种格式.
