@@ -5,7 +5,9 @@
 import copy
 import re
 from time import sleep
+
 from selenium.webdriver.common.by import By
+
 from GGR import GGR
 from Syrius_API.flagship.res_notify import send_order
 from base.common import *
@@ -23,6 +25,7 @@ class SpeedPicker:
         self.widget_text = (By.XPATH, '//android.widget.TextView')  # K11桌面的组件
         self.notify()  # 刷新一些提醒，避免遗漏配置。
         self.non_count = 0  # 界面抓到异常信息的计数器.
+        self.siteid = 202  # 默认是备用场地。
         # self.config = self.get_cnfig()  # 流程开始之前读取一次配置就行了,不用每次都读取. 每次都读一下,应对实时修改
 
     def init_driver(self):
@@ -60,11 +63,14 @@ class SpeedPicker:
             exit(-404)  # 走不动了,直接停吧.
         # 抓取界面的小程序.
         try:
-            desc = self.driver.app_elements_content_desc(self.view)  # if find element faile,will except,restart script
+            desc = self.driver.app_elements_content_desc(self.view)
             if 'SkillSpace' not in ''.join(desc):
                 logger.debug("当前不在Jarvis Launcher主界面。")
                 return
             else:
+                logger.debug(f"Jarvis Launcher 主界面上的content:{desc}")
+                if '\\nsz-sqa-test\\' in ''.join(desc):  # 主测试场地
+                    self.siteid = 2
                 image = self.driver.find_elements(self.image)
                 soft_index = self.driver.app_elements_content_desc(self.view)
                 for i in soft_index:
@@ -776,7 +782,7 @@ class SpeedPicker:
 
     def api_order(self):
         site = self.get_config()['order_site']
-        order_num = self.get_config()['order_num']
+        order_num = self.siteid
         try:
             res = send_order(num=order_num, siteid=site)
             if 'successData' in res:
