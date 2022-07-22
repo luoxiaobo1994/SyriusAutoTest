@@ -19,5 +19,6 @@ if data['yes11']:
 if data['no22']:  # 正确读取为False的.
     print('no22')
 
-update_yaml('site_info.yaml', {'api_order': False})
-print(read_yaml('site_info.yaml'))
+# update_yaml('site_info.yaml', {'api_order': False})
+data = read_yaml('site_info.yaml')
+print(data[data['SpeedPicker_cn2']])

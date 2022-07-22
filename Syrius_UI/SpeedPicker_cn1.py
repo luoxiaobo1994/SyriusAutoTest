@@ -794,7 +794,7 @@ class SpeedPicker:
 
     def api_order(self):
         site_info = read_yaml('../config/site_info.yaml')  # {'SpeedPicker_cn1': 'sz-sqa-test''sz-sqa-test': 2}
-        site = site_info(site_info(get_filename()))  # 根据文本，拿到场地名称，根据场地名称，拿到场地ID。
+        site = site_info[site_info[get_filename()]]  # 根据文本，拿到场地名称，根据场地名称，拿到场地ID。
         order_num = self.get_config()['order_num']
         try:
             res = send_order(num=order_num, siteid=site)
@@ -848,7 +848,7 @@ class SpeedPicker:
                     self.other_situation()
             elif '等待任务中' in view_ls:
                 logger.info("SpeedPicker当前没有任务，请下单。\n")  # 整两个空行来区分一下任务。
-                if read_yaml('../config/site_info.yaml','api_order'):
+                if read_yaml('../config/site_info.yaml', 'api_order'):
                     self.api_order()
                 self.wait_moment("等待任务中")
             elif '前往' in view_ls:
