@@ -854,7 +854,7 @@ class SpeedPicker:
                 self.wait_moment("前往")
             elif any_one(self.get_config()['bind_text'], view_ls):
                 self.bind_container()
-            elif len(set_view.difference(use_text)) > 4 and '×' in view_ls:  # 储位,商品名称/编码,数量,x
+            elif len(set_view.difference(use_text)) > 4 and '编码' in view_ls:  # 储位,商品名称/编码,数量,x
                 # logger.debug("走拣货流程.")
                 # 拿到这个，说明在拣货页面。需要根据几种情况去进行处理操作。
                 if not target_location.startswith('A0'):
