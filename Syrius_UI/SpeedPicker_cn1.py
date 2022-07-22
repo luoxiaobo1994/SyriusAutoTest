@@ -548,22 +548,24 @@ class SpeedPicker:
         if is_quit:
             exit(-100)
 
-    def click_view_text(self, text, wait=1, count=5):
+    def click_view_text(self, text, wait=1, count=5, new_text=None, new_element=None, pagename=None):
         # 强点击,保证点到.
         while count > 0:
             if text not in self.get_text():
                 logger.info(f"文本:{text}并不在页面内，退出强点流程。")
                 return
             self.driver.click_element((By.XPATH, f'//*[@text="{text}"]'), wait=wait)
-            sleep(2)
+            sleep(1)
             tmp_text = self.get_text(wait=1)
-            if text not in tmp_text:
+            if text not in tmp_text or new_text in tmp_text:
                 logger.info(f"强点击文本:[{text}]成功。")
-                sleep(1)
+                return
+            elif self.driver.element_display(new_element):
+                logger.info(f"强点击文本:[{text}]成功。")
                 return
             else:
                 logger.debug(f"强点操作，点击[{text}]失败。")
-                self.page_check(timeout=5, text=text, is_shoot=True)
+                self.page_check(timeout=5, text=text, is_shoot=True, pagename=pagename, is_quit=False)
                 count -= 1
         if count == 0:
             self.shoot()
@@ -599,12 +601,12 @@ class SpeedPicker:
             if self.random_trigger(n=self.get_config()['pick_psb'], process='输入商品码'):  # 概率，上报异常。
                 self.report_err()
                 return  # 结束拣货流程.
-            self.click_view_text("输入")  # 点击输入按钮
+            self.click_view_text("输入", new_element=(By.XPATH, '//android.widget.EditText'), pagename="拣货点击输入")  # 点击输入按钮
             # 随机触发,输入错误商品码的概率
             if self.random_trigger(n=self.get_config()['err_code_psb'], process='输入错误商品码'):
                 self.input_error(random.randint(1, 564313112131))  # 随机取一个,取对了,就可以买彩票了。
             try:
-                good_code = view_ls[view_ls.index('×') - 1]  # 有什么办法,准确拿到商品码.
+                good_code = view_ls[view_ls.index('编码') + 1]  # 有什么办法,准确拿到商品码.
             except:
                 good_code = '199103181516'
                 logger.debug('没有获取到商品编码，检查一下，是不是页面排版又变化了。')
