@@ -848,7 +848,7 @@ class SpeedPicker:
                     self.other_situation()
             elif '等待任务中' in view_ls:
                 logger.info("SpeedPicker当前没有任务，请下单。\n")  # 整两个空行来区分一下任务。
-                if self.get_config()['api_order']:
+                if read_yaml('../config/site_info.yaml','api_order'):
                     self.api_order()
                 self.wait_moment("等待任务中")
             elif '前往' in view_ls:
