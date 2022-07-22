@@ -69,11 +69,11 @@ class SpeedPicker:
                 return
             else:
                 logger.debug(f"Jarvis Launcher 主界面上的content:{desc}")
-                if '\\nsz-sqa-test\\' in ''.join(desc):  # 主测试场地
+                if 'sz-sqa-test' in ''.join(desc):  # 主测试场地
                     # 根据文件名，写入文件对应的场地。
                     logger.debug("机器人当前场地：sz-sqa-test")
                     update_yaml('../config/site_info.yaml', {self.get_filename(): 'sz-sqa-test'})
-                elif '\\nsz-sqa-test-spare\\' in ''.join(desc):
+                elif 'sz-sqa-test-spare' in ''.join(desc):
                     logger.debug("机器人当前场地：sz-sqa-test-spare")
                     update_yaml('../config/site_info.yaml', {self.get_filename(): 'sz-sqa-test-spare'})
                 else:
@@ -251,6 +251,7 @@ class SpeedPicker:
         logger.debug("检查是否进入其他界面了。")
         if not check_app(device=self.device_num()[0], appname='com.syriusrobotics.platform.launcher'):
             logger.warning("设备的GoGoReady似乎闪退了。")
+            self.shoot()
             self.start_GGR()
         try:
             if self.driver.element_display((By.XPATH, '//*[contains(content-desc,"配置信息")]')):
