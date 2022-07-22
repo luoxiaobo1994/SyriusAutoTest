@@ -72,10 +72,10 @@ class SpeedPicker:
                 if '\\nsz-sqa-test\\' in ''.join(desc):  # 主测试场地
                     # 根据文件名，写入文件对应的场地。
                     logger.debug("机器人当前场地：sz-sqa-test")
-                    update_yaml('../config/site_info.yaml', {get_filename(): 'sz-sqa-test'})
+                    update_yaml('../config/site_info.yaml', {self.get_filename(): 'sz-sqa-test'})
                 elif '\\nsz-sqa-test-spare\\' in ''.join(desc):
                     logger.debug("机器人当前场地：sz-sqa-test-spare")
-                    update_yaml('../config/site_info.yaml', {get_filename(): 'sz-sqa-test-spare'})
+                    update_yaml('../config/site_info.yaml', {self.get_filename(): 'sz-sqa-test-spare'})
                 else:
                     logger.debug(f"获取到的场地不是sqa测试场地，关闭接口自动派单功能。")
                     update_yaml('../config/site_info.yaml', {'api_order': False})
@@ -792,9 +792,13 @@ class SpeedPicker:
                 self.shoot()
                 exit(-500)
 
+    def get_filename():
+        name = str(__file__).split('\\')[-1].split('.')[0]
+        return name
+
     def api_order(self):
         site_info = read_yaml('../config/site_info.yaml')  # {'SpeedPicker_cn1': 'sz-sqa-test''sz-sqa-test': 2}
-        site = site_info[site_info[get_filename()]]  # 根据文本，拿到场地名称，根据场地名称，拿到场地ID。
+        site = site_info[site_info[self.get_filename()]]  # 根据文本，拿到场地名称，根据场地名称，拿到场地ID。
         order_num = self.get_config()['order_num']
         try:
             res = send_order(num=order_num, siteid=site)

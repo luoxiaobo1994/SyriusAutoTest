@@ -453,4 +453,4 @@ class just_err(Exception):
 
 
 if __name__ == '__main__':
-    print(get_filename())
+    print(os.getcwd())
