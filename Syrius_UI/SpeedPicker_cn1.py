@@ -792,7 +792,7 @@ class SpeedPicker:
                 self.shoot()
                 exit(-500)
 
-    def get_filename():
+    def get_filename(self):
         name = str(__file__).split('\\')[-1].split('.')[0]
         return name
 
@@ -943,6 +943,7 @@ if __name__ == '__main__':
         try:
             sp = SpeedPicker()
             sp.main()
+            # print(sp.get_filename())
         except KeyboardInterrupt:
             logger.info("手动停止脚本。")
             reset_keyboard(SpeedPicker().device_num()[0])  # 重置键盘.
