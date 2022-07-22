@@ -589,7 +589,12 @@ class SpeedPicker:
             logger.warning(f"注意检查一下，移动中指示的目标点{target}与当前拣货页面的不一致。")
         logger.info(f"SpeedPicker处于拣货流程，页面信息:{view_ls}")  # 需要记录一下进入拣货流程.
         self.wait_for_time(n=self.get_config()['picking_out'], timeout=self.get_config()['picking_outtime'])
-        if '输入' in view_ls:  # 1.还没扫码，有输入按钮。
+        if self.driver.element_display((By.XPATH, '//android.widget.EditText'), wait=1):
+            # 拣货情形2,点开了输入框,但是没有输入商品码
+            logger.debug(f"拣货场景2，点击了输入按钮，弹出输入框，但未输入商品码。本次输入万能码。")
+            self.inputcode(code='199103181516')
+            self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
+        elif '输入' in view_ls:  # 1.还没扫码，有输入按钮。
             logger.info("拣货场景1，SpeedPicker尚未开始捡取当前商品。")
             if self.random_trigger(n=self.get_config()['pick_psb'], process='输入商品码'):  # 概率，上报异常。
                 self.report_err()
@@ -619,11 +624,6 @@ class SpeedPicker:
             # 页面检查函数，页面名称是拣货完成，有单独判断。这里名称不要随便改。 会校验：是否开启了快速拣货。
             self.page_check(timeout=5, pagename='拣货完成', is_shoot=True, text='完成', new_text='前往',
                             new_text2='输入')  # 这里比较容易卡. 在这里检查一下.
-        elif '异常上报' not in view_ls:
-            # 拣货情形2,点开了输入框,但是没有输入商品码
-            logger.debug(f"拣货场景2，点击了输入按钮，弹出输入框，但未输入商品码。本次输入万能码。")
-            self.inputcode(code='199103181516')
-            self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
         else:
             # 拣货情形3,都捡完了,只是没点完成.
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
@@ -854,7 +854,7 @@ class SpeedPicker:
                 self.wait_moment("前往")
             elif any_one(self.get_config()['bind_text'], view_ls):
                 self.bind_container()
-            elif len(set_view.difference(use_text)) > 4 and '×' in view_ls:  # 储位,商品名称/编码,数量,x
+            elif len(set_view.difference(use_text)) > 4 and '编码' in view_ls:  # 储位,商品名称/编码,数量,x
                 # logger.debug("走拣货流程.")
                 # 拿到这个，说明在拣货页面。需要根据几种情况去进行处理操作。
                 if not target_location.startswith('A0'):
