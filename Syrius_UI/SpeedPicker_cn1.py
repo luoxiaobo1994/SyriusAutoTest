@@ -339,13 +339,15 @@ class SpeedPicker:
                 sleep(10)
 
     def report_err(self, err=''):
+        # 进入异常上报流程的入口。
         view_ls = self.get_text()
         if view_ls[0] == '异常上报':
             logger.info("当前在异常上报流程。")
             self.do_err(err)
         else:
             try:
-                self.driver.click_element((By.XPATH, '//*[@text="异常上报"]'), wait=3, raise_except=True)
+                self.driver.click_element((By.XPATH, '//android.widget.Image[@enabled="true"]'), wait=3,
+                                          raise_except=True)
                 # self.click_view_text("异常上报")  # 不能这么做,点进去了,异常上报还是在文本中.
                 self.do_err(err)
             except:

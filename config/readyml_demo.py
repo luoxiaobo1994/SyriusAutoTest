@@ -3,6 +3,7 @@
 # TIME: 2022/5/27 13:37
 # Desc: 用来测试读取配置文件的脚本.
 
+from base.common import *
 from utils.file_reader import YamlReader
 
 file = "yaml_demo.yaml"
@@ -17,3 +18,8 @@ if data['yes11']:
     print('yes11')
 if data['no22']:  # 正确读取为False的.
     print('no22')
+
+data2 = read_yaml(file)
+print(data2)
+data3 = read_yaml(file, 'dic1')
+print(data3)
