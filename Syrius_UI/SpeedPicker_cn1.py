@@ -68,14 +68,10 @@ class SpeedPicker:
                 logger.debug("当前不在Jarvis Launcher主界面。")
                 return
             else:
-                logger.debug(f"Jarvis Launcher 主界面上的content:{desc}")
-                if 'sz-sqa-test' in ''.join(desc):  # 主测试场地
-                    # 根据文件名，写入文件对应的场地。
-                    logger.debug("机器人当前场地：sz-sqa-test")
-                    update_yaml('../config/site_info.yaml', {self.get_filename(): 'sz-sqa-test'})
-                elif 'sz-sqa-test-spare' in ''.join(desc):
-                    logger.debug("机器人当前场地：sz-sqa-test-spare")
-                    update_yaml('../config/site_info.yaml', {self.get_filename(): 'sz-sqa-test-spare'})
+                logger.debug(f"Jarvis Launcher 主界面上的content:{desc}")  # 保留这个打印，记录当时的日期，桌面小程序。
+                site_name = re.findall(r"\n(.*?)\nSkill", ''.join(desc))[0]  # 正则提取出场地名称。
+                if site_name in ['sz-sqa-test-spare', 'sz-sqa-test']:
+                    update_yaml('../config/site_info.yaml', {self.get_filename(): site_name})
                 else:
                     logger.debug(f"获取到的场地不是sqa测试场地，关闭接口自动派单功能。")
                     update_yaml('../config/site_info.yaml', {'api_order': False})
@@ -503,7 +499,7 @@ class SpeedPicker:
         total_time = copy.copy(timeout)
         start = time.time()
         view_text = self.get_text()  # 先抓一个当前页面文本.
-        logger.debug(f'{pagename}进入检查是否卡屏流程，超时时间:{timeout}s。')
+        logger.debug(f'[{pagename}]进入检查是否卡屏流程，超时时间:{timeout}s。')
         # view_content =
         while time.time() - start < timeout:
             tmp_text = self.get_text()
@@ -557,14 +553,14 @@ class SpeedPicker:
         if is_quit:
             exit(-100)
 
-    def click_view_text(self, text, wait=1, count=5, new_text=None, new_element=None, pagename='强点流程'):
+    def click_view_text(self, text, wait=1, count=5, new_text=None, new_element=None, pagename='强点操作'):
         # 强点击,保证点到.
         while count > 0:
             if text not in self.get_text():
                 logger.info(f"文本:{text}并不在页面内，退出强点流程。")
                 return
             self.driver.click_element((By.XPATH, f'//*[@text="{text}"]'), wait=wait)
-            sleep(1)
+            sleep(2)  # 确定要留足2s钟，不然检测早了。老是会刷点击失败的日志。
             tmp_text = self.get_text(wait=1)
             if text not in tmp_text or new_text in tmp_text:
                 logger.info(f"强点击文本:[{text}]成功。")
