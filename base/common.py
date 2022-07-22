@@ -416,9 +416,9 @@ def read_yaml(file, key=None):
         return value
 
 
-def write_yaml(file, data=None):
+def write_yaml(file, data=None, mode='a'):
     if file and isinstance(data, dict):
-        with open(file, encoding='utf-8', mode='a') as f:
+        with open(file, encoding='utf-8', mode=mode) as f:
             yaml.dump(data, stream=f, allow_unicode=True)
     else:
         logger.debug(f"请检查输入文件路径或存入的数据类型是否是键值对。")
@@ -429,12 +429,18 @@ def clear_yaml(file):
         f.truncate()  # 清空，好像数据库清空表也是这个命令。
 
 
-def update_yaml(file, data):
+def update_yaml(file, data, mode='w'):
     # 暂时没有好的办法能直接改指定的键值对，全读出来，再写进去，可能是最好的办法。
     value = read_yaml(file)  # 读出来
-    for k, v in data:
+    # print(data)
+    for k, v in data.items():
         value[k] = v
-    write_yaml(file, data=value)  # 再写进去。
+    write_yaml(file, data=value, mode=mode)  # 再写进去。
+
+
+def get_filename():
+    name = str(__file__).split('\\')[-1].split('.')[0]
+    return name
 
 
 class just_err(Exception):
@@ -447,4 +453,4 @@ class just_err(Exception):
 
 
 if __name__ == '__main__':
-    print(check_app())
+    print(get_filename())

@@ -70,7 +70,15 @@ class SpeedPicker:
             else:
                 logger.debug(f"Jarvis Launcher 主界面上的content:{desc}")
                 if '\\nsz-sqa-test\\' in ''.join(desc):  # 主测试场地
-                    self.siteid = 2
+                    # 根据文件名，写入文件对应的场地。
+                    logger.debug("机器人当前场地：sz-sqa-test")
+                    update_yaml('../config/site_info.yaml', {get_filename(): 'sz-sqa-test'})
+                elif '\\nsz-sqa-test-spare\\' in ''.join(desc):
+                    logger.debug("机器人当前场地：sz-sqa-test-spare")
+                    update_yaml('../config/site_info.yaml', {get_filename(): 'sz-sqa-test-spare'})
+                else:
+                    logger.debug(f"获取到的场地不是sqa测试场地，关闭接口自动派单功能。")
+                    update_yaml('../config/site_info.yaml', {'api_order': False})
                 image = self.driver.find_elements(self.image)
                 soft_index = self.driver.app_elements_content_desc(self.view)
                 for i in soft_index:
@@ -548,7 +556,7 @@ class SpeedPicker:
         if is_quit:
             exit(-100)
 
-    def click_view_text(self, text, wait=1, count=5, new_text=None, new_element=None, pagename=None):
+    def click_view_text(self, text, wait=1, count=5, new_text=None, new_element=None, pagename='强点流程'):
         # 强点击,保证点到.
         while count > 0:
             if text not in self.get_text():
@@ -565,7 +573,7 @@ class SpeedPicker:
                 return
             else:
                 logger.debug(f"强点操作，点击[{text}]失败。")
-                self.page_check(timeout=5, text=text, is_shoot=True, pagename=pagename, is_quit=False)
+                self.page_check(timeout=6, text=text, is_shoot=True, pagename=pagename, is_quit=False)
                 count -= 1
         if count == 0:
             self.shoot()
@@ -785,8 +793,9 @@ class SpeedPicker:
                 exit(-500)
 
     def api_order(self):
-        site = self.get_config()['order_site']
-        order_num = self.siteid
+        site_info = read_yaml('../config/site_info.yaml')  # {'SpeedPicker_cn1': 'sz-sqa-test''sz-sqa-test': 2}
+        site = site_info(site_info(get_filename()))  # 根据文本，拿到场地名称，根据场地名称，拿到场地ID。
+        order_num = self.get_config()['order_num']
         try:
             res = send_order(num=order_num, siteid=site)
             if 'successData' in res:

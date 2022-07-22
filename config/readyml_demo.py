@@ -19,7 +19,5 @@ if data['yes11']:
 if data['no22']:  # 正确读取为False的.
     print('no22')
 
-data2 = read_yaml(file)
-print(data2)
-data3 = read_yaml(file, 'dic1')
-print(data3)
+update_yaml('site_info.yaml', {'api_order': False})
+print(read_yaml('site_info.yaml'))

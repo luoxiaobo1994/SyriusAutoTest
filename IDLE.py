@@ -18,4 +18,4 @@ def tt(timeout=0):
         print(f"结束了:{x}")
 
 
-tt()
+print(__file__)
