@@ -323,6 +323,16 @@ def interset(a, b):
     return set(a) & set(b)
 
 
+def len_diff(a, b):
+    # 两个序列的差集长度.
+    return len(interset(a, b))
+
+
+def len_same(a, b):
+    # 两个序列的相同值.
+    return 1
+
+
 def app_screenshot(device='', file_name=''):
     if not get_devices():
         logger.warning("当前电脑没有连接任何一个Android设备,无法进行截屏操作.请检查设备连接情况.")
