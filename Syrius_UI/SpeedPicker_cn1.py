@@ -71,6 +71,7 @@ class SpeedPicker:
                 logger.debug(f"Jarvis Launcher 主界面上的content:{desc}")  # 保留这个打印，记录当时的日期，桌面小程序。
                 site_name = re.findall(r"\n(.*?)\nSkill", ''.join(desc))[0]  # 正则提取出场地名称。
                 if site_name in ['sz-sqa-test-spare', 'sz-sqa-test']:
+                    logger.debug(f"获取到当前场地为:{site_name}。")
                     update_yaml('../config/site_info.yaml', {self.get_filename(): site_name})
                 else:
                     logger.debug(f"获取到的场地不是sqa测试场地，关闭接口自动派单功能。")
