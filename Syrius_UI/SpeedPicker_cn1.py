@@ -844,8 +844,9 @@ class SpeedPicker:
                 logger.warning(f"页面获取的文本与SP不符。\n现在拿到的是:{view_ls}")
                 self.shoot()
                 sleep(5)
-                if ['紧急停止', '若需恢复工作', '请解除急停状态'] == view_ls:
-                    break
+                if len(interset(['紧急停止', '若需恢复工作', '请解除急停状态'], view_ls)) >= 2:
+                    logger.debug(f"机器人已经急停，退出脚本。")
+                    exit(-101)
                 elif self.random_trigger(n=3, process='检查是否进入其他页面'):  # 有时候只是卡一下界面,并不需要一直检查是不是发生了异常.
                     self.other_situation()
             elif '等待任务中' in view_ls:
