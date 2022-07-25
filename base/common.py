@@ -323,14 +323,30 @@ def interset(a, b):
     return set(a) & set(b)
 
 
-def len_diff(a, b):
-    # 两个序列的差集长度.
+def len_same(a, b):
+    # 两个序列的交集长度.
     return len(interset(a, b))
 
 
-def len_same(a, b):
-    # 两个序列的相同值.
-    return 1
+def len_diff(a, b):
+    # 两个序列差值集合长度，先后顺序有点关系。
+    if len(a) >= len(b):
+        set1 = set(a)
+        set2 = set(b)
+    else:
+        set1 = set(b)
+        set2 = set(a)
+    return len(set1 - set2)
+
+
+def text_in_list(text="", ls=''):
+    # 某个文本是否在序列中。
+    try:
+        if text in ''.join(ls):
+            return 1
+        return 0
+    except:
+        logger.warning(f"文本[{text}]是否存在于序列[{ls}]中检查出错，请检查输入的参数。")
 
 
 def app_screenshot(device='', file_name=''):

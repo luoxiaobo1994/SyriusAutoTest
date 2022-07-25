@@ -868,10 +868,9 @@ class SpeedPicker:
                 self.wait_moment("前往")
             elif any_one(self.get_config()['bind_text'], view_ls):
                 self.bind_container()
-            elif len(interset(view_ls, use_text)) > 4 and '编码' in view_ls:  # 储位,商品名称/编码,数量,x
-                # logger.debug("走拣货流程.")
-                # 拿到这个，说明在拣货页面。需要根据几种情况去进行处理操作。
-                if not target_location.startswith('A0'):
+            elif len_diff(view_ls, use_text) > 4 and len_same(self.get_config()['picking_text'], view_ls) > 2:
+                # 进入拣货判断逻辑：1.界面文本有非SP特征文本至少4个。2.界面文本包含至少包含2个拣货流程的特定文本。
+                if not target_location.startswith('A0'):  # 移动中的目标点。
                     target_location = ''
                 self.picking(target=target_location)  # 封装成函数，单独处理。
             elif '单据' in view_ls:  #
