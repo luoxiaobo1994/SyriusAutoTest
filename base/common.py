@@ -349,6 +349,11 @@ def text_in_list(text="", ls=''):
         logger.warning(f"文本[{text}]是否存在于序列[{ls}]中检查出错，请检查输入的参数。")
 
 
+def el_index(value, ls):
+    # 某个元素在列表里的索引。index就填写+1，-1这样的对应关系。
+    return ls.index(value)
+
+
 def app_screenshot(device='', file_name=''):
     if not get_devices():
         logger.warning("当前电脑没有连接任何一个Android设备,无法进行截屏操作.请检查设备连接情况.")

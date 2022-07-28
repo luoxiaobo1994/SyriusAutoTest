@@ -653,16 +653,16 @@ class SpeedPicker:
         # self.check_time()  # 放在这里检查一下,页面是否正常退出了.
         self.press_ok()  # 和倒计时功能不能共存,会主动点掉. 当然,要是倒计时点不掉,也能发现新BUG.
         logger.info("当前商品拣货完成，检查是否有推荐点。")
-        count = 6
-        while count > 0:
+        start = time.time()
+        while time.time() - start < 6:
             try:
                 before = self.get_text(wait=1, raise_except=True)  # 先抓一次前文本.
             except:
                 continue
-            if "请到此处附近" in before:
+            if text_in_list('附近', before):  # 带有附近的文本，在当前文本里。
                 logger.debug(f"拿到推荐点位了:{before}")
                 try:
-                    if before[-1] == '请到此处附近':
+                    if '附近' in before[-1]:
                         logger.debug(f"这次脚本抓的文本里，没有包含库位信息。再抓一次看看:{self.get_text()}")
                         break
                     logger.info(f"抓取到推荐点位--->{before[before.index('请到此处附近') + 1]}")
@@ -682,8 +682,6 @@ class SpeedPicker:
                 logger.info("当前拣货点，仍有商品需要拣货。")
                 self.picking()  # 既然还要拣货,就直接捡.
                 break
-            else:
-                count -= 1
 
     def bind_container(self):
         # 绑定载物箱。
@@ -751,7 +749,7 @@ class SpeedPicker:
         # 开另一个线程来检测是否发生异常.持续检测的线程,就不要经常刷新日志了.
         view_text = self.get_text()  # 可能会空.
         view_content = self.driver.app_elements_content_desc(self.view)
-        if len({'紧急停止', '若需恢复工作', '请解除急停状态'} & set(view_text)) >= 2:
+        if len_same(self.get_config()['estop_text'], set(view_text)) >= 2:
             # 急停的情况.
             logger.info("机器人被按下急停按钮。停止脚本。")
             exit(-104)
@@ -782,8 +780,7 @@ class SpeedPicker:
             exit(-404)
         else:
             tmp_text = self.get_text(wait=10)
-            if {'等待任务中', '绑定载物箱', '前往', '请扫描载物箱码或任意格口码', '已取下', '拣货异常', '拣货中', '异常上报', '输入', '暂停', '恢复'} & set(
-                    tmp_text):
+            if len_same(self.get_config()['sp_text'], set(tmp_text)):
                 return
             else:
                 logger.info("发生了一些奇怪的异常，可能需要你自己去检查一下了。")
@@ -844,7 +841,7 @@ class SpeedPicker:
                 logger.warning(f"页面获取的文本与SP不符。\n现在拿到的是:{view_ls}")
                 self.shoot()
                 sleep(5)
-                if len(interset(['紧急停止', '若需恢复工作', '请解除急停状态'], view_ls)) >= 2:
+                if len_same(self.get_config()['estop_text'], view_ls) >= 2:
                     logger.debug(f"机器人已经急停，退出脚本。")
                     exit(-101)
                 elif self.random_trigger(n=3, process='检查是否进入其他页面'):  # 有时候只是卡一下界面,并不需要一直检查是不是发生了异常.
