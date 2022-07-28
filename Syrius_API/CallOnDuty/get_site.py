@@ -4,7 +4,7 @@
 
 import requests
 
-base_url = "https://call-on-duty-test.syriusdroids.com/api/sites"
+base_url = "https://callonduty-cn-sqa-test.syriusdroids.com"
 
-res = requests.get(url=base_url)
+res = requests.get(url=base_url + '/api/sites')
 print(res.text)

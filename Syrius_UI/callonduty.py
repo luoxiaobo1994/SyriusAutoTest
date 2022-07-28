@@ -31,7 +31,7 @@ browser = webdriver.Remote("http://localhost:4723/wd/hub", app_data)  # 注意�
 # content = browser.contexts  # 定位H5元素,需要切换contexts
 # browser.switch_to.context()  # 跳转目标
 driver = TestKey(browser)
-site = 'PwQnQb69'
+site = 'Def2ixiR'  # 旧的'PwQnQb69'
 print('*' * 30 + "注意设置平板语言模式,选择正确的交互文本" + '*' * 30)
 
 count = 0

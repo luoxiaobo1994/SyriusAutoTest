@@ -4,8 +4,8 @@
 
 import requests
 
-base_url = "https://call-on-duty-test.syriusdroids.com"
-add_url = "/api/site/PwQnQb69/portal/addRobots"  # 包含了场地的UUID链接
+base_url = "http://k8s-cnpingressalbsqat-7d4bd42867-979712821.cn-northwest-1.elb.amazonaws.com.cn"  # 这是测试环境的，注意切换。
+add_url = "/api/site/Def2ixiR/portal/addRobots"  # 包含了场地的UUID链接
 
 robot_uuids = {
     "robot_uuids": [
@@ -16,10 +16,12 @@ robot_uuids = {
         # "ee015dec7ba43fb9bac9d46a0d0a7d3e"
         # "14d4b4ab96213fe994039bfd8306e1e1",
         # "8cdde7fe317639fb9b0ec78eebcaa3b4",
-        # "ab4ee194d3443577b73abfee115bc9dd"
-        # "08fba44d3e703788b5642c140b075a9b"
-        # "3b2a6326b9e7386fb2e0c5fec31b03e1"
-        ""
+        # "ab4ee194d3443577b73abfee115bc9dd",
+        # "08fba44d3e703788b5642c140b075a9b",
+        # "3b2a6326b9e7386fb2e0c5fec31b03e1",
+        "5e43f79646124615a1da7a821007a686",
+        "bbe9859d173087b0f25e2499c50e8759",
+        # "0906cebde68330719a48f605c1215bde"
     ]
 }
 
