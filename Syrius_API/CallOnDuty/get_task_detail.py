@@ -6,7 +6,7 @@ import json
 
 import requests
 
-url = 'https://call-on-duty-test.syriusdroids.com/api/site/PwQnQb69/portal/taskDetail'
+url = 'https://call-on-duty-test.syriusdroids.com/api/site/Def2ixiR/portal/taskDetail'
 
 task_uuid = {'task_uuid': 'Ftb5E7Ck'}  # 必要的参数
 count = 0

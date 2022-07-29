@@ -7,32 +7,35 @@ import random
 import requests
 
 from base.common import read_yaml
+from call_cfg import cfg
 
-point = list(read_yaml('locations.yaml', key='Locations').keys())
+base_url = cfg()['url']  # 这是测试环境的，注意切换。
+file = 'locations.yaml'
+
+point = list(read_yaml(file=file, key='Locations').keys())[1:]  # 去除待命点
 
 
-def create_task(point_num=3, site_name='Def2ixiR', repeat=99):
-    base_url = "https://callonduty-cn-sqa-test.syriusdroids.com"
-    create_url = f'/api/site/{site_name}/portal/createTask'  # 这里填入场地ID
-
+def create_task():
+    create_url = f'/api/site/{cfg()["site"]}/portal/createTask'  # 这里填入场地ID
+    repeat_times = random.randint(cfg()["repeat_min"], cfg()["repeat_max"])
     task = {
-        "points": points_data(point_num),
-        "repeat_times": repeat,  # 任务重复次数
-        "task_name": f"{repeat}次重复任务"
+        "points": points_data(random.randint(cfg()["task_min"], cfg()["task_max"])),
+        "repeat_times": repeat_times,  # 任务重复次数
+        "task_name": f"{repeat_times}次重复任务"
     }
 
     res = requests.request('post', url=base_url + create_url, json=task)
     print(f"创建任务结果：{res.text}")
-    # print(f"创建任务结果：{task}")
+    print(f"创建的任务详情：{task}")
 
 
-def point_task(tips='', timeout=0, point_alias='other name'):
+def point_task(tips='', timeout=0):
     # 生成一个任务点信息，最小颗粒。
     return {
         "point_name": random.choice(point),
-        "tips": tips if tips else "自动化任务，不要点击。不要遮挡机器人。任务第1个点",
+        "tips": random.choice(cfg()['tips']),
         "timeout": timeout,
-        "point_alias": point_alias  # 别名是必填项
+        "point_alias": random.choice(cfg()["other_name"])  # 别名是必填项
     }
 
 
@@ -47,5 +50,3 @@ def points_data(num):
 if __name__ == '__main__':
     create_task()
     # print(point)
-    # print(point_task(tips='xxx'))
-    # ls = []

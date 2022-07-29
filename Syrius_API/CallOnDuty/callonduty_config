@@ -1,0 +1,31 @@
+site: Def2ixiR
+url: https://callonduty-cn-sqa-test.syriusdroids.com
+task_repeat: True  # 是否循环执行
+no_repeat_num: 1  # 不循环执行时的次数
+repeat_min: 1  # 最小循环次数
+repeat_max: 3 # 最大循环次数
+task_min: 1  # 最小任务点
+task_max: 10 # 最大任务点
+other_name: # 任务点别名
+  - 这是一个其他名称
+  - other name01
+  - これは何ですか
+  - 다른 이름들
+  - 123456789
+  - ~!#4 ^$%#asd 哈哈이름です
+tips: # 任务点的提示信息。
+  - 自动化任务，请勿点击。
+  - Hello,how are you?
+  - 안녕하세요
+  - こんにちは
+  - Please get me a bottle of water, thank you.
+  - 물 한병 주세요. 감사합니다.
+  - ボトル入り飲料水をください、ありがとうございます。
+  - 何してるの？
+  - 你在干什么？
+  - 뭐하세요?
+  - what are you doing?
+  - 123456789123454679871321321545675464112232213214546545613213
+  - 9999999999999999999999999999999999999999
+  - 66666666666666           66666666666
+  - 略略略略略略略略略略略略略略略略略略略略略略略略略略略略略略略略略略略略

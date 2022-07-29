@@ -5,11 +5,12 @@
 
 import requests
 
-# base_url = "https://call-on-duty-kr.syriusdroids.com"  # 基础网址
-base_url = "https://callonduty-cn-sqa-test.syriusdroids.com"  # 基础网址
+from call_cfg import cfg
+
+base_url = cfg()['url']  # 这是测试环境的，注意切换。
 create_site = '/api/site/create'  # 添加场地的api
 params = {
-    'site_name': 'SQA_test'
+    'site_name': 'SQA2_test'
 }
 
 res = requests.request("post", url=base_url + create_site, json=params)

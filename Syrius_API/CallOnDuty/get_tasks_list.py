@@ -5,7 +5,7 @@
 import requests
 
 base_url = "https://call-on-duty-test.syriusdroids.com"
-site_uuid = '/api/site/PwQnQb69/portal/tasks'
+site_uuid = '/api/site/Def2ixiR/portal/tasks'
 
 res = requests.get(url=base_url + site_uuid)
 print(res.text)

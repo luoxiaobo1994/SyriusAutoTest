@@ -6,7 +6,7 @@ import time
 from appium import webdriver
 from selenium.webdriver.common.by import By
 
-from Syrius_API.CallOnDuty.create_task import create_task
+# from Syrius_API.CallOnDuty.create_task import create_task
 from base.base_page import TestKey
 from utils.log import Logger
 
@@ -19,7 +19,7 @@ notask_btn = (By.XPATH, '//android.widget.Button[@text="退出"]')
 app_data = {
     "platformName": "Android",
     "platformVersion": "10",  # 注意调试平板的安卓版本
-    "udid": "10.2.13.221:5555",
+    "udid": "10.2.10.9:5555",
     "deviceName": "k11",  # 注意调试平板的IP
     "apppackage": "com.syriusrobotics.platform.launcher",
     "appActivity": "com.syriusrobotics.platform.launcher/com.syriusrobotics.platform.jarvis.MainFlutterActivity",
@@ -27,7 +27,7 @@ app_data = {
     "unicodeKeyboard": False,
     "resetKeyboard": False
 }
-browser = webdriver.Remote("http://localhost:4723/wd/hub", app_data)  # 注意修改这个端口号
+browser = webdriver.Remote("http://localhost:4725/wd/hub", app_data)  # 注意修改这个端口号
 # content = browser.contexts  # 定位H5元素,需要切换contexts
 # browser.switch_to.context()  # 跳转目标
 driver = TestKey(browser)
@@ -41,14 +41,15 @@ while True:
     try:
         if driver.find_element(notask_btn, wait=1):  # 没有任务，就发一个任务做。
             wait_time = speed + 5  # 这里要单独多点时间
-            create_task()
-            logger.info(f"无任务，创建了场地{site}的99次循环任务。{wait_time}s后开始执行CallOnDuty.如果机器人不移动，注意检查场地信息。")
+            # create_task()
+            # logger.info(f"无任务，创建了场地{site}的99次循环任务。{wait_time}s后开始执行CallOnDuty.如果机器人不移动，注意检查场地信息。")
             time.sleep(wait_time)
     except:
         pass
     try:
         if driver.find_element(continue_btn, wait=speed + 0.5):
             time.sleep(speed)  # 给程序预留一个播报时间.
+            logger.debug(f"当前页面文本：{driver.app_elements_text((By.XPATH, '//android.view.View'))}")
             driver.click_element(continue_btn, i=False)
             count += 1
             logger.info(f"当前循环，到达第{count}个目标点位")
