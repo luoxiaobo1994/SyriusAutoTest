@@ -7,7 +7,7 @@ import requests
 from call_cfg import cfg
 
 base_url = cfg()['url']  # 这是测试环境的，注意切换。
-add_url = f"/api/site/{cfg()['site']}/portal/addRobots"  # 包含了场地的UUID链接
+add_url = f"/api/site/Def2ixiR/portal/addRobots"  # 包含了场地的UUID链接
 
 robot_uuids = {
     "robot_uuids": [
@@ -21,9 +21,9 @@ robot_uuids = {
         # "ab4ee194d3443577b73abfee115bc9dd",
         # "08fba44d3e703788b5642c140b075a9b",
         # "3b2a6326b9e7386fb2e0c5fec31b03e1",
-        # "5e43f79646124615a1da7a821007a686",
-        # "bbe9859d173087b0f25e2499c50e8759",
-        "3b84f5ab260cc7353587df64c8aa8c5e"
+        "5e43f79646124615a1da7a821007a686",
+        "bbe9859d173087b0f25e2499c50e8759",
+        # "3b84f5ab260cc7353587df64c8aa8c5e"
     ]
 }
 

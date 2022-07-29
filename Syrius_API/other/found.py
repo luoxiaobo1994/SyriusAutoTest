@@ -12,7 +12,7 @@ import requests
 from base.common import get_date
 from utils.file_reader import YamlReader
 
-data = YamlReader('../../config/found_data.yaml').data  # 需要爬取的数据
+data = YamlReader('found_data.yaml').data  # 需要爬取的数据
 space = chr(12288)
 total = 0  # 当日收益
 result = []  # 结果集合
@@ -40,10 +40,10 @@ def get_found(code='012414', money='0'):
     # print(response.text)
     res = re.findall(r'jsonpgz\((.*?)\);', response.text)[0]  # 获取到字符串的字典。
     res = eval(res)  # 转化为字典。
-    amplitude = 0.9 if float(res['gszzl']) > 0 else 1.1  # 跌了多跌一点，涨了少涨一点。
+    amplitude = 0.95 if float(res['gszzl']) > 0 else 1.05  # 跌了多跌一点，涨了少涨一点。
     income = float(res['gszzl']) * float(money) / 100 * amplitude
     total += income  # 本基金收益
-    name = re.sub(r'[A-Za_z() ]', '', res['name']).replace('发起式','')
+    name = re.sub(r'[A-Za_z() ]', '', res['name']).replace('发起式', '')
     found_data = f"{code:{space}<10}{name:{space}<15}{res['gszzl']:{space}<10}{income:{space}<10.2f}"
     result.append(found_data)
 
