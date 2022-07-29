@@ -1,0 +1,15 @@
+- name: 获取当前环境的场地信息
+  request:
+    method: get
+    url: https://callonduty-cn-sqa-test.syriusdroids.com/api/sites
+    data: null
+    headers: null
+  validate: null
+
+- name: 查询场地当前任务
+  request:
+    method: get
+    url:
+    data:
+    headers: null
+  validate: null

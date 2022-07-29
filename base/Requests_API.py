@@ -6,26 +6,14 @@
 import requests
 
 
-def requests_api(url, method='get', headers=None, data=None, json=None, cookies=None):
-    if method.lower() == 'get':
-        res = requests.get(url, headers=headers, data=data, json=json, cookies=cookies)
-        code = res.status_code
-    elif method.lower() == 'post':
-        res = requests.post(url, headers=headers, data=data, json=json, cookies=cookies)
-        code = res.status_code
-    else:
-        print(f"请求方法有误,请输入get或post.当前的输入:{method}")
-        return
-    body = res.text
-    result = {}
-    result["code"] = code
-    result["body"] = body
-    return result
+class RequestUtil:
+    sess = requests.session()
+
+    def all_request(self, method, url, **kwargs):
+        res = RequestUtil.sess.request(method, url, **kwargs)  # 请求方法要在url前面，还真是坑。
+        return res
 
 
-def get(url, **kwargs):
-    return requests_api(url, method='get', **kwargs)
-
-
-def post(url, **kwargs):
-    return requests_api(url, method='post', **kwargs)
+if __name__ == '__main__':
+    res = RequestUtil().all_request(url="https://callonduty-cn-sqa-test.syriusdroids.com/api/sites", method='GET')
+    print(res.json())
