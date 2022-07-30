@@ -1,5 +1,8 @@
 ### Example user template template
 ### Example user template
+IDLE.py
+config/yaml_demo.yaml
+config/readyml_demo.py
 
 # IntelliJ project files
 .idea
@@ -39,9 +42,7 @@ __pycache__/
 *$py.class
 
 # C extensions
-IDLE.py
-config/yaml_demo.yaml
-config/readyml_demo.py
+*.so
 
 # Distribution / packaging
 .Python
@@ -174,3 +175,7 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+!/IDLE.py
+!/config/yaml_demo.yaml
+!/config/yaml_demo.yaml
+!/config/readyml_demo.py
