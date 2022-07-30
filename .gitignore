@@ -1,8 +1,5 @@
 ### Example user template template
 ### Example user template
-IDLE.py
-config/yaml_demo.yaml
-config/readyml_demo.py
 
 # IntelliJ project files
 .idea
@@ -176,6 +173,5 @@ dmypy.json
 cython_debug/
 
 !/IDLE.py
-!/config/yaml_demo.yaml
 !/config/yaml_demo.yaml
 !/config/readyml_demo.py
