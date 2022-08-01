@@ -5,6 +5,7 @@
 """
 selenium的二次封装,优化第一版
 """
+
 from time import sleep
 
 from appium.webdriver.common.touch_action import TouchAction

@@ -3,13 +3,9 @@
 # TIME: 2022/8/1 16:38
 # Desc: pytest执行demo
 
-import os
-import sys
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(BASE_DIR)
 
 import pytest
+
 from base.common import read_yaml
 
 
