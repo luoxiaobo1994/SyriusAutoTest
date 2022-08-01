@@ -9,7 +9,7 @@ from multiprocessing.dummy import Pool
 
 import requests
 
-from base.common import get_date
+from base.common import get_time
 from utils.file_reader import YamlReader
 
 data = YamlReader('found_data.yaml').data  # 需要爬取的数据
@@ -62,7 +62,7 @@ def main():
             print(f"\033[1;36m{i}\033[0m")
         else:
             print(f"\033[1;31m{i}\033[0m")
-    print(f"\n{get_date()} 预计收益：{total:.2f}元。")
+    print(f"\n{get_time()} 预计收益：{total:.2f}元。")
 
 
 if __name__ == '__main__':
