@@ -1,15 +1,14 @@
-- name: 获取当前环境的场地信息
-  request:
+base_url: "https://callonduty-cn-sqa-test.syriusdroids.com"
+get_site:
+  - name: 获取当前环境的场地信息
     method: get
-    url: https://callonduty-cn-sqa-test.syriusdroids.com/api/sites
-    data: null
-    headers: null
-  validate: null
+    add_url: '/api/sites'
 
-- name: 查询场地当前任务
-  request:
+  - name: 获取当前环境的场地信息 - 请求方法错误post
+    method: post
+    add_url: '/api/sites'
+
+get_task:
+  - name: 获取当前场地的任务列表
     method: get
-    url:
-    data:
-    headers: null
-  validate: null
+    add_url: '/api/site/{}/portal/tasks'  # 花括号里
