@@ -3,10 +3,13 @@
 # TIME: 2022/8/1 16:38
 # Desc: pytest执行demo
 
-import os
-import pytest
+import os, sys
 
+# sys.path.append(r'\Users\luoxiaobo\PycharmProjects\SyriusAutoTest\base')
+import pytest
 from base.common import read_yaml
+
+print(sys.path)
 
 
 class Test_Demo():

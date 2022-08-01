@@ -5,9 +5,18 @@
 
 
 import pytest
+from base.Requests_API import RequestUtil
+from base.common import read_yaml
 
 
-class CallOnDuty:
+class Test_CallOnDuty:
 
-    def test_get_site(self):
-        pass
+    @pytest.mark.parametrize("caseinfo", read_yaml('test_case.yaml'))
+    def test_get_site(self, caseinfo):
+        print(caseinfo)
+        # RequestUtil().all_request(caseinfo)
+        # assert 1
+
+
+if __name__ == '__main__':
+    pass

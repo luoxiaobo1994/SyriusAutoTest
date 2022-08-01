@@ -2,6 +2,9 @@
 # Author:Luoxiaobo
 # Time: 2021/7/6 23:09
 
-from base.common import read_yaml
+import time
+import sys
 
-print(read_yaml(file='OtherCode/study_code/pypytest2/case_demo.yaml'))
+
+for i in sys.path:
+    print(i)
