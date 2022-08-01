@@ -1,6 +1,11 @@
 # -*- coding:utf-8 -*-
 # Author: luoxiaobo
 # TIME: 2021-07-28 18:49
+import os
+import sys
+
+path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+sys.path.append(path)
 import pytest
 
 

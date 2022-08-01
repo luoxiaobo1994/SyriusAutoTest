@@ -1,0 +1,38 @@
+login:
+  - name: 测试登录成功用例1-admin用户
+    method: post
+    data:
+      username: admin001
+      password: admin123
+    url: 'https:///www.baidu.com/login'
+  - name: 测试登录成功用例2-一般用户
+    method: post
+    data:
+      username: user_001
+      password: '12345asdq9@1'
+    url: 'https:///www.baidu.com/login'
+login_err:
+  - name: 测试登录失败用例1-用户名为空
+    method: post
+    data:
+      username: admin001
+      password: admin123
+    url: 'https:///www.baidu.com/login'
+  - name: 测试登录失败用例2-密码为空
+    method: post
+    data:
+      username: user_001
+      password: '12345asdq9@1'
+    url: 'https:///www.baidu.com/login'
+  - name: 测试登录失败用例3-密码错误
+    method: post
+    data:
+      username: user_001
+      password: '12345asdq9@1'
+    url: 'https:///www.baidu.com/login'
+  - name: 测试登录失败用例4-账户错误
+    method: post
+    data:
+      username: user_001
+      password: '12345asdq9@1'
+    url: 'https:///www.baidu.com/login'

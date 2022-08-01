@@ -2,22 +2,6 @@
 # Author:Luoxiaobo
 # Time: 2021/7/6 23:09
 
-import time
+from base.common import read_yaml
 
-
-def xx():
-    global x
-    x = 5
-
-
-def tt(timeout=0):
-    start = time.time()
-    while time.time() - start < timeout:
-        pass
-    else:
-        print(f"结束了:{x}")
-
-
-print(__file__)
-
-'xx23'
+print(read_yaml(file='OtherCode/study_code/pypytest2/case_demo.yaml'))
