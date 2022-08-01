@@ -1,4 +1,5 @@
-base_url: "https://callonduty-cn-sqa-test.syriusdroids.com"
+base_url: &baseurl
+            "https://callonduty-cn-sqa-test.syriusdroids.com"
 get_site:
   - name: 获取当前环境的场地信息
     method: get
@@ -11,4 +12,4 @@ get_site:
 get_task:
   - name: 获取当前场地的任务列表
     method: get
-    add_url: '/api/site/{}/portal/tasks'  # 花括号里
+    add_url: '/api/site/{}/portal/tasks'  # 花括号里要自己再补一下场地。
