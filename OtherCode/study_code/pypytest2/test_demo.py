@@ -3,7 +3,6 @@
 # TIME: 2022/8/1 16:38
 # Desc: pytest执行demo
 
-
 import pytest
 
 from base.common import read_yaml
