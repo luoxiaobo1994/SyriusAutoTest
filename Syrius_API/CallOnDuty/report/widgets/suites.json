@@ -1,0 +1,1 @@
+{"total":2,"items":[{"uid":"134319d577a3f4b60010b64985cb0bbe","name":"Syrius_API.CallOnDuty","statistic":{"failed":0,"broken":0,"skipped":0,"passed":11,"unknown":0,"total":11}},{"uid":"9bf81d366b12205b2e935f6fadd7d0cb","name":"OtherCode.study_code.pypytest2","statistic":{"failed":0,"broken":0,"skipped":0,"passed":6,"unknown":0,"total":6}}]}

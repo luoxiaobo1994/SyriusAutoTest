@@ -1,0 +1,1 @@
+DEBUG    urllib3.connectionpool:connectionpool.py:456 https://callonduty-cn-sqa-test.syriusdroids.com:443 "GET /api/site/1234/portal/tasks HTTP/1.1" 200 36
