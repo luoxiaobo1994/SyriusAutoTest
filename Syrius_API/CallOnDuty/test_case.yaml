@@ -1,15 +1,22 @@
-base_url: &baseurl
-            "https://callonduty-cn-sqa-test.syriusdroids.com"
+site: Def2ixiR
 get_site:
   - name: 获取当前环境的场地信息
     method: get
-    add_url: '/api/sites'
+    url: 'https://callonduty-cn-sqa-test.syriusdroids.com/api/sites'
 
+get_site_err:
   - name: 获取当前环境的场地信息 - 请求方法错误post
     method: post
-    add_url: '/api/sites'
+    url: 'https://callonduty-cn-sqa-test.syriusdroids.com/api/sites'
 
 get_task:
   - name: 获取当前场地的任务列表
     method: get
-    add_url: '/api/site/{}/portal/tasks'  # 花括号里要自己再补一下场地。
+    url: 'https://callonduty-cn-sqa-test.syriusdroids.com/api/site/{}/portal/tasks'  # 花括号里要自己再补一下场地。
+get_task_err:
+  - name: 获取不存在的场地的任务列表
+    method: get
+    url: 'https://callonduty-cn-sqa-test.syriusdroids.com/api/site/1234/portal/tasks'
+  - name: '获取不场地:请求方式错误-post'
+    method: get
+    url: 'https://callonduty-cn-sqa-test.syriusdroids.com/api/site/{}/portal/tasks'
