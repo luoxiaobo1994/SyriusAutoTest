@@ -8,9 +8,15 @@ import pytest
 
 from base.Requests_API import RequestUtil
 from base.common import read_yaml
+from utils.log2 import Logger
+
+logger = Logger(file='callonduty.txt').get_logger()
 
 
 class Test_CallOnDuty:
+
+    def setup_class(self):
+        logger.debug('前置操作')
 
     @allure.feature('获取环境下的场地信息')
     @allure.title("测试用例：获取场地")

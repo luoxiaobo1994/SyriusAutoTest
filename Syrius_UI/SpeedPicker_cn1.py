@@ -12,7 +12,9 @@ from GGR import GGR
 from Syrius_API.flagship.res_notify import send_order
 from base.common import *
 from utils.file_reader import YamlReader
-from utils.log import logger
+from utils.log2 import Logger
+
+logger = Logger(file=__file__.split('\\')[-1].replace('.py', '.txt')).get_logger()
 
 
 class SpeedPicker:

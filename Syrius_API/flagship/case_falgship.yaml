@@ -1,0 +1,67 @@
+get_token: # 获取Token正例
+  - name: 获取SQA账户Token-正例
+    headers:
+      Content-Type: 'application/json'
+    method: get
+    url: 'https://flagship-sqa-test.flexgalaxy.com/authenication/expansion/tenant'
+    data:
+      "authFlow": "AK_SK_AUTH_FLOW"
+        "attributes":
+          "clientKey": "4otid7tu3lfu05p118ia7hvknq"
+          "clientSecret": "1ac4pmokjnuu4kc8rjq5ajcm6bcol1jls2n3cnqh84ssknqvulgi"
+    res_code: 200
+get_token_err: # 获取Token反例
+  - name: '获取SQA账户Token-反例1:请求方式错误post'
+    headers:
+      Content-Type: 'application/json'
+    method: post
+    url: 'https://flagship-sqa-test.flexgalaxy.com/authenication/expansion/tenant'
+    data:
+      "authFlow": "AK_SK_AUTH_FLOW"
+        "attributes":
+          "clientKey": "4otid7tu3lfu05p118ia7hvknq"
+          "clientSecret": "1ac4pmokjnuu4kc8rjq5ajcm6bcol1jls2n3cnqh84ssknqvulgi"
+    res_code: 404
+  - name: '获取SQA账户Token-反例2:无必要参数authFlow'
+    headers:
+      Content-Type: 'application/json'
+    method: get
+    url: 'https://flagship-sqa-test.flexgalaxy.com/authenication/expansion/tenant'
+    data:
+      "attributes":
+        "clientKey": "4otid7tu3lfu05p118ia7hvknq"
+        "clientSecret": "1ac4pmokjnuu4kc8rjq5ajcm6bcol1jls2n3cnqh84ssknqvulgi"
+    res_code: 403
+  - name: '获取SQA账户Token-反例3:参数attributes错误'
+    headers:
+      Content-Type: 'application/json'
+    method: get
+    url: 'https://flagship-sqa-test.flexgalaxy.com/authenication/expansion/tenant'
+    data:
+      "authFlow": "AK_SK_AUTH_FLOW"
+        "attributes":
+          "clientKey": "1234aa56789"
+          "clientSecret": "1ac4pmokjn5644663cnqh84ssknqvulgi"
+    res_code: 403
+  - name: '获取SQA账户Token-反例4:请求头缺少Content-Type'
+    headers:
+      Content-Type: 'application/json'
+    method: post
+    url: 'https://flagship-sqa-test.flexgalaxy.com/authenication/expansion/tenant'
+    data:
+      "authFlow": "AK_SK_AUTH_FLOW"
+        "attributes":
+          "clientKey": "4otid7tu3lfu05p118ia7hvknq"
+          "clientSecret": "1ac4pmokjnuu4kc8rjq5ajcm6bcol1jls2n3cnqh84ssknqvulgi"
+    res_code: 404
+
+send_order: # 下发订单
+  - name: '下发订单:参数attributes错误'
+    method: get
+    url: 'https://flagship-sqa-test.flexgalaxy.com/authenication/expansion/tenant'
+    data:
+      "authFlow": "AK_SK_AUTH_FLOW"
+        "attributes":
+          "clientKey": "1234aa56789"
+          "clientSecret": "1ac4pmokjn5644663cnqh84ssknqvulgi"
+    res_code: 403
