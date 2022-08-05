@@ -28,6 +28,7 @@ class SpeedPicker:
         self.notify()  # 刷新一些提醒，避免遗漏配置。
         self.non_count = 0  # 界面抓到异常信息的计数器.
         self.siteid = 202  # 默认是备用场地。
+        self.start_time = time.time()  # 一个初始的计时器。
         # self.config = self.get_cnfig()  # 流程开始之前读取一次配置就行了,不用每次都读取. 每次都读一下,应对实时修改
 
     def init_driver(self):
@@ -430,7 +431,6 @@ class SpeedPicker:
         # 持续去抓某个文本，直到这个文本不再这个页面了。说明流程变了。
         # 这里可能是影响效率的地方，想办法怎么优化一下。
         logger.info(f"持续检查文本[{text}]是否还在当前页面。")
-        start = time.time()
         count = [0]
         err = 20
         err_num = copy.copy(err)  # err 一直在自减，这里要拷贝一下。
@@ -458,6 +458,7 @@ class SpeedPicker:
                             # if without text display,break loop
                             if self.driver.element_display((By.XPATH, f'//*[@text="{without}"]')):
                                 logger.debug(f"文本[{without}]刷新。 停止检查[{text}]。")
+                                self.start_time = time.time()  # 重置计时器
                                 return
 
                         elif self.islosepos():
@@ -465,15 +466,17 @@ class SpeedPicker:
                             self.shoot()
                             return
                         sleep(1)  # 等待时间不能太长。
-                        minutes = (time.time() - start) // 60
+                        minutes = (time.time() - self.start_time) // 60
                         if minutes % 5 == 0 and minutes not in count:  # 每5分钟上报一次.
                             count.append(minutes)
                             logger.warning(
                                 f"当前页面超过{minutes}分钟没有变化了，请检查是否发生了什么异常情况。")
                             self.err_notify()
+                            self.start_time = time.time()  # 重置计时器
                             return  # 出问题了，也跳出流程，等着回来吧。
 
                     else:
+                        self.start_time = time.time()  # 重置计时器
                         return  # 抓不到重复的文本了。跳出循环。不能是break,会执行后面的if else
                 else:
                     if self.random_trigger(n=60, process='抓文本异常捕捉'):
