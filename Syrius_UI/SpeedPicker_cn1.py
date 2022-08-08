@@ -42,7 +42,7 @@ class SpeedPicker:
 
     def notify(self):
         """ 脚本启动的一些注意事项提醒 """
-        logger.debug("注意事项：1.SpeedPicker请开启快速拣货功能。\n2.注意平板连接到此电脑。\n3.注意先启动Appium服务。")
+        logger.debug("注意事项：\n1.SpeedPicker请开启快速拣货功能。\n2.注意平板连接到此电脑。\n3.注意先启动Appium服务。")
 
     def device_num(self):
         num = int(__file__.split('\\')[-1].split('.')[0].split('cn')[-1]) - 1  # 序号从0开始
@@ -635,7 +635,7 @@ class SpeedPicker:
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
             logger.debug(f"通过点击[完成]，完成拣货。")
             # 页面检查函数，页面名称是拣货完成，有单独判断。这里名称不要随便改。 会校验：是否开启了快速拣货。
-            self.page_check(timeout=5, pagename='拣货完成', is_shoot=True, text='完成', new_text='前往',
+            self.page_check(timeout=6, pagename='拣货完成', is_shoot=True, text='完成', new_text='前往',
                             new_text2='输入')  # 这里比较容易卡. 在这里检查一下.
         else:
             # 拣货情形3,都捡完了,只是没点完成.
