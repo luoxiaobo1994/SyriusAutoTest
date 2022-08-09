@@ -42,7 +42,7 @@ class SpeedPicker:
         return browser
 
     def reset_timer(self):
-        self.start_time = 0  # 一个初始的计时器。
+        self.start_time = time.time()  # 一个初始的计时器。
         self.time_count = [0]
 
     def notify(self):
