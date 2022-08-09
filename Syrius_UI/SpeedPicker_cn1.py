@@ -945,13 +945,20 @@ class SpeedPicker:
 
 if __name__ == '__main__':
     while True:
+        sp = SpeedPicker()
         try:
-            sp = SpeedPicker()
             sp.main()
             # print(sp.get_filename())
         except KeyboardInterrupt:
             logger.info("手动停止脚本。")
             reset_keyboard(SpeedPicker().device_num()[0])  # 重置键盘.
+        except TypeError:
+            logger.debug(f"抓取到的类型异常，可能是抓空了，或者界面异常了。检查一下截图。")
+            if sp.err_notify():  # 检查是否发生了一些异常。
+                exit(-100)
+            app_screenshot()  # 不管如何，截图记录一下当时的情况。
+            sleep(3)  # 短暂等待一下，再继续跑。
+            continue
         except Exception as e:
             timeout = 10
             logger.error(
