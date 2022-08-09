@@ -29,7 +29,7 @@ class SpeedPicker:
         self.non_count = 0  # 界面抓到异常信息的计数器.
         self.siteid = 202  # 默认是备用场地。
         self.start_time = time.time()  # 一个初始的计时器。
-        self.time_count = [0]
+        self.time_count = [0]  # 检查文本时的时间计时列表。
         # self.config = self.get_cnfig()  # 流程开始之前读取一次配置就行了,不用每次都读取. 每次都读一下,应对实时修改
 
     def init_driver(self):
@@ -40,6 +40,10 @@ class SpeedPicker:
                                 port=appium_port)  # 自己获取安卓版本
         logger.info(f"脚本当前连接的平板:{device}，安卓版本：{get_android_version(device)}，Appium端口:{appium_port}")
         return browser
+
+    def reset_timer(self):
+        self.start_time = 0  # 一个初始的计时器。
+        self.time_count = [0]
 
     def notify(self):
         """ 脚本启动的一些注意事项提醒 """
@@ -459,14 +463,12 @@ class SpeedPicker:
                             # if without text display,break loop
                             if self.driver.element_display((By.XPATH, f'//*[@text="{without}"]')):
                                 logger.debug(f"文本[{without}]刷新。 停止检查[{text}]。")
-                                self.start_time = time.time()  # 重置计时器
-                                self.time_count = [0]
+                                self.reset_timer()
                                 return
                         elif self.islosepos():
                             logger.warning("机器人丢失定位。")
                             self.shoot()
-                            self.start_time = time.time()  # 重置计时器
-                            self.time_count = [0]
+                            self.reset_timer()
                             return
                         sleep(1)  # 等待时间不能太长。
                         minutes = (time.time() - self.start_time) // 60
@@ -476,10 +478,8 @@ class SpeedPicker:
                                 f"当前页面超过{minutes}分钟没有变化了，请检查是否发生了什么异常情况。")
                             self.err_notify()
                             return  # 出问题了，也跳出流程，等着回来吧。回来之前，不要重置计时器。
-
                     else:
-                        self.start_time = time.time()  # 重置计时器
-                        self.time_count = [0]
+                        self.reset_timer()
                         return  # 抓不到重复的文本了。跳出循环。不能是break,会执行后面的if else
                 else:
                     if self.random_trigger(n=60, process='抓文本异常捕捉'):
@@ -502,6 +502,8 @@ class SpeedPicker:
             self.shoot()
         else:
             logger.debug(f"持续检查文本，超过{err_num}次，都没有跳出检查函数。检查一下页面吧!当前页面:{self.get_text()}")
+        if self.time_count.__len__() >= 12:
+            logger.warning(f"SpeedPicker超过{self.time_count[-1]}分钟页面无变化，退出脚本，请前往检查一下。")
 
     def page_check(self, timeout=30, pagename='', is_shoot=False, text='', new_text='', new_text2='', is_quit=True):
         # 暂时就这么设计，如果跳转的文本过多，则使用**kwargs，代替多参数。
