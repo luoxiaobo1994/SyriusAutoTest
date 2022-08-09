@@ -29,6 +29,7 @@ class SpeedPicker:
         self.non_count = 0  # 界面抓到异常信息的计数器.
         self.siteid = 202  # 默认是备用场地。
         self.start_time = time.time()  # 一个初始的计时器。
+        self.time_count = [0]
         # self.config = self.get_cnfig()  # 流程开始之前读取一次配置就行了,不用每次都读取. 每次都读一下,应对实时修改
 
     def init_driver(self):
@@ -431,7 +432,7 @@ class SpeedPicker:
         # 持续去抓某个文本，直到这个文本不再这个页面了。说明流程变了。
         # 这里可能是影响效率的地方，想办法怎么优化一下。
         logger.info(f"持续检查文本[{text}]是否还在当前页面。")
-        count = [0]
+        count = self.time_count
         err = 20
         err_num = copy.copy(err)  # err 一直在自减，这里要拷贝一下。
         while err > 0:
@@ -459,11 +460,13 @@ class SpeedPicker:
                             if self.driver.element_display((By.XPATH, f'//*[@text="{without}"]')):
                                 logger.debug(f"文本[{without}]刷新。 停止检查[{text}]。")
                                 self.start_time = time.time()  # 重置计时器
+                                self.time_count = [0]
                                 return
                         elif self.islosepos():
                             logger.warning("机器人丢失定位。")
                             self.shoot()
                             self.start_time = time.time()  # 重置计时器
+                            self.time_count = [0]
                             return
                         sleep(1)  # 等待时间不能太长。
                         minutes = (time.time() - self.start_time) // 60
@@ -476,6 +479,7 @@ class SpeedPicker:
 
                     else:
                         self.start_time = time.time()  # 重置计时器
+                        self.time_count = [0]
                         return  # 抓不到重复的文本了。跳出循环。不能是break,会执行后面的if else
                 else:
                     if self.random_trigger(n=60, process='抓文本异常捕捉'):
