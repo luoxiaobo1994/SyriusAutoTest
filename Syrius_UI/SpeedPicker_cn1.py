@@ -439,14 +439,14 @@ class SpeedPicker:
                 view_ls = self.get_text(wait=wait, raise_except=True)  # 不用太频繁.
                 if view_ls:  # 居然还有空的情况，干。
                     if text in view_ls:
-                        if self.random_trigger(n=10, process='持续抓文本'):
+                        if self.random_trigger(n=20, process='持续抓文本'):
                             err -= 1  # 有时候可能卡流程,这里也做一个跳出检测
                             sleep(timeout)
                             if i:
                                 logger.debug(f"调试功能，持续抓取文本:[{text}]中。")
                         elif text == '前往':
                             if '恢复' in view_ls:
-                                sleep(3)  # 有时候人要推,给点时间.
+                                sleep(5)  # 有时候人要推,给点时间.
                                 self.click_view_text('恢复')
                         elif '关闭' in view_ls:
                             logger.debug(f"出现关闭按钮，页面信息:{view_ls}")
@@ -460,10 +460,10 @@ class SpeedPicker:
                                 logger.debug(f"文本[{without}]刷新。 停止检查[{text}]。")
                                 self.start_time = time.time()  # 重置计时器
                                 return
-
                         elif self.islosepos():
                             logger.warning("机器人丢失定位。")
                             self.shoot()
+                            self.start_time = time.time()  # 重置计时器
                             return
                         sleep(1)  # 等待时间不能太长。
                         minutes = (time.time() - self.start_time) // 60
@@ -472,8 +472,7 @@ class SpeedPicker:
                             logger.warning(
                                 f"当前页面超过{minutes}分钟没有变化了，请检查是否发生了什么异常情况。")
                             self.err_notify()
-                            self.start_time = time.time()  # 重置计时器
-                            return  # 出问题了，也跳出流程，等着回来吧。
+                            return  # 出问题了，也跳出流程，等着回来吧。回来之前，不要重置计时器。
 
                     else:
                         self.start_time = time.time()  # 重置计时器
@@ -933,8 +932,8 @@ class SpeedPicker:
                     logger.warning("卡在推荐点位了。赶紧去检查一下!")
                     self.shoot()
                     exit(-100)
-                self.page_check(timeout=self.get_config()['page_time'], is_shoot=True,
-                                pagename="推荐点位检查界面", new_text='前往', new_text2='输入')  # 检查是不是半天没变化.
+                    self.page_check(timeout=10, is_shoot=True, pagename="推荐点位检查界面", new_text='前往',
+                                    new_text2='输入')  # 检查是不是半天没变化.
                 self.robot_battery()
 
 
