@@ -168,11 +168,11 @@ if __name__ == '__main__':
     ci = create_order()
     ci.order_id(
         pick_type=2,  # 订单类型.1=Total,2=Order
-        num=18,  # 多少个不同的订单ID.
+        num=40,  # 多少个不同的订单ID.
         same_id=3,  # 一个ID号要几个商品
         container_num=3,  # 载物箱索引,1=1A,2=3A,3=6A,4=9A
         count_range=10,  # 拣货数量的随机范围1~这个值.
         code_len=15,  # 商品码长度
-        file_path='D:\工作\项目\订单\csv订单\\',  # 订单生成文件的路径,填写自己存放的路径.
+        file_path='E:\工作\项目\订单\csv订单',  # 订单生成文件的路径,填写自己存放的路径.
         file_name=f'{file_time()}'  # 文件名称
     )

@@ -623,7 +623,7 @@ class SpeedPicker:
                 self.input_error(random.randint(1, 564313112131))  # 随机取一个,取对了,就可以买彩票了。
             try:
                 good_num = re.findall('×[\d]+', ''.join(view_ls))[0]
-                logger.debug(f"当前商品需要捡取：{good_num}个。")
+                logger.debug(f"当前商品需要捡取：{good_num.replace('×', '')}个。")
                 index1 = el_index(good_num, view_ls)
                 good_code = view_ls[index1 - 1]  # 有什么办法,准确拿到商品码.
                 if good_code.isalnum():
@@ -880,6 +880,7 @@ class SpeedPicker:
                 if self.random_trigger(n=self.get_config()['pasue_psb'], process='暂停移动'):  # 触发随机。
                     self.pause_move()  # 暂停移动。
                 self.wait_moment("前往")
+                logger.debug(f"机器人到达：{locate}。")
             elif any_one(self.get_config()['bind_text'], view_ls):
                 self.bind_container()
             elif len_diff(view_ls, use_text) > 4 and re.findall('×[\d]+', ls):
