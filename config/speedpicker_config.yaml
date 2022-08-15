@@ -12,7 +12,7 @@ api_order: True  # 是否开启接口发单功能。
 order_num: 50  # 订单个数
 picking_out: 20 # 拣货超时几率 1/10, 1是常开,0是常闭.
 picking_outtime: 20  # 拣货超时时间 30s
-wait_finshed: 20  # 等待点击超时按钮的超时时间,30s
+wait_finshed: 20 # 等待点击超时按钮的超时时间,30s
 res_report_times: 5  # 订单执行结果上传失败后的重试次数。
 page_time: 60  # 检查页面是否变化的超时时间.
 container_code: # 载物箱编码.

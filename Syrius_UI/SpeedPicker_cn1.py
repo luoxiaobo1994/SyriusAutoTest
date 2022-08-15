@@ -622,7 +622,14 @@ class SpeedPicker:
             if self.random_trigger(n=self.get_config()['err_code_psb'], process='输入错误商品码'):
                 self.input_error(random.randint(1, 564313112131))  # 随机取一个,取对了,就可以买彩票了。
             try:
-                good_code = view_ls[view_ls.index('编码') + 1]  # 有什么办法,准确拿到商品码.
+                good_num = re.findall('×[\d]+', ''.join(view_ls))[0]
+                logger.debug(f"当前商品需要捡取：{good_num}个。")
+                index1 = el_index(good_num, view_ls)
+                good_code = view_ls[index1 - 1]  # 有什么办法,准确拿到商品码.
+                if good_code.isalnum():
+                    pass
+                else:
+                    good_code = '199103181516'
             except:
                 good_code = '199103181516'
                 logger.debug('没有获取到商品编码，检查一下，是不是页面排版又变化了。')
@@ -875,7 +882,7 @@ class SpeedPicker:
                 self.wait_moment("前往")
             elif any_one(self.get_config()['bind_text'], view_ls):
                 self.bind_container()
-            elif len_diff(view_ls, use_text) > 4 and len_same(self.get_config()['picking_text'], view_ls) > 2:
+            elif len_diff(view_ls, use_text) > 4 and re.findall('×[\d]+', ls):
                 # 进入拣货判断逻辑：1.界面文本有非SP特征文本至少4个。2.界面文本包含至少包含2个拣货流程的特定文本。
                 if not target_location.startswith('A0'):  # 移动中的目标点。
                     target_location = ''
