@@ -892,12 +892,15 @@ class SpeedPicker:
                 logger.debug(f"拣货结果:{self.get_text()}")
                 # logger.debug(f"拣货信息-content:{self.driver.app_elements_content_desc((By.XPATH, '//*'))}")
                 # self.press_ok()  # 确定波次.
+                logger.debug("任务结束，确认拣货结果。")
                 self.click_view_text("确定")  # 强点.
+                logger.debug(f"当前任务完成，取下载物箱。")
                 self.click_view_text("已取下")  # 强点.
                 logger.info('-·' * 30 + '-' + '\n')
                 self.wait_moment('已取下')
             elif '已取下' in view_ls:  # 起脚本时,在这个界面的情况
                 # 异常处理区,或者订单异常终止,都是这个流程,无需重复点.
+                logger.debug(f"当前任务完成，取下载物箱。")
                 self.click_view_text("已取下")  # 强点.
                 logger.info("完成一单，不错!")
                 logger.info('-·' * 30 + '-' + '\n')
