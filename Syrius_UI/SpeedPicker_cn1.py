@@ -514,6 +514,9 @@ class SpeedPicker:
         # view_content =
         while time.time() - start < timeout:
             tmp_text = self.get_text()
+            if text_in_list('附近', tmp_text):
+                locate = tmp_text[el_index("请你前往", tmp_text) + 1]
+                logger.debug(f'抓取到推荐点位：{locate}')
             if view_text == tmp_text:
                 sleep(1)
                 if text not in tmp_text and text:
@@ -646,14 +649,14 @@ class SpeedPicker:
                     break
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
             logger.debug(f"通过点击[完成]，完成拣货。")
-            # 页面检查函数，页面名称是拣货完成，有单独判断。这里名称不要随便改。 会校验：是否开启了快速拣货。
-            self.page_check(timeout=6, pagename='拣货完成', is_shoot=True, text='完成', new_text='前往',
-                            new_text2='输入')  # 这里比较容易卡. 在这里检查一下.
         else:
             # 拣货情形3,都捡完了,只是没点完成.
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
             logger.debug(f"拣货场景3，商品已捡取，未点击[完成]，通过点击[完成]，快速完成拣货。")
-        self.go_to()
+        # 页面检查函数，页面名称是拣货完成，有单独判断。这里名称不要随便改。 会校验：是否开启了快速拣货。
+        self.page_check(timeout=6, pagename='拣货完成', is_shoot=True, text='完成', new_text='前往',
+                        new_text2='输入')  # 这里比较容易卡. 在这里检查一下.
+        # self.go_to()
 
     def check_time(self):
         while True:
