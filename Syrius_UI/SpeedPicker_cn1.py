@@ -24,13 +24,12 @@ class SpeedPicker:
         # sleep(10)  # 做一个长等待，没办法。加载慢。
         self.view = (By.XPATH, '//android.view.View')
         self.image = (By.XPATH, '//android.widget.ImageView')
-        self.widget_text = (By.XPATH, '//android.widget.TextView')  # K11桌面的组件
+        self.widget_text = (By.XPATH, '//android.widget.TextView')  # K11桌面的组件和新版GGR新的悬浮窗，部分界面文本组件。
         self.notify()  # 刷新一些提醒，避免遗漏配置。
         self.non_count = 0  # 界面抓到异常信息的计数器.
         self.siteid = 202  # 默认是备用场地。
         self.start_time = time.time()  # 一个初始的计时器。
         self.time_count = [0]  # 检查文本时的时间计时列表。
-        # self.config = self.get_cnfig()  # 流程开始之前读取一次配置就行了,不用每次都读取. 每次都读一下,应对实时修改
 
     def init_driver(self):
         device = self.device_num()[0]  # 10.111.150.202:5555 这种格式.
@@ -58,12 +57,12 @@ class SpeedPicker:
             logger.warning("获取设备UDID失败了，检查一下。")
 
     def robot_battery(self):
-        tmp_text = self.driver.app_elements_content_desc(self.view)
+        tmp_text = self.driver.app_elements_text(self.widget_text)
         for i in tmp_text:
             if i.endswith('%') and i.split('%')[0].isdigit():
                 logger.info(f"当前机器人电量为:{i}")
-                return
-            # logger.warning('获取机器人电池失败.')
+                return 1
+        return 0
 
     def open_sp(self):
         # 先判断是否有异常.
@@ -145,7 +144,7 @@ class SpeedPicker:
         """检查机器人是否丢失定位,但是重复了."""
         try:
             self.driver.find_elements(
-                locator=(By.XPATH, '//android.widget.ImageView[contains(@content-desc,"机器人定位丢失")]'),
+                locator=(By.XPATH, '//android.widget.TextView[contains(@text,"机器人定位丢失")]'),
                 wait=1, raise_except=True)
             self.shoot()
             return 1  # return True
@@ -207,7 +206,9 @@ class SpeedPicker:
         self.inputcode(code=str(code) + err_num)  # Add a random number to form an error barcode.
         logger.info("随机事件，输入一个[错误的]条码。")
 
-    def get_text(self, wait=3, raise_except=False):  # 3s左右合理,有些流程跳转时,会转圈一会儿.
+    def get_text(self, ele='', wait=3, raise_except=False, ):  # 3s左右合理,有些流程跳转时,会转圈一会儿.
+        if not ele:
+            ele = self.view
         count = 20  # 有个限制.
         while count > 0:
             count -= 1  # 避免死循环
@@ -342,14 +343,11 @@ class SpeedPicker:
                   f' -a android.intent.action.MAIN -c android.intent.category.LAUNCHER')
         sleep(30)  # 启动加载需要时间,不能直接起脚本.
         while True:
-            content = self.driver.app_elements_content_desc(self.image)
-            for i in content:
-                if i.endswith('%') and i.split('%')[0].isdigit():
-                    logger.debug(f'获取到机器人电池电量数据，上下位机连接完成。当前机器人电量:{i}')
-                    sleep(5)
-                    break
+            if self.robot_battery():
+                logger.debug(f"获取机器人电量成功，完成连接。")
+                break
             else:
-                logger.debug(f'当前仍未获取到机器人电量，机器人与平板未完成连接。文本：{content}')
+                logger.debug(f"暂未获取到电量信息，请等待。")
                 sleep(10)
 
     def report_err(self, err=''):
@@ -512,15 +510,16 @@ class SpeedPicker:
         view_text = self.get_text()  # 先抓一个当前页面文本.
         logger.debug(f'[{pagename}]进入检查是否卡屏流程，超时时间:{timeout}s。')
         # view_content =
-        while time.time() - start < timeout:
+        while (time.time() - start) < timeout:
             tmp_text = self.get_text()
             if text_in_list('附近', tmp_text):
-                locate = tmp_text[el_index("请你前往", tmp_text) + 1]
+                logger.debug(f"推荐点位信息：{tmp_text}")
+                locate = tmp_text[el_index("请到此处附近", tmp_text) + 1]
                 logger.debug(f'抓取到推荐点位：{locate}')
             if view_text == tmp_text:
                 sleep(1)
                 if text not in tmp_text and text:
-                    logger.debug(f"特征文本：[{text}]已经不在{pagename}页面，判定界面已跳转，程序未卡屏。")
+                    logger.debug(f"判断1-特征文本：[{text}]已经不在{pagename}页面，判定界面已跳转，程序未卡屏。")
                     return 1  # 特征文本不在界面内了.也可以跳过了.
                 elif (new_text, new_text2) and interset((new_text, new_text2), tmp_text):
                     logger.debug(f"特征文本：[{new_text, new_text2}],出现在当前界面。判定界面已跳转，程序未卡屏。")
@@ -530,6 +529,7 @@ class SpeedPicker:
                     self.click_view_text('好')
                     return 1
             else:
+                logger.debug(f"判断2-特征文本：[{text}]已经不在{pagename}页面，判定界面已跳转，程序未卡屏。")
                 return 1  # 页面变化了.
         if pagename == "拣货完成":
             tmp_text = self.get_text()
@@ -835,14 +835,15 @@ class SpeedPicker:
 
     def main(self):
         """主业务流程，通过不断的抓取页面信息。去确定当前SpeedPicker运行状态"""
-        self.open_sp()
+        # self.open_sp()
         target_location = ''
         while True:
             self.non_count = 0  # 只要在正常循环内.重置次数.
             # self.press_ok()  # 应对随时弹出来的需要协助，提示框。有必要保留,可能点掉绑定载具的"完成"
             try:
                 view_ls = self.get_text(wait=15)  # 当前页面文本信息。  [紧急拣货中,订单ID,请放好扫码枪,完成]
-                # logger.debug(f"view_ls:{view_ls}")
+                view_content = self.driver.app_elements_text((By.XPATH, '//android.widget.TextView'))
+                logger.debug(f"view_ls:{view_ls},content:{view_content}")
                 ls = ''.join(view_ls)  # 这个是长文本。用来做一些特殊判断。
             except:
                 continue
@@ -851,6 +852,9 @@ class SpeedPicker:
             if self.random_trigger(n=60):
                 logger.debug(f"主流程调试日志view_ls：{view_ls}")  # 调试打印的，后面不用了
                 # logger.debug(f"主流程调试日志ls：{ls}")  # 调试打印的，后面不用了
+            elif self.islosepos():
+                logger.error("机器人丢失定位了。")
+                break  # 跑不动了。
             elif '机器人无响应，请重试操作或重启软件' in view_ls:
                 logger.warning("出现机器人无响应弹窗了。")
                 self.driver.tap((By.XPATH, '//*[@text="重试"]'))
@@ -919,9 +923,6 @@ class SpeedPicker:
             elif view_ls[0] == "异常上报":  # 异常上报界面.
                 logger.info("当前处于异常上报流程。")
                 self.do_err()
-            elif self.islosepos():
-                logger.error("机器人丢失定位了。")
-                break  # 跑不动了。
             elif '当前作业被取消' in view_ls:
                 logger.debug("当前作业被取消。")
                 self.click_view_text('好')
