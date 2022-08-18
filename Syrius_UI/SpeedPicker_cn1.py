@@ -474,6 +474,7 @@ class SpeedPicker:
                             count.append(minutes)
                             logger.warning(
                                 f"当前页面超过{minutes}分钟没有变化了，请检查是否发生了什么异常情况。")
+                            self.shoot()
                             self.err_notify()
                             return  # 出问题了，也跳出流程，等着回来吧。回来之前，不要重置计时器。
                     else:
@@ -835,15 +836,15 @@ class SpeedPicker:
 
     def main(self):
         """主业务流程，通过不断的抓取页面信息。去确定当前SpeedPicker运行状态"""
-        # self.open_sp()
+        self.open_sp()
         target_location = ''
         while True:
             self.non_count = 0  # 只要在正常循环内.重置次数.
             # self.press_ok()  # 应对随时弹出来的需要协助，提示框。有必要保留,可能点掉绑定载具的"完成"
             try:
                 view_ls = self.get_text(wait=15)  # 当前页面文本信息。  [紧急拣货中,订单ID,请放好扫码枪,完成]
-                view_content = self.driver.app_elements_text((By.XPATH, '//android.widget.TextView'))
-                logger.debug(f"view_ls:{view_ls},content:{view_content}")
+                # view_content = self.driver.app_elements_text((By.XPATH, '//android.widget.TextView'))
+                # logger.debug(f"view_ls:{view_ls},content:{view_content}")
                 ls = ''.join(view_ls)  # 这个是长文本。用来做一些特殊判断。
             except:
                 continue
