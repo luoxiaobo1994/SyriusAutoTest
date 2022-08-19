@@ -177,7 +177,7 @@ class SpeedPicker:
             sleep(wait_time)
             try:
                 self.driver.click_element((By.XPATH, '//android.view.View[@text="恢复"]'))
-                logger.info(f"暂停结束， 恢复移动。")
+                logger.info(f"暂停结束，恢复移动。")
                 return
             except:
                 logger.info("恢复按钮消失了，可能是人为点击了。")
@@ -950,13 +950,13 @@ class SpeedPicker:
                 sleep(5)
                 now = self.get_text()
                 logger.debug(f"main主函数里，最后一个else。为什么会走到这一步？ 刚才拿到的文本:{view_ls},此时的界面文本:{now}")
-                if view_ls == now and '请到此处附近' in view_ls:
-                    logger.warning("卡在推荐点位了。赶紧去检查一下!")
-                    self.shoot()
-                    exit(-100)
+                if len_same(use_text, now) > 2:  # 可能只是卡了一下，重新抓一次就正常了。
+                    logger.debug(f"抓取到的信息正常，继续流程。")
                     self.page_check(timeout=10, is_shoot=True, pagename="推荐点位检查界面", new_text='前往',
                                     new_text2='输入')  # 检查是不是半天没变化.
-                self.robot_battery()
+                else:
+                    logger.debug(f"抓取到的文本信息异常，请检查一下页面。")
+                    self.shoot()
 
 
 if __name__ == '__main__':
