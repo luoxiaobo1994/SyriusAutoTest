@@ -44,6 +44,7 @@ def random_item():
         "barcode": item_code(),  # 随机码
         "quantity": random.choice(range(1, 10)),  # 随机数量，填少一点。贴合实际一些。
         "binLocations": [binlocation()],  # 随机生成一个.
+        # "binLocations":  random.choice(['A02010202','A03010202','A05010202']),  # 随机生成一个.
         "imageUrl": f"file:///../sdcard/syrius_guanxi_productImg/{random.choice(img_list)}",
         "attributes": {
             "extensibleAttr0001": "222"
@@ -79,8 +80,8 @@ def random_id(siteid="202"):
         "storages": [
             {
                 # "type": '6A_container' # 指定类型时,把注释去掉,并去掉下面的随机选择.
-                "type": random.choice(['1A_container', '3A_container', '6A_container', '9A_container'])  # 随机选一个
-                # "type": random.choice(['666'])  # 随机选一个
+                # "type": random.choice(['1A_container', '3A_container', '6A_container', '9A_container'])  # 随机选一个
+                "type": random.choice(['ppbb'])  # 随机选一个
             }
         ],
         "items": item_num(),  # 每个订单有几个商品,由这个函数,再去生成. 数量随机
@@ -128,6 +129,6 @@ def send_order(num=0, least=1, most=20, siteid="202"):
 
 
 if __name__ == '__main__':
-    print(send_order(num=50, siteid="202"))
+    print(send_order(num=50, siteid="2"))
     # print(type(binlocation()))
     # id_num()
