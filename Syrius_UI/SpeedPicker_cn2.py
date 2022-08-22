@@ -515,12 +515,8 @@ class SpeedPicker:
             tmp_text = self.get_text()
             if text_in_list('附近', tmp_text):
                 logger.debug(f"推荐点位信息：{tmp_text}")
-                try:
-                    locate = tmp_text[el_index("请到此处附近", tmp_text) + 1]
-                    logger.debug(f'抓取到推荐点位：{locate}')
-                except IndexError:
-                    logger.warning(f"脚本抓取的当前页面文本遗漏了，请检查。")
-                    self.shoot()
+                locate = tmp_text[el_index("请到此处附近", tmp_text) + 1]
+                logger.debug(f'抓取到推荐点位：{locate}')
             if view_text == tmp_text:
                 sleep(1)
                 if text not in tmp_text and text:
