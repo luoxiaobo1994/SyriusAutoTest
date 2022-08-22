@@ -14,7 +14,9 @@ from base.common import *
 from utils.file_reader import YamlReader
 from utils.log2 import Logger
 
-logger = Logger(file=__file__.split('\\')[-1].replace('.py', '.txt')).get_logger()
+file = __file__.split('\\')[-1].replace('.py', '.txt')
+logger = Logger(file=file).get_logger()
+logger.debug(f"当前日志记录文件为：{file}.txt")
 
 
 class SpeedPicker:
