@@ -10,7 +10,7 @@ from logging.handlers import TimedRotatingFileHandler
 
 class Logger(object):
 
-    def __init__(self, log_name="Syrius", file='log.txt'):
+    def __init__(self, file, log_name="Syrius", ):
         self.logger = logging.getLogger(log_name)
         logging.root.setLevel(logging.NOTSET)  # 日志级别,NOTEST是比DEBUG还低一级的级别,就是全部输出了.
         self.logger_file_name = self.file_day() + file  # 生成的文件名称.2022-6-20_log.txt
@@ -58,5 +58,5 @@ class Logger(object):
 
 
 if __name__ == '__main__':
-    logger = Logger(file='newlog.txt').get_logger()
-    logger.debug("666")
+    log1 = Logger(file='newlog.txt').get_logger()
+    log1.debug("666")
