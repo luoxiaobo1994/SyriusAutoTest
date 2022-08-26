@@ -737,11 +737,11 @@ class SpeedPicker:
         if '完成' in tt:
             self.click_view_text('完成')
         container_code = self.get_config()['container_code']
-        barcode = '19910318151 6ccc!@#$'
-        # 获取载物箱类型
-        for i in tt:
-            if '_container' in i:
-                barcode = container_code.get(i, '199103181516')
+        barcode = random_string(20)
+        # 获取载物箱的箱码
+        container = list(interset(tt, container_code.keys()))[0]
+        if container:
+            barcode = container_code.get(container)
         while True:
             self.press_ok()
             tmp_text = ''.join(self.get_text())

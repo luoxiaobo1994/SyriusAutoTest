@@ -16,14 +16,16 @@ devices = {
     # '10.2.9.181': '10.2.11.119',
     # '10.2.8.118': '10.2.16.137',
     # '10.2.8.242': '10.2.11.107'  # 梁龙
-    '10.2.8.103': '10.2.10.9'  # 梁龙
+    # '10.2.8.103': '10.2.10.9'  # 梁龙
     # '10.2.9.18': '10.2.16.163'  # 雷龙1604
 
 }
 
 
 def all_connect(ip):
-    cmds = ['adb devices', "adb shell ip addr show wlan0", "adb tcpip 5555"]  # 连上机器人需要执行的命令。
+    cmds = ['adb devices', "adb shell ip addr show wlan0", "adb tcpip 5555",
+            " amixer cset -c tegrasndt186ref name='x Speaker Channel Switch' Off"]  # 连上机器人需要执行的命令。
+    logger.debug("注意，脚本将会关闭连接的机器人扬声器声音。")
     # for i in devices.keys():
     res = ssh(ip=ip, cmds=cmds)  # 正常返回成功与否..
     # print(res)
