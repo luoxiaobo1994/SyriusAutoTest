@@ -87,8 +87,10 @@ class SpeedPicker:
                     update_yaml('site_info.yaml', {'api_order': False})
                 image = self.driver.find_elements(self.image)
                 soft_index = self.driver.app_elements_content_desc(self.view)
+                installsp = False
                 for i in soft_index:
                     if 'SpeedPicker' in i:
+                        installsp = True
                         x = i.split('\n')[::-1]
                         sp_index = x.index('SpeedPicker') + 1  # 因为反过来了.从0开始.
                         self.driver.click_one(image[-sp_index])
@@ -110,7 +112,8 @@ class SpeedPicker:
                 else:
                     if len(interset(self.get_text(), self.get_config()['sp_text'])) > 1:
                         return
-                    log.warning(f"这个设备{self.device_num()[0]}还没有安装SpeedPicker，请先安装。")
+                    if not installsp:
+                        log.warning(f"这个设备{self.device_num()[0]}还没有安装SpeedPicker，请先安装。")
         except:
             return
 
