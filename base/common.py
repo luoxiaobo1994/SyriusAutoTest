@@ -364,10 +364,6 @@ def app_screenshot(device='', file_name=''):
     path = '/sdcard/lxb_shoot'  # 存放截图的平板文件夹
     if not file_name:
         file_name = 'ScreenShoot' + file_time()  # 没有指定文本名称时,使用时间戳
-    try:
-        os.system(f"adb shell mkdir -p {path}")  # 先创建一个文件夹
-    except:
-        pass
     if device:  # 多设备的情况下,需要指定设备截图.
         # 指定设备
         try:
@@ -380,6 +376,10 @@ def app_screenshot(device='', file_name=''):
         os.system(f"adb -s {device} pull {path}/{file_name}.png {dir}")
         logger.debug(f"截图下载到本机成功,截图存放位置:{dir}\\{file_name}.png")  # windows是反斜杠.
     else:
+        try:
+            os.system(f"adb shell mkdir -p {path}")  # 先创建一个文件夹
+        except:
+            pass
         os.system(f"adb shell screencap -p {path}/{file_name}.png")
         logger.debug(f"截图成功,截图存放位置:{path}/{file_name}.png")
         time.sleep(1)
