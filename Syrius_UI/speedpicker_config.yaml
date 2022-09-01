@@ -21,6 +21,7 @@ container_code: # 载物箱编码.
   6A_container: 6A_con-@1
   9A_container: 19910318151 6ccc!@#$
   1m_container: 1mcontainer
+  ppbb: 4444
 sp_text:
   - 等待任务中
   - 紧急拣货中

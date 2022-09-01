@@ -608,13 +608,13 @@ class SpeedPicker:
                 if '超时' in ''.join(view_text):
                     log.warning("出现超时弹窗了，注意检查一下！！！")
 
-    def picking(self, target=''):
+    def picking(self, target='', checktarget=False):
         if not target.startswith('A0') and target != '':  # 在拣货点开脚本，目标点是空的。
             log.debug(f"拣货点:目标点[{target}]检查不正确，退出拣货流程。")
             return  # 前往的目标点，不是货架区。说明不是拣货流程，直接跳出去。
         self.press_ok()
         view_ls = self.get_text()
-        if target in view_ls:
+        if target in view_ls and checktarget:
             log.debug(f"移动中前往的目标点位：{target}，与当前到达的拣货点一致。")
         elif target and target not in view_ls:
             log.warning(f"注意检查一下，移动中指示的目标点{target}与当前拣货页面的不一致。")
@@ -724,12 +724,7 @@ class SpeedPicker:
             return
         tt = self.get_text()
         str_txt = ''.join(tt)  # 转成字符串
-        try:
-            container_num = re.findall(r'\d/(\d)', str_txt)[0]  # 找到需要绑定的载物箱的个数.
-            log.info(f"当前订单需要绑定:{container_num}个载物箱。")
-        except:
-            log.warning(f"正则获取载物箱数量出了异常，当前页面文本:{self.get_text()}")
-            self.shoot()
+
         if self.random_trigger(n=0, process='切换载具'):  # 上报异常，就不用做了。
             self.report_err('载具不合适')
             return  # 确保流程跳出去。
@@ -742,9 +737,19 @@ class SpeedPicker:
         container_code = self.get_config()['container_code']
         barcode = random_string(20)
         # 获取载物箱的箱码
-        container = list(interset(tt, container_code.keys()))[0]
+        try:
+            container = list(interset(tt, container_code.keys()))[0]
+            try:
+                container_num = re.findall(r'\d/(\d)', str_txt)[0]  # 找到需要绑定的载物箱的个数.
+                log.info(f"当前订单需要绑定:{container_num}个载物箱。载物箱类型：{container}")
+            except:
+                log.warning(f"正则获取载物箱数量出了异常，当前页面文本:{self.get_text()}")
+                self.shoot()
+        except IndexError:
+            log.debug(f"当前需要绑定的载物箱在配置文件中没有查询到，是一个自定义的载物箱，使用万能码进行绑定。")
+            container = 'x'
         if container:
-            barcode = container_code.get(container)
+            barcode = container_code.get(container, '199103181516')
         while True:
             self.press_ok()
             tmp_text = ''.join(self.get_text())
@@ -904,7 +909,7 @@ class SpeedPicker:
                 # 进入拣货判断逻辑：1.界面文本有非SP特征文本至少4个。2.界面文本包含至少包含2个拣货流程的特定文本。
                 if not target_location.startswith('A0'):  # 移动中的目标点。
                     target_location = ''
-                self.picking(target=target_location)  # 封装成函数，单独处理。
+                self.picking(target=target_location, checktarget=True)  # 封装成函数，单独处理。
             elif '单据' in view_ls:  #
                 log.debug(f"拣货结果:{self.get_text()}")
                 # log.debug(f"拣货信息-content:{self.driver.app_elements_content_desc((By.XPATH, '//*'))}")
@@ -961,8 +966,9 @@ class SpeedPicker:
                 log.debug(f"main主函数里，最后一个else。为什么会走到这一步？ 刚才拿到的文本:{view_ls},此时的界面文本:{now}")
                 if len_same(use_text, now) > 2:  # 可能只是卡了一下，重新抓一次就正常了。
                     log.debug(f"抓取到的信息正常，继续流程。")
-                    self.page_check(timeout=10, is_shoot=True, pagename="推荐点位检查界面", new_text='前往',
-                                    new_text2='输入')  # 检查是不是半天没变化.
+                    if '请到此处附近' in now:
+                        self.page_check(timeout=10, is_shoot=True, pagename="推荐点位检查界面", new_text='前往',
+                                        new_text2='输入')  # 检查是不是半天没变化.
                 else:
                     log.debug(f"抓取到的文本信息异常，请检查一下页面。")
                     self.shoot()
