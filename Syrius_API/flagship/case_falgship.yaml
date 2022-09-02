@@ -10,6 +10,7 @@ get_token: # 获取Token正例
           "clientKey": "4otid7tu3lfu05p118ia7hvknq"
           "clientSecret": "1ac4pmokjnuu4kc8rjq5ajcm6bcol1jls2n3cnqh84ssknqvulgi"
     res_code: 200
+
 get_token_err: # 获取Token反例
   - name: '获取SQA账户Token-反例1:请求方式错误post'
     headers:

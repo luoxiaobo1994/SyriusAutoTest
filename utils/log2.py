@@ -8,7 +8,7 @@ import time
 from logging.handlers import TimedRotatingFileHandler
 
 
-class Logger(object):
+class Logger2(object):
 
     def __init__(self, file, log_name="Syrius"):
         self.logger = logging.getLogger(log_name)
@@ -22,6 +22,7 @@ class Logger(object):
         self.formatter = logging.Formatter("%(name)s %(asctime)s [%(levelname)s] : %(message)s",
                                            datefmt='%Y-%m-%d %H:%M:%S')
         self.create_logdir()  # 判断是否有文件夹,没有就先创建一个.
+
 
     def create_logdir(self):
         dir = "D:\AutomationLog"
@@ -59,5 +60,4 @@ class Logger(object):
 
 if __name__ == '__main__':
     file = __file__.split('\\')[-1].replace('.py', '.txt')
-    log = Logger(file=file).get_logger()
-    log.debug(f"当前日志记录文件为：{file}")
+    log = Logger2(file=file).get_logger()

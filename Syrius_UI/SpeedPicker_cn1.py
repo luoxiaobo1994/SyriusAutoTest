@@ -12,11 +12,10 @@ from GGR import GGR
 from Syrius_API.flagship.SendOrder import send_order
 from base.common import *
 from utils.file_reader import YamlReader
-from utils.log2 import Logger
+from utils.log2 import Logger2
 
 file = __file__.split('\\')[-1].replace('.py', '.txt')
-log = Logger(file=file).get_logger()
-log.debug(f"当前日志记录文件为：{file}")
+log = Logger2(file=file).get_logger()
 
 
 class SpeedPicker:
@@ -616,7 +615,7 @@ class SpeedPicker:
         view_ls = self.get_text()
         if target in view_ls and checktarget and ismove:
             log.debug(f"移动中前往的目标点位：{target}，与当前到达的拣货点一致。")
-        elif target and target not in view_ls:
+        elif target and target not in view_ls and ismove:
             log.warning(f"注意检查一下，移动中指示的目标点{target}与当前拣货页面的不一致。")
         log.info(f"SpeedPicker处于拣货流程，页面信息:{view_ls}")  # 需要记录一下进入拣货流程.
         self.wait_for_time(n=self.get_config()['picking_out'], timeout=self.get_config()['picking_outtime'])

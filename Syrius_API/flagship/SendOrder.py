@@ -81,8 +81,9 @@ def random_id(siteid="202"):
         "storages": [
             {
                 # "type": '6A_container' # 指定类型时,把注释去掉,并去掉下面的随机选择.
-                # "type": random.choice(['1A_container', '3A_container', '6A_container', '9A_container'])  # 随机选一个
-                "type": random.choice(['1m_container'])  # 随机选一个
+                "type": random.choice(['1A_container', '3A_container', '6A_container', '9A_container', '1m_container'])
+                # 随机选一个
+                # "type": random.choice(['1m_container'])  # 固定一个
             }
         ],
         "items": item_num(),  # 每个订单有几个商品,由这个函数,再去生成. 数量随机
@@ -130,6 +131,6 @@ def send_order(num=0, least=1, most=20, siteid="202"):
 
 
 if __name__ == '__main__':
-    print(send_order(num=50, siteid="2"))
+    print(send_order(num=20, siteid="2"))
     # print(type(binlocation()))
     # id_num()
