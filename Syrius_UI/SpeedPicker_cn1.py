@@ -524,8 +524,8 @@ class SpeedPicker:
                     locate = tmp_text[el_index("请到此处附近", tmp_text) + 1]
                     log.debug(f'抓取到推荐点位：{locate}')
                 except IndexError:
-                    log.warning(f"脚本抓取的当前页面文本遗漏了，请检查。")
-                    self.shoot()
+                    log.warning(f"发生异常：索引错误。推荐点位页面，抓取到特征文本，但缺失了点位文本。")
+                    log.debug(f"再次抓取推荐点，查看是否抓取到：{self.get_text()}")
             if view_text == tmp_text:
                 sleep(1)
                 if text not in tmp_text and text:
@@ -608,13 +608,13 @@ class SpeedPicker:
                 if '超时' in ''.join(view_text):
                     log.warning("出现超时弹窗了，注意检查一下！！！")
 
-    def picking(self, target='', checktarget=False):
+    def picking(self, target='', checktarget=False, ismove=False):
         if not target.startswith('A0') and target != '':  # 在拣货点开脚本，目标点是空的。
             log.debug(f"拣货点:目标点[{target}]检查不正确，退出拣货流程。")
             return  # 前往的目标点，不是货架区。说明不是拣货流程，直接跳出去。
         self.press_ok()
         view_ls = self.get_text()
-        if target in view_ls and checktarget:
+        if target in view_ls and checktarget and ismove:
             log.debug(f"移动中前往的目标点位：{target}，与当前到达的拣货点一致。")
         elif target and target not in view_ls:
             log.warning(f"注意检查一下，移动中指示的目标点{target}与当前拣货页面的不一致。")
@@ -852,6 +852,7 @@ class SpeedPicker:
         """主业务流程，通过不断的抓取页面信息。去确定当前SpeedPicker运行状态"""
         self.open_sp()
         target_location = ''
+        move_flag = False
         while True:
             self.non_count = 0  # 只要在正常循环内.重置次数.
             # self.press_ok()  # 应对随时弹出来的需要协助，提示框。有必要保留,可能点掉绑定载具的"完成"
@@ -891,6 +892,7 @@ class SpeedPicker:
                     self.api_order()
                 self.wait_moment("等待任务中")
             elif '前往' in view_ls:
+                move_flag = True
                 try:
                     locate = view_ls[view_ls.index('前往') + 1]  # 前往的后一个，就是目标地点。
                 except:
@@ -909,7 +911,8 @@ class SpeedPicker:
                 # 进入拣货判断逻辑：1.界面文本有非SP特征文本至少4个。2.界面文本包含至少包含2个拣货流程的特定文本。
                 if not target_location.startswith('A0'):  # 移动中的目标点。
                     target_location = ''
-                self.picking(target=target_location, checktarget=True)  # 封装成函数，单独处理。
+                self.picking(target=target_location, checktarget=True, ismove=move_flag)  # 封装成函数，单独处理。
+                move_flag = False
             elif '单据' in view_ls:  #
                 log.debug(f"拣货结果:{self.get_text()}")
                 # log.debug(f"拣货信息-content:{self.driver.app_elements_content_desc((By.XPATH, '//*'))}")
