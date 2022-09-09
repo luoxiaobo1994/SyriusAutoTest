@@ -360,9 +360,9 @@ def app_screenshot(device='', file_name=''):
         return
     if len(get_devices()) > 1 and device == '':
         device = get_devices()[0]
-    dir = "D:\AutomationScreen"  # 创建存放截图的电脑文件夹
+    dir = "D:\AutomationScreen\charge"  # 创建存放截图的电脑文件夹
     if not os.path.exists(dir):
-        os.makedirs("D:\AutomationScreen")
+        os.makedirs("D:\AutomationScreen\charge")
     path = '/sdcard/lxb_shoot'  # 存放截图的平板文件夹
     if not file_name:
         file_name = 'ScreenShoot' + file_time()  # 没有指定文本名称时,使用时间戳
