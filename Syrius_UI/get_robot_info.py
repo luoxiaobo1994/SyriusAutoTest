@@ -13,6 +13,7 @@ def get_info():
     robot_env = cat_file("/opt/syrius/ota/checker/applicationq.yml")
     robot_sn = cat_file('/sys/robotInfo/RobotSN')
     robot_id = 1
+    calibration = cat_file('/etc/syrius/calibration_result/robot_sensors.yaml')
 
 
 def cat_file(file):
