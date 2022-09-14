@@ -44,6 +44,28 @@ def ssh(ip, cmds=[], username='syrius', password="syrius", port=22, i=False, tim
         client.close()
 
 
+def Linux_command(ip, command, index=0, port=22, username='syrius', password='syrius', name='', need=''):
+    '''用于执行linux命令，并返回执行结果'''
+    try:
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(ip, port, username, password)
+        stdin, stdout, stderr = ssh.exec_command(command)
+        res = stdout.readline()
+        ssh.close()
+        if 'No such file or directory' in res:
+            return f'机器人:{ip}，执行命令:[{command}]，查询的文件不存在。请注意检查！'
+        if res:
+            if need and need not in res:
+                return f'执行命令:[{command}]，产生的结果与预期不一致，[{need}]不在[{res}]内。'
+            return name + res.replace('\n', '') if index else name + res.replace('\n', '')
+        else:
+            return f'机器人:{ip}，执行命令:[{command}]，没有结果。请注意检查！'
+
+    except Exception as e:
+        return e
+
+
 if __name__ == '__main__':
     cmds = ["adb devices", "adb shell ip addr show wlan0"]
     res = ssh(ip='10.2.9.18', cmds=cmds)
