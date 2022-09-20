@@ -7,24 +7,21 @@
 class Solution:
     def threeSum(self, nums):
         res = []
-        if len(nums) < 3:
-            return res
-        nums.sort()  # 先排序
-        left = 0
-        right = len(nums) - 1
-        if left + right < 0:  # 最小的+最大的都还是负数,再加上中间的也无济于事.
-            return res
-        while left < right:
-            ln, rn = nums[left], nums[right]  # 左右两个数.
-            mn = 0 - ln - rn  # 要从中间找到这个差值.
-            if mn in nums[left + 1:right]:
-                if [ln, mn, rn] not in res:
-                    res.append([ln, mn, rn])
-            # 指针移动的情况.
-            if mn < 0:  # 差值是大于0的,那么需要减小两边的和,减小右边的数.
+        n = len(nums)
+        nums.sort()  # 先排序。
+        for left in range(n - 2):
+            if nums[left] > 0:  # 拿到的左边的值已经大于0，和右边的组合起来，和一定大于0
+                break
+            right = n - 1
+            if nums[left] + nums[right] < 0:  # 两边的和已经小于0，再加上中间值，也不会大于0.
+                continue
+            while left < right:
+                target = 0 - nums[left] - nums[right]
+                if target in nums[left + 1:right]:
+                    r1 = [nums[left], target, nums[right]]
+                    if r1 not in res:
+                        res.append(r1)
                 right -= 1
-            else:
-                left += 1
         return res
 
 
@@ -38,7 +35,7 @@ class Solution2:
         nums.sort()  # 排序
         for i in range(n):  # 循环遍历。
             if nums[i] > 0:  # 拿到的数值已经大于0，和后面的加和肯定就大于0了。
-                return res
+                break
             if (i > 0 and nums[i] == nums[i - 1]):  # 连续两个值相同。
                 continue  # 跳过？
             l = i + 1  # 左指针
@@ -61,4 +58,4 @@ class Solution2:
 
 ls = [-1, 0, 1, 2, -1, -4, -2, -3, 3, 0, 4]
 
-print(Solution2().threeSum(ls))
+print(Solution().threeSum(ls))
