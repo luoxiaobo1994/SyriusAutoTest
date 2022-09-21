@@ -4,7 +4,7 @@
 import os
 import re
 from multiprocessing.dummy import Pool
-
+from check_robot import main
 from utils.connect_linux import ssh
 from utils.log import logger
 
@@ -23,6 +23,7 @@ devices = {
 
 
 def all_connect(ip):
+    main(ip)
     cmds = ['adb devices', "adb shell ip addr show wlan0", "adb tcpip 5555",
             "amixer cset -c tegrasndt186ref name='x Speaker Channel Switch' Off"]  # 连上机器人需要执行的命令。
     logger.debug("注意，脚本将会关闭连接的机器人扬声器声音。")

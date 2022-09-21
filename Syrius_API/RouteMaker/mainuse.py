@@ -5,7 +5,7 @@
 import os
 
 # 传入你地图文件的地址.地图ID/map_01/common 到这一级目录.
-file = r'E:\工作\地图\临时地图\859a09fc-8d65-4ba5-9a61-5c6d0b3be4c6\map_01\common'
+file = r'D:\工作\地图\cc66d5de-6152-4ae3-ae37-2663450c6210\map_01\common'
 # 不要直接运行脚本,在pycharm里打开是看不到坐标的,只能看到图.使用命令行运行这个py文件
 # ...\Syrius_API\RouteMaker>  python .\mainuse.py
 os.system(f"Python route_ui.py {file}")
