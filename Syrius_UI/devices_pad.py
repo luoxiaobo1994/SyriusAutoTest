@@ -4,25 +4,26 @@
 import os
 import re
 from multiprocessing.dummy import Pool
-
+from check_robot import main
 from utils.connect_linux import ssh
 from utils.log import logger
 
 devices = {
     # 填写你的机器人IP和机器人对应平板的IP.可以通过脚本,快速连接机器人,打开平板远程连接功能.
-    '10.2.8.65': '10.2.11.51',  # device_ip : pad_ip
+    # '10.2.8.65': '10.2.11.51',  # device_ip : pad_ip
     # '10.2.9.39': '10.2.10.35',  # 高版梁龙
     # '10.2.8.57': '10.2.11.51',  # MLDM2449011108
-    # '10.2.9.181': '10.2.11.119',
+    '10.2.9.181': '10.2.11.119',
     # '10.2.8.118': '10.2.16.137',
     # '10.2.8.242': '10.2.11.107'  # 梁龙
-    # '10.2.8.103': '10.2.10.9'  # 梁龙
+    '10.2.8.103': '10.2.10.9'  # 梁龙
     # '10.2.9.18': '10.2.16.163'  # 雷龙1604
 
 }
 
 
 def all_connect(ip):
+    main(ip)
     cmds = ['adb devices', "adb shell ip addr show wlan0", "adb tcpip 5555",
             "amixer cset -c tegrasndt186ref name='x Speaker Channel Switch' Off"]  # 连上机器人需要执行的命令。
     logger.debug("注意，脚本将会关闭连接的机器人扬声器声音。")
