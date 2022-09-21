@@ -43,11 +43,11 @@ def main(bot):
     check_disk(bot)
     check_battery(bot)
 
+    print('-' * 20)
+
 
 if __name__ == '__main__':
-    # check('雷龙-齐达内')
-    # check_battery('雷龙-齐达内')
-    # main('雷龙-齐达内')
-    # check('雷龙-内马尔')
-    # check('雷龙-苏亚雷斯')
-    main('10.2.8.103')
+    main(robot['雷龙-齐达内'])
+    # main(robot['雷龙-内马尔'])
+    main(robot['雷龙-苏亚雷斯'])
+    main(robot['梁龙-佐助'])
