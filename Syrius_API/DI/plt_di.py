@@ -15,7 +15,11 @@ data = read_yaml('DI.yaml')
 
 def plt_DI():
     x = list(data.keys())[-5:]
-    y = list(data.values())[-5:]
+    y = []
+    bug = list(data.values())[-5:]  # 先获取到最新5个版本的BUG分布情况
+    for i in bug:
+        y.append(i['P0'] * 10 + i['P1'] * 3 + i['P2'] * 1 + i['P3'] * 0.1)
+    print(y)
     plt.plot(x, y, marker='o', label='DI值')
     plt.xlabel("MoveBase版本")
     plt.ylabel("DI值")
