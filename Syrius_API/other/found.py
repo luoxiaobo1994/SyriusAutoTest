@@ -56,12 +56,16 @@ def main():
     print(f"{'基金代码':{space}<10}{'基金名称':{space}<13}{'实时估值':{space}<8}{'预计收益':{space}<10}")
     p = Pool()
     p.map(wraper, dict(data).items())
-    result.sort()  # 保证每次打印的顺序是一致的，避免多线程导致的顺序不一样。
-    for i in result:
-        if '-' in i:
-            print(f"\033[1;36m{i}\033[0m")
+    data1 = []  # 处理数据中间变量。
+    for j in result:
+        data1.append(j.split())  # ['000336', '农银研究精选混合', '-0.27', '-0.12']
+    data2 = sorted(data1, key=lambda x: float(x[-1]), reverse=True)  # 排序好的数据。
+    for i in data2:  # 一个个子列表
+        j = f"{i[0]:{space}<10}{i[1]:{space}<15}{i[2]:{space}<10}{float(i[3]):{space}<10.2f}"
+        if '-' in j:
+            print(f"\033[1;36m{j}\033[0m")
         else:
-            print(f"\033[1;31m{i}\033[0m")
+            print(f"\033[1;31m{j}\033[0m")
     print(f"\n{get_time()} 预计收益：{total:.2f}元。")
 
 
