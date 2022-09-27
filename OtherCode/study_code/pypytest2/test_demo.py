@@ -3,11 +3,8 @@
 # TIME: 2022/8/1 16:38
 # Desc: pytest执行demo
 
-import sys, os
-
-sys.path.append((os.path.abspath(os.path.join(os.path.dirname(__file__), '../'))))
 import pytest
-from utilfunc import read_yaml
+from base.common import read_yaml
 
 
 class Test_Demo():
