@@ -5,9 +5,7 @@
 
 import os
 from time import sleep
-
 from appium import webdriver
-
 from base.base_page import TestKey
 from base.common import get_android_version
 from pages.pad_setings_page import *

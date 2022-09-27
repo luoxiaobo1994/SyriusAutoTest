@@ -5,7 +5,9 @@ import os
 import sys
 
 path = os.path.abspath((os.path.abspath(os.path.join(os.path.dirname(__file__), '../'))))
+path2 = r'C:\Users\43811\PycharmProjects\SyriusAutoTest\OtherCode\study_code\pypytest2'
 sys.path.append(path)
+sys.path.append(path2)
 import pytest
 
 
