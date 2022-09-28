@@ -5,7 +5,8 @@ import os
 import sys
 
 path = os.path.abspath((os.path.abspath(os.path.join(os.getcwd(), '../SyriusAutoTest/base'))))
-path2 = r'C:\Users\43811\PycharmProjects\SyriusAutoTest\OtherCode\study_code\pypytest2'
+path2 = os.path.abspath(
+    (os.path.abspath(os.path.join(os.getcwd(), '../SyriusAutoTest/OtherCode/study_code/pypytest2'))))
 sys.path.append(path)
 sys.path.append(path2)
 import pytest
@@ -30,5 +31,4 @@ def tearDown():
 #     return driver
 
 if __name__ == '__main__':
-    print(path)
-    print(os.getcwd())
+    print(path2)
