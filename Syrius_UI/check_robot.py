@@ -42,18 +42,26 @@ def check_battery(name):
     log.debug(f"机器人[{name}]的当前电量：{data}%")
 
 
+def clear_OTA(name):
+    cmd = ['rm -rf /opt/syrius/cache/ota_client/downloader/*',
+           'rm -rf /opt/syrius/cache/ota_client/facade/*']
+    log.debug("清除机器人OTA缓存。")
+    for i in cmd:
+        Linux_command(name, i)
+
+
 def main(bot):
     check_info(bot)
     check_disk(bot)
     check_battery(bot)
-
+    clear_OTA(bot)
     log.debug('-' * 20)
 
 
 if __name__ == '__main__':
-    main(robot['雷龙-齐达内'])
+    # main(robot['雷龙-齐达内'])
     # main(robot['雷龙-内马尔'])
-    # main(robot['雷龙-苏亚雷斯'])
+    main(robot['雷龙-苏亚雷斯'])
     # main(robot['梁龙-佐助'])
     # main('10.2.8.242')
-    # check_battery(robot['梁龙-佐助'])
+    # check_battery(robo/t['梁龙-佐助'])

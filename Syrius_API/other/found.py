@@ -42,6 +42,8 @@ def get_found(code='012414', money='0'):
     res = eval(res)  # 转化为字典。
     amplitude = 0.9 if float(res['gszzl']) > 0 else 1.1  # 跌了多跌一点，涨了少涨一点。
     income = float(res['gszzl']) * float(money) / 100 * amplitude
+    if float(money) < 10 and income == 0:  # 持仓极少的基，收益不要成0，会有点打乱涨跌情况。
+        income = -0.01 if float(res['gszzl']) < 0 else 0.01
     total += income  # 本基金收益
     name = re.sub(r'[A-Za_z() ]', '', res['name']).replace('发起式', '')
     found_data = f"{code:{space}<10}{name:{space}<15}{res['gszzl']:{space}<10}{income:{space}<10.2f}"
@@ -59,7 +61,7 @@ def main():
     data1 = []  # 处理数据中间变量。
     for j in result:
         data1.append(j.split())  # ['000336', '农银研究精选混合', '-0.27', '-0.12']
-    data2 = sorted(data1, key=lambda x: float(x[-1]), reverse=True)  # 排序好的数据。
+    data2 = sorted(data1, key=lambda x: float(x[2]), reverse=True)  # 排序好的数据。
     for i in data2:  # 一个个子列表
         j = f"{i[0]:{space}<10}{i[1]:{space}<15}{i[2]:{space}<10}{float(i[3]):{space}<10.2f}"
         if '-' in j:
