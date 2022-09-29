@@ -3,13 +3,10 @@
 # TIME: 2022/8/1 16:38
 # Desc: pytest执行demo
 
-import os, sys
-
-# sys.path.append(r'\Users\luoxiaobo\PycharmProjects\SyriusAutoTest\base')
 import pytest
 from base.common import read_yaml
 
-print(sys.path)
+
 
 
 class Test_Demo():
@@ -32,6 +29,6 @@ class Test_Demo():
 
 
 if __name__ == '__main__':
-    pytest.main(['test_demo.py'])
-    os.system('allure generate ./temp -o ./report --clean')
+    pytest.main([__file__])
+    # os.system('allure generate ./temp -o ./report --clean')
     # print(read_yaml(file='./case_demo.yaml', key='login'))
