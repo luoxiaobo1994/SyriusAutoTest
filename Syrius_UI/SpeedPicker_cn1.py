@@ -886,7 +886,8 @@ class SpeedPicker:
                 elif self.random_trigger(n=3, process='检查是否进入其他页面'):  # 有时候只是卡一下界面,并不需要一直检查是不是发生了异常.
                     self.other_situation()
             elif '等待任务中' in view_ls:
-                log.info("SpeedPicker当前没有任务，请下单。\n")  # 整两个空行来区分一下任务。
+                log.info("SpeedPicker当前没有任务，等待5s。若仍无任务，将会通过接口下发订单。\n")
+                sleep(5)
                 if read_yaml('site_info.yaml', 'api_order'):
                     self.api_order()
                 self.wait_moment("等待任务中")
