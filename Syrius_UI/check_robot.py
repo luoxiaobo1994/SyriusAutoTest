@@ -22,6 +22,7 @@ def check_info(name):
     log.debug(Linux_command(name, 'cat /etc/syrius/ota/version', index=1, name=f'机器人[{name}]的MoveBase-Version:'))
     log.debug(Linux_command(name, 'cat /opt/syrius/ota/checker/application.yml', index=1, need='env: test'))
     log.debug(Linux_command(name, 'cat /sys/robotInfo/RobotSN', index=1, name=f'机器人[{name}]SN:'))
+
     if Linux_command(name, 'ls -lh /etc/syrius/calibration_result/robot_sensors.yaml', index=1, name='标定文件检查：'):
         log.debug(f"机器人[{name}]的标定文件检查：正常。")
     else:
@@ -32,6 +33,13 @@ def check_disk(name):
     res = Linux_command(name, 'df | head -2 | grep /')
     percent = re.findall('\d+%', res)[0]
     log.debug(f"机器人[{name}]的磁盘当前使用：{percent}")
+
+
+def check_id(name):
+    res = Linux_command(name, 'dbus-send --system --print-reply=literal --type=method_call --dest=com.'
+                              'syriusrobotics.secbot /buzzard/secbot com.syriusrobotics.secbot.ISecBot.getDroidId')
+    id = res.split()[0]
+    log.debug(f"机器人[{name}]的ID：{id}")
 
 
 def check_battery(name):
@@ -45,7 +53,7 @@ def check_battery(name):
 def clear_OTA(name):
     cmd = ['rm -rf /opt/syrius/cache/ota_client/downloader/*',
            'rm -rf /opt/syrius/cache/ota_client/facade/*']
-    log.debug("清除机器人OTA缓存。")
+    log.debug(f"清除机器人[{name}]的OTA缓存。")
     for i in cmd:
         Linux_command(name, i)
 
@@ -55,13 +63,14 @@ def main(bot):
     check_disk(bot)
     check_battery(bot)
     clear_OTA(bot)
+    check_id(bot)
     log.debug('-' * 20)
 
 
 if __name__ == '__main__':
-    main(robot['雷龙-齐达内'])
-    main(robot['雷龙-内马尔'])
-    # main(robot['雷龙-苏亚雷斯'])
+    # main(robot['雷龙-齐达内'])
+    # main(robot['雷龙-内马尔'])
+    main(robot['雷龙-苏亚雷斯'])
     # main(robot['梁龙-佐助'])
     # main('10.2.8.242')
     # check_battery(robo/t['梁龙-佐助'])

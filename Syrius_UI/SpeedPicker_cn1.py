@@ -913,7 +913,7 @@ class SpeedPicker:
                     target_location = ''
                 self.picking(target=target_location, checktarget=True, ismove=move_flag)  # 封装成函数，单独处理。
                 move_flag = False
-            elif '单据' in view_ls:  #
+            elif '拣货执行结果' in view_ls:  #
                 log.debug(f"拣货结果:{self.get_text()}")
                 # log.debug(f"拣货信息-content:{self.driver.app_elements_content_desc((By.XPATH, '//*'))}")
                 # self.press_ok()  # 确定波次.
