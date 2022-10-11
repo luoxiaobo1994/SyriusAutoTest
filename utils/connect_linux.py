@@ -44,15 +44,22 @@ def ssh(ip, cmds=[], username='syrius', password="syrius", port=22, i=False, tim
         client.close()
 
 
-def Linux_command(ip, command, index=0, port=22, username='syrius', password='syrius', name='', need=''):
+def Linux_command(ip, command, index=0, port=22, username='syrius', password='syrius', name='', need='',
+                  isreturn=False):
     '''用于执行linux命令，并返回执行结果'''
     try:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(ip, port, username, password)
-        stdin, stdout, stderr = ssh.exec_command(command)
+        ssh.connect(ip, port, username, password, timeout=10)
+        stdin, stdout, stderr = ssh.exec_command(command, get_pty=True)
+        if command.startswith('sudo'):
+            stdin.write(password + '\n')
+            time.sleep(0.5)
+            stdin.flush()
         res = stdout.readline()
         ssh.close()
+        if isreturn == True:
+            return f'执行命令:{command}'
         if 'No such file or directory' in res:
             return f'机器人:{ip}，执行命令:[{command}]，查询的文件不存在。请注意检查！'
         if res:
@@ -60,8 +67,7 @@ def Linux_command(ip, command, index=0, port=22, username='syrius', password='sy
                 return f'执行命令:[{command}]，产生的结果与预期不一致，[{need}]不在[{res}]内。'
             return name + res.replace('\n', '') if index else name + res.replace('\n', '')
         else:
-            return f'机器人:{ip}，执行命令:[{command}]，没有结果。请注意检查！'
-
+            return f'机器人:[{ip}]，执行命令:[{command}]，没有结果。请注意检查！'
     except Exception as e:
         return e
 

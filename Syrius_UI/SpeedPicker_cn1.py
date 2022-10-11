@@ -888,9 +888,9 @@ class SpeedPicker:
             elif '等待任务中' in view_ls:
                 log.info("SpeedPicker当前没有任务，等待5s。若仍无任务，将会通过接口下发订单。\n")
                 sleep(5)
+                self.wait_moment("等待任务中")
                 if read_yaml('site_info.yaml', 'api_order'):
                     self.api_order()
-                self.wait_moment("等待任务中")
             elif '前往' in view_ls:
                 move_flag = True
                 try:
