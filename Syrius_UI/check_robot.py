@@ -24,7 +24,6 @@ def check_info(robot):
     log.debug(
         Linux_command(robot, "grep -E 'build date:(.*?)$' /etc/version.yaml", name=f'机器人[{robot}]的L4T-vendor构建日期:'))
     log.debug(Linux_command(robot, 'cat /sys/robotInfo/RobotSN', index=1, name=f'机器人[{robot}]SN:'))
-    log.debug(Linux_command(robot, 'touch SQA测试机器人请勿乱改动.txt', isreturn=True))
     if Linux_command(robot, 'ls -lh /etc/syrius/calibration_result/robot_sensors.yaml', index=1, name='标定文件检查：'):
         log.debug(f"机器人[{robot}]的标定文件检查：正常。")
     else:
@@ -84,6 +83,11 @@ def check_server(robot):
     log.debug(res)
 
 
+def make_file(robot):
+    log.debug(Linux_command(robot, 'touch SQA测试机器人请勿乱改动.txt', isreturn=True))
+    Linux_command(robot, '')
+
+
 def main(bot):
     check_info(bot)
     check_disk(bot)
@@ -100,5 +104,5 @@ if __name__ == '__main__':
     # main(robot['雷龙-内马尔'])
     # main(robot['雷龙-苏亚雷斯'])
     # main(robot['梁龙-佐助'])
-    # main('10.2.8.242')
+    # main('10.2.8.77')
     # main(robot['梁龙-佐助'])

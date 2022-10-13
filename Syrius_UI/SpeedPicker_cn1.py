@@ -467,6 +467,8 @@ class SpeedPicker:
                                 log.debug(f"文本[{without}]刷新。 停止检查[{text}]。")
                                 self.reset_timer()
                                 return
+                        elif '等待任务中' in view_ls:
+                            self.api_order()
                         elif self.islosepos():
                             log.warning("机器人丢失定位。")
                             self.shoot()
