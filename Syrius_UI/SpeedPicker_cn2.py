@@ -467,6 +467,8 @@ class SpeedPicker:
                                 log.debug(f"文本[{without}]刷新。 停止检查[{text}]。")
                                 self.reset_timer()
                                 return
+                        elif '等待任务中' in view_ls:
+                            self.api_order()
                         elif self.islosepos():
                             log.warning("机器人丢失定位。")
                             self.shoot()
@@ -833,6 +835,7 @@ class SpeedPicker:
             res = send_order(num=order_num, siteid=site)
             if 'successData' in res:
                 log.info("通过接口下发拣货任务成功。")
+                sleep(5)
             else:
                 sleep(10)
                 log.debug("通过接口下发任务失败了，请检查一下.或者手动发单。")
@@ -886,10 +889,11 @@ class SpeedPicker:
                 elif self.random_trigger(n=3, process='检查是否进入其他页面'):  # 有时候只是卡一下界面,并不需要一直检查是不是发生了异常.
                     self.other_situation()
             elif '等待任务中' in view_ls:
-                log.info("SpeedPicker当前没有任务，请下单。\n")  # 整两个空行来区分一下任务。
+                log.info("SpeedPicker当前没有任务，等待5s。若仍无任务，将会通过接口下发订单。\n")
+                sleep(5)
+                self.wait_moment("等待任务中")
                 if read_yaml('site_info.yaml', 'api_order'):
                     self.api_order()
-                self.wait_moment("等待任务中")
             elif '前往' in view_ls:
                 move_flag = True
                 try:
@@ -912,7 +916,7 @@ class SpeedPicker:
                     target_location = ''
                 self.picking(target=target_location, checktarget=True, ismove=move_flag)  # 封装成函数，单独处理。
                 move_flag = False
-            elif '单据' in view_ls:  #
+            elif '拣货执行结果' in view_ls:  #
                 log.debug(f"拣货结果:{self.get_text()}")
                 # log.debug(f"拣货信息-content:{self.driver.app_elements_content_desc((By.XPATH, '//*'))}")
                 # self.press_ok()  # 确定波次.
