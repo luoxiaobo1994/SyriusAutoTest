@@ -24,6 +24,7 @@ def check_info(robot):
     log.debug(
         Linux_command(robot, "grep -E 'build date:(.*?)$' /etc/version.yaml", name=f'机器人[{robot}]的L4T-vendor构建日期:'))
     log.debug(Linux_command(robot, 'cat /sys/robotInfo/RobotSN', index=1, name=f'机器人[{robot}]SN:'))
+    log.debug(Linux_command(robot, "date +'%Y-%m-%d %H:%M:%S'", index=1, name=f'机器人[{robot}]时间:'))
     if Linux_command(robot, 'ls -lh /etc/syrius/calibration_result/robot_sensors.yaml', index=1, name='标定文件检查：'):
         log.debug(f"机器人[{robot}]的标定文件检查：正常。")
     else:
@@ -67,7 +68,7 @@ def clear_OTA(robot):
 def write_env(robot):
     res1 = Linux_command(robot, 'cat /opt/syrius/ota/checker/application.yml', index=1, need='env: test')
     res2 = Linux_command(robot, 'cat /opt/syrius/iot-gateway/application.yml', index=1, need='env: test')
-    if all([res1, res2]):
+    if all([res1, res2]) and 'test' in res1:
         log.debug(f"机器人[{robot}]的环境为：{res1}")
     else:
         log.debug(f"机器人[{robot}]的环境文件缺失，手动添加配置文件。")
@@ -88,6 +89,22 @@ def make_file(robot):
     Linux_command(robot, '')
 
 
+def check_model(robot):
+    model = {
+        'LLLPO0100': '波塞冬',
+        'LMLDI0100': '矮版梁龙-雅滕电机',
+        'LMLDI0200': '矮版梁龙-自研电机',
+        'LMLDI0101': '高版梁龙-雅滕电机',
+        'LMLDI0201': '高版梁龙-雅滕电机',
+        'LMLDI0400': '矮版梁龙2-雅滕电机-认证',
+        'LMLDI0401': '高版梁龙2-雅滕电机-认证',
+        'LMLDI0500': '高版梁龙2-雅滕电机-非认证',
+        'LMLDI0501': '高版梁龙2-雅滕电机-非认证',
+    }
+    res = Linux_command(robot, 'cat /sys/robotInfo/Model')[:9]
+    log.debug(f"机器人[{robot}]Model是：{res}，对应机型：{model[res] if model.get(res) else '没有对应机型，请检查。'}")
+
+
 def main(bot):
     check_info(bot)
     check_disk(bot)
@@ -95,14 +112,16 @@ def main(bot):
     clear_OTA(bot)
     check_id(bot)
     write_env(bot)
+    check_model(bot)
     log.debug('-' * 20)
 
 
 if __name__ == '__main__':
-    # main(robot['雷龙-齐达内'])
+    main(robot['雷龙-齐达内'])
     # check_server(robot['雷龙-齐达内'])
     # main(robot['雷龙-内马尔'])
     # main(robot['雷龙-苏亚雷斯'])
     # main(robot['梁龙-佐助'])
     # main('10.2.8.77')
-    main(robot['梁龙-佐助'])
+    # main('10.2.8.90')
+    # main(robot['梁龙-佐助'])
