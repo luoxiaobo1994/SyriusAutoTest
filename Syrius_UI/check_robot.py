@@ -4,7 +4,7 @@
 # Desc: 测试前，检查机器人环境是否正常。
 
 import re
-
+from base.common import *
 from utils.connect_linux import *
 from utils.log2 import Logger2
 
@@ -24,11 +24,16 @@ def check_info(robot):
     log.debug(
         Linux_command(robot, "grep -E 'build date:(.*?)$' /etc/version.yaml", name=f'机器人[{robot}]的L4T-vendor构建日期:'))
     log.debug(Linux_command(robot, 'cat /sys/robotInfo/RobotSN', index=1, name=f'机器人[{robot}]SN:'))
-    log.debug(Linux_command(robot, "date +'%Y-%m-%d %H:%M:%S'", index=1, name=f'机器人[{robot}]时间:'))
     if Linux_command(robot, 'ls -lh /etc/syrius/calibration_result/robot_sensors.yaml', index=1, name='标定文件检查：'):
         log.debug(f"机器人[{robot}]的标定文件检查：正常。")
     else:
         log.debug(f"机器人[{robot}]的标定文件已丢失，请检查！！！！")
+
+def check_time():
+    res = log.debug(Linux_command(robot, "date +'%Y-%m-%d %H:%M:%S'", index=1, name=f'机器人[{robot}]时间:'))
+    difference = time_difference(res,isreturn=True)
+    if difference >=5:
+        log.warning(f"注意：时间相差较大。注意检查机器人时间。")
 
 
 def check_disk(robot):

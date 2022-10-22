@@ -12,7 +12,7 @@ import threading
 import time
 import traceback
 from collections.abc import Iterable
-
+from datetime import datetime, date
 import wcwidth
 import yaml
 
@@ -50,6 +50,27 @@ def get_date():
     now_time = time.localtime()  # [2020, 11, 30, 12, 3, 5, 0, 335, 0]
     date_1 = '-'.join(str(i).zfill(2) for i in now_time[:3])
     return date_1
+
+
+def time_difference(sometime, isreturn=False, compare=False, time_threshold=5, method='>'):
+    # 计算两个时间差,传入的时间参数格式“2022-10-22 13:15:55”
+    t1 = datetime.now()
+    t2 = datetime.strptime(sometime, "%Y-%m-%d %H:%M:%S")
+    difference = (t1 - t2).total_seconds()
+    abs_time = abs(difference)
+    logger.debug(f"传入计算的时间，与当前时间相差为：{'慢' if difference > 0 else '快'}{abs_time:.2f}秒。")
+    if compare:
+        if method == '>':
+            if abs_time > time_threshold:
+                logger.warning(f"传入的时间与当前时间相比，差值大于：{time_threshold}秒，请注意检查。")
+        elif method == '<':
+            if abs_time < time_threshold:
+                logger.warning(f"传入的时间与当前时间相比，差值小于：{time_threshold}秒，请注意检查。")
+        else:
+            if abs_time == time_threshold:
+                logger.warning(f"传入的时间与当前时间相比，差值超等于：{time_threshold}秒，请注意检查。")
+    if isreturn:
+        return abs(difference)
 
 
 # 调试打印,带时间戳
