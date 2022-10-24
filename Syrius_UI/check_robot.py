@@ -84,10 +84,10 @@ def write_env(robot):
         log.debug(f"机器人[{robot}]的环境为：{res1}")
     else:
         log.debug(f"机器人[{robot}]的环境文件缺失，手动添加配置文件。")
-        cmd = "sudo echo 'env: test' > /opt/syrius/ota/checker/application.yml"
+        cmd = "sudo echo 'env: test' > /opt/cosmos/bin/ota/checker/application.yml"
         Linux_command(robot, cmd)
-        cmd2 = "sudo echo 'env: test' > /opt/syrius/iot-gateway/application.yml"
-        Linux_command(robot, cmd2)
+        # cmd2 = "sudo echo 'env: test' > /opt/syrius/iot-gateway/application.yml"
+        # Linux_command(robot, cmd2)
 
 
 def check_server(robot):
