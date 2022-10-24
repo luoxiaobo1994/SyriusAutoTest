@@ -626,12 +626,12 @@ class SpeedPicker:
             log.debug(f"拣货场景2，点击了输入按钮，弹出输入框，但未输入商品码。本次输入万能码。")
             self.inputcode(code='199103181516')
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
-        elif '输入' in view_ls:  # 1.还没扫码，有输入按钮。
+        elif '扫货品/输入' in view_ls:  # 1.还没扫码，有输入按钮。
             log.info("拣货场景1，SpeedPicker尚未开始捡取当前商品。")
             if self.random_trigger(n=self.get_config()['pick_psb'], process='输入商品码'):  # 概率，上报异常。
                 self.report_err()
                 return  # 结束拣货流程.
-            self.click_view_text("输入", new_element=(By.XPATH, '//android.widget.EditText'), pagename="拣货点击输入")  # 点击输入按钮
+            self.click_view_text("扫货品/输入", new_element=(By.XPATH, '//android.widget.EditText'), pagename="拣货点击输入")  # 点击输入按钮
             # 随机触发,输入错误商品码的概率
             if self.random_trigger(n=self.get_config()['err_code_psb'], process='输入错误商品码'):
                 self.input_error(random.randint(1, 564313112131))  # 随机取一个,取对了,就可以买彩票了。
@@ -666,7 +666,7 @@ class SpeedPicker:
             log.debug(f"拣货场景3，商品已捡取，未点击[完成]，通过点击[完成]，快速完成拣货。")
         # 页面检查函数，页面名称是拣货完成，有单独判断。这里名称不要随便改。 会校验：是否开启了快速拣货。
         self.page_check(timeout=6, pagename='拣货完成', is_shoot=True, text='完成', new_text='前往',
-                        new_text2='输入')  # 这里比较容易卡. 在这里检查一下.
+                        new_text2='扫货品/输入')  # 这里比较容易卡. 在这里检查一下.
         # self.go_to()
 
     def check_time(self):
