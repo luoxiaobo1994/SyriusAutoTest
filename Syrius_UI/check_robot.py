@@ -38,15 +38,22 @@ def check_time(robot, repair=True):
     now = str(datetime.now())
     if res[:10] != now[:10]:
         log.warning(f"机器人[{robot}]当前时间与实际UTC时间差距较大，请检查！！！")
-        # if repair:
-        #     log.debug("脚本即将设置时间到当前时间。")
-        #     Linux_command(f'sudo date -s "{now}"')  # 得-8个小时，怎么处理？
+        now1 = list(time.localtime())
+        date = ''.join([str(i) for i in now1[:3]])
+        h = now1[3] - 8
+        m = now1[4]
+        s = now1[5]
+        writetime = date + ' ' + ':'.join([str(h), str(m), str(s)])
+        # print(writetime)
+        if repair:
+            log.debug(f"脚本即将设置时间到当前时间:{writetime}，时间时区为UTC0。")
+            Linux_command(robot, f'sudo date -s "{writetime}"')
 
 
 def check_disk(robot):
     res = Linux_command(robot, 'df | head -2 | grep /')
     percent = re.findall('\d+%', res)[0]
-    log.debug(f"机器人[{robot}]的磁盘当前使用：{percent}")
+    log.debug(f"机器人[{robot}]的磁盘当前使用:{percent}")
     threshold = '85%'
     if percent > threshold:
         log.debug(f"机器人[{robot}]的磁盘占用大于{threshold}，执行:1.日志清除命令。2.删除home目录下的更新包")
@@ -80,7 +87,8 @@ def clear_OTA(robot):
 def write_env(robot):
     res1 = Linux_command(robot, 'cat /opt/cosmos/bin/ota/checker/application.yml', index=1, need='env: test')
     res2 = Linux_command(robot, 'cat /opt/cosmos/bin/iot-gateway/application.yml', index=1, need='env: test')
-    if all([res1, res2]) and 'test' in res1:
+    res3 = Linux_command(robot, 'cat /opt/cosmos/bin/secbot/secbot/application.yml', index=1, need='env: test')
+    if all([res1, res2, res3]) and 'test' in res1:
         log.debug(f"机器人[{robot}]的环境为：{res1}")
     else:
         log.debug(f"机器人[{robot}]的环境文件缺失，手动添加配置文件。")
@@ -88,11 +96,13 @@ def write_env(robot):
         Linux_command(robot, cmd)
         cmd2 = "sudo echo 'env: test' > /opt/cosmos/bin/iot-gateway/application.yml"
         Linux_command(robot, cmd2)
+        cmd3 = "sudo echo 'env: test' > /opt/cosmos/bin/secbot/secbot/application.yml"
+        Linux_command(robot, cmd3)
 
 
 def check_server(robot):
-    cmd = 'ps -aux | grep navigation_skill'
-    res = Linux_command(robot, cmd)
+    cmd = 'ps -ef | grep navigation'
+    res = Linux_command(robot, cmd, just_result=True)
     log.debug(res)
 
 
@@ -134,9 +144,9 @@ def main(bot):
 
 if __name__ == '__main__':
     # main(robot['雷龙-齐达内'])
-    # check_server(robot['雷龙-齐达内'])
-    # main(robot['雷龙-内马尔'])
-    main(robot['雷龙-苏亚雷斯'])
+    # check_server(robot['雷龙-苏亚雷斯'])
+    main(robot['雷龙-内马尔'])
+    # main(robot['雷龙-苏亚雷斯'])
     # main(robot['梁龙-佐助'])
     # main('10.2.8.77')
     # main('10.2.8.90')
