@@ -12,7 +12,8 @@ import threading
 import time
 import traceback
 from collections.abc import Iterable
-from datetime import datetime, date
+from datetime import datetime
+
 import wcwidth
 import yaml
 
@@ -489,4 +490,4 @@ class just_err(Exception):
 
 
 if __name__ == '__main__':
-    print(get_devices())
+    print(datetime.now())

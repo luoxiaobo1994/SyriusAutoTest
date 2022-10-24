@@ -45,7 +45,7 @@ def ssh(ip, cmds=[], username='syrius', password="syrius", port=22, i=False, tim
 
 
 def Linux_command(ip, command, index=0, port=22, username='syrius', password='syrius', name='', need='',
-                  isreturn=False):
+                  isreturn=False, just_result=False):
     '''用于执行linux命令，并返回执行结果'''
     try:
         ssh = paramiko.SSHClient()
@@ -58,6 +58,9 @@ def Linux_command(ip, command, index=0, port=22, username='syrius', password='sy
             stdin.flush()
         res = stdout.readline()
         ssh.close()
+        if just_result:
+            res = res.replace('\n', '')
+            return res
         if isreturn == True:
             return f'执行命令:{command}'
         if 'No such file or directory' in res:

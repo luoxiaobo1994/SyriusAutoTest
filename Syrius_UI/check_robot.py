@@ -4,6 +4,7 @@
 # Desc: 测试前，检查机器人环境是否正常。
 
 import re
+
 from base.common import *
 from utils.connect_linux import *
 from utils.log2 import Logger2
@@ -19,8 +20,9 @@ robot = {
 
 
 def check_info(robot):
-    log.debug(Linux_command(robot, 'cat /etc/syrius/ota/version', index=1, name=f'机器人[{robot}]的MoveBase-Version:'))
-
+    # log.debug(Linux_command(robot, 'cat /etc/syrius/ota/version', index=1, name=f'机器人[{robot}]的MoveBase-Version:'))
+    log.debug(
+        Linux_command(robot, 'cat /opt/cosmos/bin/etc/ota/version', index=1, name=f'机器人[{robot}]的MoveBase-Version:'))
     log.debug(
         Linux_command(robot, "grep -E 'build date:(.*?)$' /etc/version.yaml", name=f'机器人[{robot}]的L4T-vendor构建日期:'))
     log.debug(Linux_command(robot, 'cat /sys/robotInfo/RobotSN', index=1, name=f'机器人[{robot}]SN:'))
@@ -29,11 +31,16 @@ def check_info(robot):
     else:
         log.debug(f"机器人[{robot}]的标定文件已丢失，请检查！！！！")
 
-def check_time():
-    res = log.debug(Linux_command(robot, "date +'%Y-%m-%d %H:%M:%S'", index=1, name=f'机器人[{robot}]时间:'))
-    difference = time_difference(res,isreturn=True)
-    if difference >=5:
-        log.warning(f"注意：时间相差较大。注意检查机器人时间。")
+
+def check_time(robot, repair=True):
+    res = Linux_command(robot, "date +'%Y-%m-%d %H:%M:%S'", just_result=True)
+    log.debug(f"机器人[{robot}]当前时间:{res}")
+    now = str(datetime.now())
+    if res[:10] != now[:10]:
+        log.warning(f"机器人[{robot}]当前时间与实际UTC时间差距较大，请检查！！！")
+        # if repair:
+        #     log.debug("脚本即将设置时间到当前时间。")
+        #     Linux_command(f'sudo date -s "{now}"')  # 得-8个小时，怎么处理？
 
 
 def check_disk(robot):
@@ -106,12 +113,16 @@ def check_model(robot):
         'LMLDI0500': '高版梁龙2-雅滕电机-非认证',
         'LMLDI0501': '高版梁龙2-雅滕电机-非认证',
     }
-    res = Linux_command(robot, 'cat /sys/robotInfo/Model')[:9]
-    log.debug(f"机器人[{robot}]Model是：{res}，对应机型：{model[res] if model.get(res) else '没有对应机型，请检查。'}")
+    try:
+        res = Linux_command(robot, 'cat /sys/robotInfo/Model')[:9]
+        log.debug(f"机器人[{robot}]Model是：{res}，对应机型：{model[res] if model.get(res) else '没有对应机型，请检查。'}")
+    except TypeError:
+        log.warning(f"机器人[{robot}]Model查询结果返回异常，请检查。")
 
 
 def main(bot):
     check_info(bot)
+    check_time(bot)
     check_disk(bot)
     check_battery(bot)
     clear_OTA(bot)
@@ -125,7 +136,7 @@ if __name__ == '__main__':
     main(robot['雷龙-齐达内'])
     # check_server(robot['雷龙-齐达内'])
     # main(robot['雷龙-内马尔'])
-    # main(robot['雷龙-苏亚雷斯'])
+    main(robot['雷龙-苏亚雷斯'])
     # main(robot['梁龙-佐助'])
     # main('10.2.8.77')
     # main('10.2.8.90')
