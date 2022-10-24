@@ -6,6 +6,7 @@ more_good: True # 输入更多的商品数值.
 pasue_move: True # 是否暂停移动.
 pasue_psb: 15  # 暂停移动的概率 1/15
 pick_psb: 15  # 拣货上报异常的概率.1/15
+skip_picker: 30  # 跳过当前商品的捡取任务。1/30
 more_psb: 0  # 多输入几个商品数量的概率.1/15
 err_code_psb: 15 # 输入错误商品码的概率.1/15
 api_order: True  # 是否开启接口发单功能。

@@ -570,7 +570,8 @@ class SpeedPicker:
                     log.debug(f"连续{count}次重试上传均失败，本次尝试暂时跳过本次结果上传。")
                     self.driver.click_element(skip_btn)
                     # 调用自身，可能有点问题。先看看。
-                    self.page_check(timeout=10, pagename="拣货结果上报", text="暂时跳过", is_shoot=True, new_text="前往")
+                    self.page_check(timeout=10, pagename="拣货结果上报", text="暂时跳过", is_shoot=True,
+                                    new_text="前往")
 
         log.warning(f"超过[{total_time}]s，[{pagename}]页面文本没有变化。可能卡界面了。")
         if is_shoot:
@@ -631,10 +632,13 @@ class SpeedPicker:
             if self.random_trigger(n=self.get_config()['pick_psb'], process='输入商品码'):  # 概率，上报异常。
                 self.report_err()
                 return  # 结束拣货流程.
-            self.click_view_text("扫货品/输入", new_element=(By.XPATH, '//android.widget.EditText'), pagename="拣货点击输入")  # 点击输入按钮
+            self.click_view_text("扫货品/输入", new_element=(By.XPATH, '//android.widget.EditText'),
+                                 pagename="拣货点击输入")  # 点击输入按钮
             # 随机触发,输入错误商品码的概率
             if self.random_trigger(n=self.get_config()['err_code_psb'], process='输入错误商品码'):
                 self.input_error(random.randint(1, 564313112131))  # 随机取一个,取对了,就可以买彩票了。
+            if self.random_trigger(n=self.get_config()['skip_picking'], process='跳过当前商品拣货'):
+                self.click_view_text('跳过')
             try:
                 good_num = re.findall('×[\d]+', ''.join(view_ls))[0]
                 log.debug(f"当前商品需要捡取：{good_num.replace('×', '')}个。")
@@ -796,7 +800,8 @@ class SpeedPicker:
             while count > 0:
                 try:
                     # 考虑网速差,拉取的配置较大的情况.多给点时间.不过拉不完也会重新进来的,问题不大.
-                    self.driver.click_element(locator=(By.XPATH, '//android.widget.Button[@content-desc="完成"]'), wait=5)
+                    self.driver.click_element(locator=(By.XPATH, '//android.widget.Button[@content-desc="完成"]'),
+                                              wait=5)
                     log.info("获取云端更新配置完成。")
                     break
                 except:
@@ -840,7 +845,8 @@ class SpeedPicker:
                 sleep(10)
                 log.debug("通过接口下发任务失败了，请检查一下.或者手动发单。")
         except Exception as e:
-            log.warning(f"通过接口下发订单的流程出现了一些异常，请注意检查。异常信息:{e}\n错误行:{traceback.format_exc()}")
+            log.warning(
+                f"通过接口下发订单的流程出现了一些异常，请注意检查。异常信息:{e}\n错误行:{traceback.format_exc()}")
             sleep(10)
 
     def get_config(self):
@@ -969,7 +975,8 @@ class SpeedPicker:
                 self.press_ok()  # 这里来点一下
                 sleep(5)
                 now = self.get_text()
-                log.debug(f"main主函数里，最后一个else。为什么会走到这一步？ 刚才拿到的文本:{view_ls},此时的界面文本:{now}")
+                log.debug(
+                    f"main主函数里，最后一个else。为什么会走到这一步？ 刚才拿到的文本:{view_ls},此时的界面文本:{now}")
                 if len_same(use_text, now) > 2:  # 可能只是卡了一下，重新抓一次就正常了。
                     log.debug(f"抓取到的信息正常，继续流程。")
                     if '请到此处附近' in now:

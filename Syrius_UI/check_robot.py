@@ -78,16 +78,16 @@ def clear_OTA(robot):
 
 
 def write_env(robot):
-    res1 = Linux_command(robot, 'cat /opt/syrius/ota/checker/application.yml', index=1, need='env: test')
-    res2 = Linux_command(robot, 'cat /opt/syrius/iot-gateway/application.yml', index=1, need='env: test')
+    res1 = Linux_command(robot, 'cat /opt/cosmos/bin/ota/checker/application.yml', index=1, need='env: test')
+    res2 = Linux_command(robot, 'cat /opt/cosmos/bin/iot-gateway/application.yml', index=1, need='env: test')
     if all([res1, res2]) and 'test' in res1:
         log.debug(f"机器人[{robot}]的环境为：{res1}")
     else:
         log.debug(f"机器人[{robot}]的环境文件缺失，手动添加配置文件。")
         cmd = "sudo echo 'env: test' > /opt/cosmos/bin/ota/checker/application.yml"
         Linux_command(robot, cmd)
-        # cmd2 = "sudo echo 'env: test' > /opt/syrius/iot-gateway/application.yml"
-        # Linux_command(robot, cmd2)
+        cmd2 = "sudo echo 'env: test' > /opt/cosmos/bin/iot-gateway/application.yml"
+        Linux_command(robot, cmd2)
 
 
 def check_server(robot):
@@ -133,7 +133,7 @@ def main(bot):
 
 
 if __name__ == '__main__':
-    main(robot['雷龙-齐达内'])
+    # main(robot['雷龙-齐达内'])
     # check_server(robot['雷龙-齐达内'])
     # main(robot['雷龙-内马尔'])
     main(robot['雷龙-苏亚雷斯'])
