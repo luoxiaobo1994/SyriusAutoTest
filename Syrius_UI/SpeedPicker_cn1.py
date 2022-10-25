@@ -468,7 +468,11 @@ class SpeedPicker:
                                 self.reset_timer()
                                 return
                         elif '等待任务中' in view_ls:
-                            self.api_order()
+                            sleep(10)
+                            if '等待任务中' in self.get_text():
+                                if read_yaml('site_info.yaml', 'api_order'):
+                                    log.debug("持续等待10s，机器人仍然等待任务，且开启了接口发送订单功能。")
+                                    self.api_order()
                         elif self.islosepos():
                             log.warning("机器人丢失定位。")
                             self.shoot()
@@ -896,11 +900,10 @@ class SpeedPicker:
                 elif self.random_trigger(n=3, process='检查是否进入其他页面'):  # 有时候只是卡一下界面,并不需要一直检查是不是发生了异常.
                     self.other_situation()
             elif '等待任务中' in view_ls:
-                log.info("SpeedPicker当前没有任务，等待5s。若仍无任务，将会通过接口下发订单。\n")
-                sleep(5)
+                log.info("SpeedPicker当前没有任务，等待10s。若仍无任务，将会通过接口下发订单。\n")
+                sleep(10)
                 self.wait_moment("等待任务中")
-                if read_yaml('site_info.yaml', 'api_order'):
-                    self.api_order()
+
             elif '前往' in view_ls:
                 move_flag = True
                 try:

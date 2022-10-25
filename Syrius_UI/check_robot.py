@@ -145,8 +145,8 @@ def main(bot):
 if __name__ == '__main__':
     # main(robot['雷龙-齐达内'])
     # check_server(robot['雷龙-苏亚雷斯'])
-    main(robot['雷龙-内马尔'])
-    # main(robot['雷龙-苏亚雷斯'])
+    # main(robot['雷龙-内马尔'])
+    main(robot['雷龙-苏亚雷斯'])
     # main(robot['梁龙-佐助'])
     # main('10.2.8.77')
     # main('10.2.8.90')
