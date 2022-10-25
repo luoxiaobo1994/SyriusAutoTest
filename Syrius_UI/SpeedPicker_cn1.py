@@ -631,6 +631,7 @@ class SpeedPicker:
                 log.debug(f"触发随机事件，跳过当前商品的捡取。")
                 self.driver.click_element((By.XPATH, f'//*[@text="跳过"]'))
                 self.press_ok()
+                return  # 结束当前商品拣货
         if self.driver.element_display((By.XPATH, '//android.widget.EditText'), wait=1):
             # 拣货情形2,点开了输入框,但是没有输入商品码
             log.debug(f"拣货场景2，点击了输入按钮，弹出输入框，但未输入商品码。本次输入万能码。")
