@@ -618,7 +618,7 @@ class SpeedPicker:
         if not target.startswith('A0') and target != '':  # 在拣货点开脚本，目标点是空的。
             log.debug(f"拣货点:目标点[{target}]检查不正确，退出拣货流程。")
             return  # 前往的目标点，不是货架区。说明不是拣货流程，直接跳出去。
-        self.press_ok()
+        # self.press_ok()  # 异常耗时了。
         view_ls = self.get_text()
         if target in view_ls and checktarget and ismove:
             log.debug(f"移动中前往的目标点位：{target}，与当前到达的拣货点一致。")
@@ -632,12 +632,7 @@ class SpeedPicker:
                 self.driver.click_element((By.XPATH, f'//*[@text="跳过"]'))
                 self.press_ok()
                 return  # 结束当前商品拣货
-        if self.driver.element_display((By.XPATH, '//android.widget.EditText'), wait=1):
-            # 拣货情形2,点开了输入框,但是没有输入商品码
-            log.debug(f"拣货场景2，点击了输入按钮，弹出输入框，但未输入商品码。本次输入万能码。")
-            self.inputcode(code='199103181516')
-            self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
-        elif '扫货品/输入' in view_ls:  # 1.还没扫码，有输入按钮。
+        if '扫货品/输入' in view_ls:  # 1.还没扫码，有输入按钮。
             log.info("拣货场景1，SpeedPicker尚未开始捡取当前商品。")
             if self.random_trigger(n=self.get_config()['pick_psb'], process='输入商品码'):  # 概率，上报异常。
                 self.report_err()
@@ -673,6 +668,11 @@ class SpeedPicker:
                     break
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
             log.debug(f"通过点击[完成]，完成拣货。")
+        elif self.driver.element_display((By.XPATH, '//android.widget.EditText'), wait=1):
+            # 拣货情形2,点开了输入框,但是没有输入商品码
+            log.debug(f"拣货场景2，点击了输入按钮，弹出输入框，但未输入商品码。本次输入万能码。")
+            self.inputcode(code='199103181516')
+            self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
         else:
             # 拣货情形3,都捡完了,只是没点完成.
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
@@ -930,7 +930,7 @@ class SpeedPicker:
                     target_location = ''
                 self.picking(target=target_location, checktarget=True, ismove=move_flag)  # 封装成函数，单独处理。
                 move_flag = False
-            elif '拣货执行结果' in view_ls:  #
+            elif '拣货执行结果' in view_ls or interset(['格口名称', '订单编号'], view_ls):  #
                 log.debug(f"拣货结果:{self.get_text()}")
                 # log.debug(f"拣货信息-content:{self.driver.app_elements_content_desc((By.XPATH, '//*'))}")
                 # self.press_ok()  # 确定波次.
