@@ -626,6 +626,11 @@ class SpeedPicker:
             log.warning(f"注意检查一下，移动中指示的目标点{target}与当前拣货页面的不一致。")
         log.info(f"SpeedPicker处于拣货流程，页面信息:{view_ls}")  # 需要记录一下进入拣货流程.
         self.wait_for_time(n=self.get_config()['picking_out'], timeout=self.get_config()['picking_outtime'])
+        if self.random_trigger(n=self.get_config()['skip_picking'], process='跳过当前商品拣货'):
+            if '跳过' in self.get_text():
+                log.debug(f"触发随机事件，跳过当前商品的捡取。")
+                self.click_view_text('跳过')
+                self.press_ok()
         if self.driver.element_display((By.XPATH, '//android.widget.EditText'), wait=1):
             # 拣货情形2,点开了输入框,但是没有输入商品码
             log.debug(f"拣货场景2，点击了输入按钮，弹出输入框，但未输入商品码。本次输入万能码。")
@@ -641,9 +646,7 @@ class SpeedPicker:
             # 随机触发,输入错误商品码的概率
             if self.random_trigger(n=self.get_config()['err_code_psb'], process='输入错误商品码'):
                 self.input_error(random.randint(1, 564313112131))  # 随机取一个,取对了,就可以买彩票了。
-            if self.random_trigger(n=self.get_config()['skip_picking'], process='跳过当前商品拣货'):
-                self.click_view_text('跳过')
-                self.press_ok()
+
             try:
                 good_num = re.findall('×[\d]+', ''.join(view_ls))[0]
                 log.debug(f"当前商品需要捡取：{good_num.replace('×', '')}个。")
