@@ -639,6 +639,7 @@ class SpeedPicker:
                 self.input_error(random.randint(1, 564313112131))  # 随机取一个,取对了,就可以买彩票了。
             if self.random_trigger(n=self.get_config()['skip_picking'], process='跳过当前商品拣货'):
                 self.click_view_text('跳过')
+                self.press_ok()
             try:
                 good_num = re.findall('×[\d]+', ''.join(view_ls))[0]
                 log.debug(f"当前商品需要捡取：{good_num.replace('×', '')}个。")
