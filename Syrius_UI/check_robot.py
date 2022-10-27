@@ -113,6 +113,7 @@ def make_file(robot):
 
 def check_model(robot):
     model = {
+        'LLLBR0200': '雷龙',  # 非正常添加，手动写的
         'LLLPO0100': '波塞冬',
         'LMLDI0100': '矮版梁龙-雅滕电机',
         'LMLDI0200': '矮版梁龙-自研电机',
@@ -139,15 +140,15 @@ def main(bot):
     check_id(bot)
     write_env(bot)
     check_model(bot)
-    log.debug('-' * 20)
+    log.debug('-' * 50 + '\n')
 
 
 if __name__ == '__main__':
-    main(robot['雷龙-齐达内'])
+    # main(robot['雷龙-齐达内'])
     # check_server(robot['雷龙-苏亚雷斯'])
     # main(robot['雷龙-内马尔'])
     # main(robot['雷龙-苏亚雷斯'])
-    # main(robot['梁龙-佐助'])
+    main(robot['梁龙-佐助'])
     # main('10.2.8.77')
     # main('10.2.8.90')
     # main(robot['梁龙-佐助'])
