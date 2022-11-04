@@ -139,7 +139,7 @@ def main(bot):
     check_info(bot)
     check_time(bot)
     check_disk(bot)
-    check_battery(bot)
+    # check_battery(bot)  # 电量命令变更
     clear_OTA(bot)
     check_id(bot)
     write_env(bot)
@@ -150,8 +150,8 @@ def main(bot):
 if __name__ == '__main__':
     # main(robot['雷龙-齐达内'])
     # check_server(robot['雷龙-苏亚雷斯'])
-    main(robot['雷龙-内马尔'])
-    # main(robot['雷龙-苏亚雷斯'])
+    # main(robot['雷龙-内马尔'])
+    main(robot['雷龙-苏亚雷斯'])
     # main(robot['梁龙-佐助'])
     # main('10.2.8.77')
     # main('10.2.8.90')
