@@ -548,12 +548,12 @@ class SpeedPicker:
                 return 1  # 页面变化了.
         if pagename == "拣货完成":
             tmp_text = self.get_text()
-            if '/' in tmp_text:
+            if '/' in tmp_text[:-1]:
                 index_1 = tmp_text.index('/')
                 if tmp_text[index_1 - 1].isdigit() and tmp_text[index_1 + 1].isdigit():
                     log.warning(f"没有开启快速拣货，脚本不能顺利执行。请开启快速拣货，退出脚本。")
                     self.shoot()
-                    exit(-100)
+                    # exit(-100)
         elif text == "已取下":
             if '上传结果失败' in self.get_text():
                 count = self.get_config()['res_report_times']  # 配置化。
@@ -620,6 +620,8 @@ class SpeedPicker:
             return  # 前往的目标点，不是货架区。说明不是拣货流程，直接跳出去。
         # self.press_ok()  # 异常耗时了。
         view_ls = self.get_text()
+        view_ls2 = self.driver.app_elements_text(locator=(By.XPATH, 'android.widget.TextView'))
+        logger.debug(f"调试程序，拣货过程中的wdgetText:{view_ls2}")
         if target in view_ls and checktarget and ismove:
             log.debug(f"移动中前往的目标点位：{target}，与当前到达的拣货点一致。")
         elif target and target not in view_ls and ismove:
@@ -630,10 +632,14 @@ class SpeedPicker:
             if '跳过' in self.get_text():
                 log.debug(f"触发随机事件，跳过当前商品的捡取。")
                 self.driver.click_element((By.XPATH, f'//*[@text="跳过"]'))
-                self.press_ok()
+                self.driver.click_element((By.XPATH, f'//*[@text="确定"]'), wait=2)
                 return  # 结束当前商品拣货
-        if '扫货品/输入' in view_ls:  # 1.还没扫码，有输入按钮。
+        if '扫货品/输入' in view_ls or '扫货品/输入' in view_ls2:  # 1.还没扫码，有输入按钮。
             log.info("拣货场景1，SpeedPicker尚未开始捡取当前商品。")
+            if '跳过此处，稍后拣选？' in view_ls:
+                self.driver.click_element((By.XPATH, f'//*[@text="确定"]'), wait=2)
+                log.debug(f"跳过当前商品拣货。")
+                return
             if self.random_trigger(n=self.get_config()['pick_psb'], process='输入商品码'):  # 概率，上报异常。
                 self.report_err()
                 return  # 结束拣货流程.
@@ -678,7 +684,7 @@ class SpeedPicker:
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
             log.debug(f"拣货场景3，商品已捡取，未点击[完成]，通过点击[完成]，快速完成拣货。")
         # 页面检查函数，页面名称是拣货完成，有单独判断。这里名称不要随便改。 会校验：是否开启了快速拣货。
-        self.page_check(timeout=6, pagename='拣货完成', is_shoot=True, text='完成', new_text='前往',
+        self.page_check(timeout=10, pagename='拣货完成', is_shoot=True, text='完成', new_text='前往',
                         new_text2='扫货品/输入')  # 这里比较容易卡. 在这里检查一下.
         # self.go_to()
 
