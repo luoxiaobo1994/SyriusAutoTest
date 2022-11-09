@@ -32,22 +32,26 @@ def check_info(robot):
         log.debug(f"机器人[{robot}]的标定文件已丢失，请检查！！！！")
 
 
-def check_time(robot, repair=True):
-    res = Linux_command(robot, "date +'%Y-%m-%d %H:%M:%S'", just_result=True)
-    log.debug(f"机器人[{robot}]当前时间:{res}")
-    now = str(datetime.now())
-    if res[:10] != now[:10]:
-        log.warning(f"机器人[{robot}]当前时间与实际UTC时间差距较大，请检查！！！")
-        now1 = list(time.localtime())
-        date = ''.join([str(i) for i in now1[:3]])
-        h = now1[3] - 8
-        m = now1[4]
-        s = now1[5]
-        writetime = date + ' ' + ':'.join([str(h), str(m), str(s)])
-        # print(writetime)
-        if repair:
-            log.debug(f"脚本即将设置时间到当前时间:{writetime}，时间时区为UTC0。")
-            Linux_command(robot, f'sudo date -s "{writetime}"')
+def check_time(robot, repair=True, count=5):
+    while count > 0:
+        res = Linux_command(robot, "date +'%Y-%m-%d %H:%M:%S'", just_result=True)
+        log.debug(f"机器人[{robot}]当前时间:{res}")
+        now = str(datetime.now())
+        if res[:10] != now[:10]:
+            log.warning(f"机器人[{robot}]当前时间与实际UTC时间差距较大，请检查！！！")
+            now1 = list(time.localtime())
+            date = ''.join([str(i) for i in now1[:3]])
+            h = now1[3] - 8
+            m = now1[4]
+            s = now1[5]
+            writetime = date + ' ' + ':'.join([str(h), str(m), str(s)])
+            # print(writetime)
+            if repair:
+                log.debug(f"脚本即将设置时间到当前时间:{writetime}，时间时区为UTC0。")
+                Linux_command(robot, f'sudo date -s "{writetime}"')
+            count -= 1
+        else:
+            return 1
 
 
 def check_disk(robot):
@@ -135,7 +139,7 @@ def main(bot):
     check_info(bot)
     check_time(bot)
     check_disk(bot)
-    check_battery(bot)
+    # check_battery(bot)  # 电量命令变更
     clear_OTA(bot)
     check_id(bot)
     write_env(bot)

@@ -911,7 +911,7 @@ class SpeedPicker:
                     self.other_situation()
             elif '等待任务中' in view_ls:
                 log.info("SpeedPicker当前没有任务，等待10s。若仍无任务，将会通过接口下发订单。\n")
-                sleep(10)
+                # sleep(10)
                 self.wait_moment("等待任务中")
 
             elif '前往' in view_ls:
