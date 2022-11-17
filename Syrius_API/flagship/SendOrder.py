@@ -131,6 +131,6 @@ def send_order(num=0, least=1, most=20, siteid="202"):
 
 
 if __name__ == '__main__':
-    print(send_order(num=200, siteid="202"))
+    print(send_order(num=2, siteid="2"))
     # print(type(binlocation()))
     # id_num()
