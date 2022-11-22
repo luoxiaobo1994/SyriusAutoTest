@@ -16,4 +16,4 @@ def solotion1(divide, divisor):
     return count * flag
 
 
-print(solotion1(7, -2))
+print(solotion1(7, 2))

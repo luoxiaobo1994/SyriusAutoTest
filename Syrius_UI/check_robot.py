@@ -26,7 +26,8 @@ def check_info(robot):
     log.debug(
         Linux_command(robot, "grep -E 'build date:(.*?)$' /etc/version.yaml", name=f'机器人[{robot}]的L4T-vendor构建日期:'))
     log.debug(Linux_command(robot, 'cat /sys/robotInfo/RobotSN', index=1, name=f'机器人[{robot}]SN:'))
-    if Linux_command(robot, 'ls -lh /etc/syrius/calibration_result/robot_sensors.yaml', index=1, name='标定文件检查：'):
+    if Linux_command(robot, 'ls -lh /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml', index=1,
+                     name='标定文件检查：'):
         log.debug(f"机器人[{robot}]的标定文件检查：正常。")
     else:
         log.debug(f"机器人[{robot}]的标定文件已丢失，请检查！！！！")
@@ -150,10 +151,10 @@ def main(bot):
 if __name__ == '__main__':
     # main(robot['雷龙-齐达内'])
     # check_server(robot['雷龙-苏亚雷斯'])
-    # main(robot['雷龙-内马尔'])
+    main(robot['雷龙-内马尔'])
     # main('10.2.8.118')
     # main('10.2.9.106')
-    main('10.2.9.39')
+    # main('10.2.9.39')
     # main(robot['雷龙-苏亚雷斯'])
     # main(robot['梁龙-鸣人'])
     # main('10.2.8.77')
