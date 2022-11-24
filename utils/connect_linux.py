@@ -45,7 +45,7 @@ def ssh(ip, cmds=[], username='syrius', password="syrius", port=22, i=False, tim
 
 
 def Linux_command(ip, command, index=0, port=22, username='syrius', password='syrius', name='', need='',
-                  isreturn=False, just_result=False):
+                  isreturn=False, just_result=False, more_res=False):
     '''用于执行linux命令，并返回执行结果'''
     try:
         ssh = paramiko.SSHClient()
@@ -56,7 +56,12 @@ def Linux_command(ip, command, index=0, port=22, username='syrius', password='sy
             stdin.write(password + '\n')
             time.sleep(0.5)
             stdin.flush()
-        res = stdout.readline()
+        if more_res:
+            res = stdout.readlines()
+            ssh.close()
+            return res  # 多行读取，返回的是列表，处理逻辑不在这里实现了，影响后续代码。
+        else:
+            res = stdout.readline()  # 只要单行结果。
         ssh.close()
         if just_result:
             res = res.replace('\n', '')

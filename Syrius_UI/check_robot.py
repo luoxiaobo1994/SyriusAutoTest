@@ -11,6 +11,8 @@ from utils.log2 import Logger2
 
 log = Logger2(file='check_robot_log.txt').get_logger()
 
+model = ''
+
 robot = {
     '雷龙-齐达内': '10.2.8.65',
     '雷龙-内马尔': '10.2.8.57',
@@ -26,9 +28,13 @@ def check_info(robot):
     log.debug(
         Linux_command(robot, "grep -E 'build date:(.*?)$' /etc/version.yaml", name=f'机器人[{robot}]的L4T-vendor构建日期:'))
     log.debug(Linux_command(robot, 'cat /sys/robotInfo/RobotSN', index=1, name=f'机器人[{robot}]SN:'))
-    if Linux_command(robot, 'ls -lh /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml', index=1,
+    if Linux_command(robot, "grep -E 'Sensors:' /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml", index=1,
                      name='标定文件检查：'):
-        log.debug(f"机器人[{robot}]的标定文件检查：正常。")
+        log.debug(f"机器人[{robot}]的标定文件检查-新路径：正常。")
+        return
+    elif Linux_command(robot, "grep -E 'Sensors:' /etc/syrius/calibration_result/robot_sensors.yaml", index=1,
+                       name='标定文件检查：'):
+        log.debug(f"机器人[{robot}]的标定文件检查-旧路径：正常。")
     else:
         log.debug(f"机器人[{robot}]的标定文件已丢失，请检查！！！！")
 
@@ -136,6 +142,78 @@ def check_model(robot):
         log.warning(f"机器人[{robot}]Model查询结果返回异常，请检查。")
 
 
+def check_skill(robot):
+    res = get_resset(robot, 'ls /opt/cosmos/bin')
+    # 把需要检查的文件丢在下面这个集合里，后面的逻辑会处理校验。
+    necessary_file = {'calibration_skill', 'inuitive_xusb_detector', 'pulseaudioman ', 'health_skill',
+                      'mapping_skill ', 'gadgetman', 'jinglebell', 'navigation_skill', 'psyche'}
+    # print(res)  # 得到的结果，包含制表符和换行符。['bootstrapper\t  mapping_skill   secbot\r\n',  iot-gateway\t\t...]
+    if len(necessary_file & res) == len(necessary_file):
+        log.debug(f"机器人[{robot}] /opt/cosmos/bin目录下的文件与预设的检查项一致。")
+    else:
+        log.warning(f"机器人[{robot}] /opt/cosmos/bin目录下的文件与预设的检查项不一致，缺少以下文件:"
+                    f"\n{necessary_file.difference(res)}")
+
+
+def check_java(robot):
+    res = get_resset(robot, 'ls /opt/cosmos/bin/keyring/keyring')
+    necessary_file = {'stop.sh', 'run.sh'}
+    if 'keyring' in ''.join(res) and necessary_file & res == necessary_file:
+        log.debug(f"机器人[{robot}]下位机Java关键进程文件和jar包检查通过。")
+        for i in res:
+            if 'keyring' in i:
+                log.debug(f"机器人[{robot}]的keyring版本是：{i}")
+
+    else:
+        log.debug(f"机器人[{robot}]下位机Java关键进程文件和jar包检查异常。查询到的文件如下：{res}")
+
+
+def check_iot(robot):
+    res = get_resset(robot, 'ls /opt/cosmos/bin/iot-gateway')
+    necessary_file = {'stop.sh', 'run.sh'}
+    if 'iot-gateway' in ''.join(res) and necessary_file & res == necessary_file:
+        log.debug(f"机器人[{robot}]下位机iot-getway关键进程文件和jar包检查通过。")
+        for i in res:
+            if 'iot-gateway' in i:
+                log.debug(f"机器人[{robot}]的iot-gateway版本是：{i}")
+
+    else:
+        log.debug(f"机器人[{robot}]下位机iot-gateway关键进程文件和jar包检查异常。查询到的文件如下：{res}")
+
+
+def check_kuafu(robot):
+    res = get_resset(robot, 'ls /opt/cosmos/bin/kuafu')
+    necessary_file = {'run.sh'}
+    if 'kuafu_gateway_classic' in ''.join(res) and necessary_file & res == necessary_file:
+        log.debug(f"机器人[{robot}]下位机kuafu_gateway_classic关键进程文件和jar包检查通过。")
+        for i in res:
+            if 'iot-gateway' in i:
+                log.debug(f"机器人[{robot}]的kuafu_gateway_classic版本是：{i}")
+
+    else:
+        log.debug(f"机器人[{robot}]下位机kuafu_gateway_classic关键进程文件和jar包检查异常。查询到的文件如下：{res}")
+
+
+def check_ota(robot):
+    res = get_resset(robot, 'ls /opt/cosmos/bin/kuafu')
+    necessary_file = {'run.sh'}
+    if 'kuafu_gateway_classic' in ''.join(res) and necessary_file & res == necessary_file:
+        log.debug(f"机器人[{robot}]下位机kuafu_gateway_classic关键进程文件和jar包检查通过。")
+        for i in res:
+            if 'iot-gateway' in i:
+                log.debug(f"机器人[{robot}]的kuafu_gateway_classic版本是：{i}")
+
+    else:
+        log.debug(f"机器人[{robot}]下位机kuafu_gateway_classic关键进程文件和jar包检查异常。查询到的文件如下：{res}")
+
+
+def get_resset(robot, commond):
+    res = Linux_command(robot, commond, more_res=True)
+    tmp_res = ''.join(res).replace('\t', '').replace('\n', '').replace('\r', '')  # 替换，分割，转集合。
+    new_res = set(tmp_res.split())
+    return new_res
+
+
 def main(bot):
     check_info(bot)
     check_time(bot)
@@ -145,12 +223,17 @@ def main(bot):
     check_id(bot)
     write_env(bot)
     check_model(bot)
-    log.debug('-' * 50 + '\n')
+    check_skill(bot)
+    check_java(bot)
+    check_iot(bot)
+    check_kuafu(bot)
+    # check_ota(bot)  # 和文档给的有点不一样。
+    log.debug('-' * 80 + '\n')
 
 
 if __name__ == '__main__':
     # main(robot['雷龙-齐达内'])
-    # check_server(robot['雷龙-苏亚雷斯'])
+    # check_java(robot['雷龙-内马尔'])
     main(robot['雷龙-内马尔'])
     # main('10.2.8.118')
     # main('10.2.9.106')
@@ -159,4 +242,3 @@ if __name__ == '__main__':
     # main(robot['梁龙-鸣人'])
     # main('10.2.8.77')
     # main('10.2.8.90')
-    # main(robot['梁龙-鸣人'])
