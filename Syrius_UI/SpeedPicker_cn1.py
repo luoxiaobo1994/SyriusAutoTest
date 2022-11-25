@@ -675,12 +675,14 @@ class SpeedPicker:
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
             log.debug(f"通过点击[完成]，完成拣货。")
         elif self.driver.element_display((By.XPATH, '//android.widget.EditText'), wait=1):
+            # print(2222)
             # 拣货情形2,点开了输入框,但是没有输入商品码
             log.debug(f"拣货场景2，点击了输入按钮，弹出输入框，但未输入商品码。本次输入万能码。")
             self.inputcode(code='199103181516')
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
         else:
             # 拣货情形3,都捡完了,只是没点完成.
+            # print(11111)
             self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
             log.debug(f"拣货场景3，商品已捡取，未点击[完成]，通过点击[完成]，快速完成拣货。")
         # 页面检查函数，页面名称是拣货完成，有单独判断。这里名称不要随便改。 会校验：是否开启了快速拣货。
@@ -928,7 +930,7 @@ class SpeedPicker:
                     self.pause_move()  # 暂停移动。
                 self.wait_moment("前往")
                 log.debug(f"机器人到达：{locate}。")
-            elif any_one(self.get_config()['bind_text'], view_ls):
+            elif any_one(self.get_config()['bind_text'], view_ls) and '前往' not in view_ls:
                 self.bind_container()
             elif len_diff(view_ls, use_text) > 4 and re.findall('×[\d]+', ls):
                 # 进入拣货判断逻辑：1.界面文本有非SP特征文本至少4个。2.界面文本包含至少包含2个拣货流程的特定文本。
@@ -936,7 +938,7 @@ class SpeedPicker:
                     target_location = ''
                 self.picking(target=target_location, checktarget=True, ismove=move_flag)  # 封装成函数，单独处理。
                 move_flag = False
-            elif '拣货执行结果' in view_ls or interset(['格口名称', '订单编号'], view_ls):  #
+            elif '跳过' not in view_ls and ('拣货执行结果' in view_ls or interset(['格口名称', '订单编号'], view_ls)):  #
                 log.debug(f"拣货结果:{self.get_text()}")
                 # log.debug(f"拣货信息-content:{self.driver.app_elements_content_desc((By.XPATH, '//*'))}")
                 # self.press_ok()  # 确定波次.
@@ -1012,8 +1014,8 @@ if __name__ == '__main__':
             reset_keyboard(SpeedPicker().device_num()[0])  # 重置键盘.
         except TypeError:
             log.debug(f"抓取到的类型异常，可能是抓空了，或者界面异常了。检查一下截图。")
-            if sp.err_notify():  # 检查是否发生了一些异常。
-                exit(-100)
+            # if sp.err_notify():  # 检查是否发生了一些异常。
+            #     exit(-100)
             app_screenshot()  # 不管如何，截图记录一下当时的情况。
             sleep(3)  # 短暂等待一下，再继续跑。
             continue

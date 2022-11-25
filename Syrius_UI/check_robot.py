@@ -28,6 +28,7 @@ def check_info(robot):
     log.debug(
         Linux_command(robot, "grep -E 'build date:(.*?)$' /etc/version.yaml", name=f'机器人[{robot}]的L4T-vendor构建日期:'))
     log.debug(Linux_command(robot, 'cat /sys/robotInfo/RobotSN', index=1, name=f'机器人[{robot}]SN:'))
+    log.debug(Linux_command(robot, 'ps -aux | grep java | wc -l', need='10'))
     if Linux_command(robot, "grep -E 'Sensors:' /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml", index=1,
                      name='标定文件检查：'):
         log.debug(f"机器人[{robot}]的标定文件检查-新路径：正常。")
@@ -144,10 +145,10 @@ def check_model(robot):
 
 def check_skill(robot):
     res = get_resset(robot, 'ls /opt/cosmos/bin')
+    print(res)  # 得到的结果
     # 把需要检查的文件丢在下面这个集合里，后面的逻辑会处理校验。
-    necessary_file = {'calibration_skill', 'inuitive_xusb_detector', 'pulseaudioman ', 'health_skill',
-                      'mapping_skill ', 'gadgetman', 'jinglebell', 'navigation_skill', 'psyche'}
-    # print(res)  # 得到的结果，包含制表符和换行符。['bootstrapper\t  mapping_skill   secbot\r\n',  iot-gateway\t\t...]
+    necessary_file = {'calibration_skill', 'inuitive_xusb_detector', 'pulseaudioman', 'health_skill',
+                      'mapping_skill', 'gadgetman', 'jinglebell', 'navigation_skill', 'psyche'}
     if len(necessary_file & res) == len(necessary_file):
         log.debug(f"机器人[{robot}] /opt/cosmos/bin目录下的文件与预设的检查项一致。")
     else:
