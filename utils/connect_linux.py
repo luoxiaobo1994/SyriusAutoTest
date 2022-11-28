@@ -44,7 +44,7 @@ def ssh(ip, cmds=[], username='syrius', password="syrius", port=22, i=False, tim
         client.close()
 
 
-def Linux_command(ip, command, index=0, port=22, username='syrius', password='syrius', name='', need='',
+def Linux_command(ip, command, index=0, port=22, username='factory', password='factory', name='', need='',
                   isreturn=False, just_result=False, more_res=False):
     '''用于执行linux命令，并返回执行结果'''
     try:
