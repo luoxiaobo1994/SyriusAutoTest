@@ -235,7 +235,8 @@ def main(bot):
 if __name__ == '__main__':
     # main(robot['雷龙-齐达内'])
     # check_java(robot['雷龙-内马尔'])
-    main(robot['雷龙-内马尔'])
+    # main(robot['雷龙-内马尔'])
+    main('10.2.8.193')
     # main('10.2.8.118')
     # main('10.2.9.106')
     # main('10.2.9.39')
