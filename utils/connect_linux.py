@@ -82,5 +82,5 @@ def Linux_command(ip, command, index=0, port=22, username='factory', password='f
 
 if __name__ == '__main__':
     cmds = ["adb devices", "adb shell ip addr show wlan0"]
-    res = ssh(ip='10.2.9.18', cmds=cmds)
+    res = ssh(ip='10.2.16.200', port=9537, cmds=['sudo ls'])
     print(res)

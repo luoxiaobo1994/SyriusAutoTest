@@ -2,13 +2,22 @@
 # Author: luoxiaobo
 # TIME: 2022/12/1 10:45
 # Desc: 测试前检查机器人测试环境信息。
+
 import datetime
 import re
 import time
 
 import paramiko
 
-ssh = paramiko.SSHClient()
+# 全局数据
+ssh = paramiko.SSHClient()  # 连接实例
+# 现有机器人列表。
+robot = {
+    '苏亚雷斯': '10.2.9.181',
+    '齐达内': '10.2.8.65',
+    '内马尔': '10.2.8.57',
+    '鸣人': '10.2.8.130'
+}
 
 
 def pp(msg, level='DEBUG'):
@@ -16,7 +25,7 @@ def pp(msg, level='DEBUG'):
     print(f"{datetime.datetime.now()} [{level}] : {msg}")
 
 
-def sshLogin(ip, port, username, passwd):
+def sshLogin(ip, port, username='factory', passwd='factory'):
     # 连接远程服务
     global ssh
     ssh = paramiko.SSHClient()
@@ -29,7 +38,7 @@ def sshLogin(ip, port, username, passwd):
         pp(msg=f"连接[]失败，失败原因：超时。", level='WARNING')
 
 
-def exe_cmd(cmd='ls', isreturn=True, printres=False, timeout=3):
+def exe_cmd(cmd='ls', isreturn=True, printres=False, timeout=3, username='factory', passwd='factory'):
     # 执行命令。只包含命令和是否返回结果两个参数，具体业务，再分函数细写。
     global ssh
     # pp(f"执行命令：{cmd}")
@@ -37,6 +46,10 @@ def exe_cmd(cmd='ls', isreturn=True, printres=False, timeout=3):
     result = stdout.read().decode('utf-8')
     result = result.strip()  # 删除前后空格
     result.replace('\n', '')
+    if cmd.startswith('sudo'):
+        stdin.write(passwd + '\n')
+        time.sleep(0.5)
+        stdin.flush()
     if 'Permission denied' in result:
         pp(f'执行命令：{cmd}的权限不够，请检查。', 'WARNING')
     if isreturn:
@@ -133,9 +146,9 @@ def env(count=3):
     else:
         pp(f"机器人的环境文件缺失，手动添加配置文件。")
         try:
-            cmd1 = 'sudo bash -c "echo env: test > /opt/cosmos/bin/ota/checker/application.yml"'
-            cmd2 = 'sudo bash -c "echo env: test > /opt/cosmos/bin/iot-gateway/application.yml"'
-            cmd3 = 'sudo bash -c "echo env: test > /opt/cosmos/bin/secbot/application.yml"'
+            cmd1 = 'sudo echo env: test > /opt/cosmos/bin/ota/checker/application.yml'
+            cmd2 = 'sudo echo env: test > /opt/cosmos/bin/iot-gateway/application.yml'
+            cmd3 = 'sudo echo env: test > /opt/cosmos/bin/secbot/application.yml'
             exe_cmd(cmd1, printres=True)
             exe_cmd(cmd2)
             exe_cmd(cmd3)
@@ -163,14 +176,19 @@ def model():
         pp(f"机器人Model查询结果返回异常，请检查。")
 
 
+def debug():
+    exe_cmd('sudo ls')
+
+
 def main():
-    sshLogin('10.2.9.181', 22, 'factory', 'factory')
+    sshLogin('10.2.16.200', 9537, 'factory', 'factory')
     # basic_info()
     # calibartion()
     # check_time()
     # diskUsage()
     # model()
-    env()
+    # env()
+    debug()
     sshClose()
 
 

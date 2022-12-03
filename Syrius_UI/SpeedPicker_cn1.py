@@ -672,22 +672,22 @@ class SpeedPicker:
                 else:
                     # log.debug(f"相同商品连续捡取完毕。")
                     break
-            self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
+            self.driver.click_element((By.XPATH, '//*[starts-with(@text, "完成")]'))
             log.debug(f"通过点击[完成]，完成拣货。")
         elif self.driver.element_display((By.XPATH, '//android.widget.EditText'), wait=1):
             # print(2222)
             # 拣货情形2,点开了输入框,但是没有输入商品码
             log.debug(f"拣货场景2，点击了输入按钮，弹出输入框，但未输入商品码。本次输入万能码。")
             self.inputcode(code='199103181516')
-            self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
+            self.driver.click_element((By.XPATH, '//*[starts-with(@text, "完成")]'))
         else:
             # 拣货情形3,都捡完了,只是没点完成.
             # print(11111)
-            self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
+            self.driver.click_element((By.XPATH, '//*[starts-with(@text, "完成")]'))
             log.debug(f"拣货场景3，商品已捡取，未点击[完成]，通过点击[完成]，快速完成拣货。")
         # 页面检查函数，页面名称是拣货完成，有单独判断。这里名称不要随便改。 会校验：是否开启了快速拣货。
         self.page_check(timeout=10, pagename='拣货完成', is_shoot=True, text='完成', new_text='前往',
-                        new_text2='扫货品/输入')  # 这里比较容易卡. 在这里检查一下.
+                        new_text2='完成并继续')  # 这里比较容易卡. 在这里检查一下.
         # self.go_to()
 
     def check_time(self):
