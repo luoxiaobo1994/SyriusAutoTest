@@ -180,8 +180,8 @@ def debug():
     exe_cmd('sudo ls')
 
 
-def main():
-    sshLogin('10.2.16.200', 9537, 'factory', 'factory')
+def main(ip='10.2.16.200',port=22):
+    sshLogin(ip, port, 'factory', 'factory')
     # basic_info()
     # calibartion()
     # check_time()
@@ -193,4 +193,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main('10.2.8.118')
