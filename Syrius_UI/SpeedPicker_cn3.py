@@ -841,7 +841,7 @@ class SpeedPicker:
             sleep(10)
 
     def get_config(self):
-        return YamlReader('speedpicker_config.yaml').data
+        return YamlReader('2speedpicker_config.yaml').data
 
     def shoot(self):
         # 截图
