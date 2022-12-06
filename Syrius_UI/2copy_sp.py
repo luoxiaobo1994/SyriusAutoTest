@@ -10,7 +10,7 @@ from base.common import get_devices
 
 """快速生成SpeedPicker多个副本的文件。"""
 
-file = "1SpeedPicker_cn1.py"  # 确保这个脚本和SpeedPicker_cn1.py在同级目录下.
+file = "SpeedPicker_cn1.py"  # 确保这个脚本和SpeedPicker_cn1.py在同级目录下.
 devices = len(get_devices())
 
 
