@@ -10,7 +10,7 @@ from utils.log import logger
 devices = {}
 
 
-def ssh(ip, cmds=[], username='syrius', password="syrius", port=22, i=False, timeout=15):
+def ssh(ip, cmds=[], username='factory', password="factory", port=22, i=False, timeout=15):
     client = paramiko.SSHClient()
     try:
         # 创建ssh客户端
