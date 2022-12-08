@@ -140,7 +140,7 @@ def clearOTA():
 def env(count=3):
     res1 = exe_cmd('cat /opt/cosmos/bin/ota/checker/application.yml')
     res2 = exe_cmd('cat /opt/cosmos/bin/iot-gateway/application.yml')
-    res3 = exe_cmd('cat /opt/cosmos/bin/secbot/secbot/application.yml')
+    res3 = exe_cmd('cat /opt/cosmos/bin/secbot/application.yml')
     if 'env: test' in res1 and res1 == res2 == res3:
         pp(f"机器人的环境为：{res1}")
     else:
@@ -181,16 +181,31 @@ def debug():
 
 
 def main(ip='10.2.16.200',port=22):
-    sshLogin(ip, port, 'factory', 'factory')
-    # basic_info()
-    # calibartion()
+    sshLogin(ip, port, 'developer', 'developer')
+    basic_info()
+    calibartion()
     # check_time()
     # diskUsage()
     # model()
     # env()
-    debug()
+    # debug()
     sshClose()
 
 
 if __name__ == '__main__':
-    main('10.2.8.118')
+    robot = {
+        '雷龙·苏亚雷斯':'10.2.9.181',
+        '雷龙·内马尔':'10.2.8.255',
+        '雷龙·齐达内': '10.2.8.65',
+        '雷龙·C罗': '10.2.8.118',
+        '梁龙·鸣人':'10.2.8.103',
+        '梁龙·索隆':'10.2.8.211',
+        '梁龙·佐助':'10.2.8.77',
+    }
+    main('雷龙·苏亚雷斯')
+    # main('雷龙·内马尔')
+    # main('雷龙·齐达内')
+    # main('雷龙·C罗')
+    # main('梁龙·鸣人')
+    # main('梁龙·佐助')
+    # main('梁龙·索隆')
