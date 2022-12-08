@@ -5,6 +5,7 @@
 
 from base.common import *
 
+
 if __name__ == '__main__':
     app_screenshot()  # 仅能指定文件名称,文件路径已经写死.
     # app_screenshot('10.2.10.229:5555')  # 仅能指定文件名称,文件路径已经写死.
