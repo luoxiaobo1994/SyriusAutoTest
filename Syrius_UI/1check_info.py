@@ -97,7 +97,7 @@ def basic_info():
         pp(f"Java进程数量：{java_process}，{'正常。'}", color='r')
 
 
-def calibartion():
+def calibration():
     # 标定文件检查。
     res = exe_cmd("grep -E 'Sensors:' /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml")
     res2 = exe_cmd("ls -lh /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml").split()[4]
@@ -238,7 +238,7 @@ def main(ip='10.2.16.200', port=22):
     try:
         sshLogin(ip=ip, port=port, username='developer', passwd='developer')
         basic_info()
-        calibartion()
+        calibration()
         check_time()
         diskUsage()
         model()
