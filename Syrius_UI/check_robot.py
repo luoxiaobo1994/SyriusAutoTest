@@ -188,7 +188,7 @@ def check_kuafu(robot):
     if 'kuafu_gateway_classic' in ''.join(res) and necessary_file & res == necessary_file:
         log.debug(f"机器人[{robot}]下位机kuafu_gateway_classic关键进程文件和jar包检查通过。")
         for i in res:
-            if 'iot-gateway' in i:
+            if 'kuafu_gateway_classic' in i:
                 log.debug(f"机器人[{robot}]的kuafu_gateway_classic版本是：{i}")
 
     else:

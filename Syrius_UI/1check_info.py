@@ -4,7 +4,6 @@
 # Desc: 测试前检查机器人测试环境信息。
 
 import datetime
-import os
 import re
 import time
 
@@ -21,7 +20,7 @@ robot = {
 }
 
 
-def pp(msg, level='DEBUG', color=''):
+def pp(msg, level='DEBUG', color='g'):
     if not color:
         # 充当log函数
         print(f"{datetime.datetime.now()} [{level}] : {msg}")
@@ -32,17 +31,18 @@ def pp(msg, level='DEBUG', color=''):
             print(f"\033[1;31m{datetime.datetime.now()} [{level}] : {msg}\033[0m")
 
 
-def sshLogin(ip, port, username='factory', passwd='factory'):
+def sshLogin(ip, port, username='developer', passwd='developer'):
     # 连接远程服务
     global ssh
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
-        ssh.connect(ip, port, username, passwd, timeout=10)
-        pp(msg=f"开始连接：[{ip}], 端口为：[{str(port)}], 账号为：[{username}], 密码为：[{passwd}]。")
+        ssh.connect(ip, port, username, passwd, timeout=5)
+        pp(msg=f"开始连接：[{ip}], 端口为：[{str(port)}], 账号为：[{username}], 密码为：[{passwd}]。", color='g')
         pp(f"连接[{ip}]成功。")
     except TimeoutError:
-        pp(msg=f"连接[]失败，失败原因：超时。", level='WARNING', color='r')
+        pp(msg=f"连接{ip}失败，失败原因：超时。", level='WARNING', color='r')
+        raise TimeoutError
 
 
 def exe_cmd(cmd='ls', isreturn=True, printres=False, timeout=3, username='factory', passwd='factory'):
@@ -69,7 +69,7 @@ def sshClose():
     # 关闭远程连接。
     global ssh
     ssh.close()
-    pp(f"操作完毕，关闭ssh连接。")
+    pp(f"操作完毕，关闭ssh连接。", color='g')
     pp('*-' * 20)
 
 
@@ -147,7 +147,7 @@ def clearOTA():
     pp("清除OTA缓存。")
 
 
-def env(ip,port='22',count=3):
+def env(ip, port='22', count=3):
     res1 = exe_cmd('cat /opt/cosmos/bin/ota/checker/application.yml')
     res2 = exe_cmd('cat /opt/cosmos/bin/iot-gateway/application.yml')
     res3 = exe_cmd('cat /opt/cosmos/bin/secbot/application.yml')
@@ -162,6 +162,42 @@ def env(ip,port='22',count=3):
             pp(f"环境配置文件创建完成。", color='g')
         except TimeoutError:
             pp(f"环境配置文件创建失败，请检查。", color='r')
+
+
+def skill_file():
+    res1 = set(exe_cmd('ls /opt/cosmos/bin').split())
+    skill = {'bootstrapper', 'jinglebell', 'ota', 'share', 'calibration_skill', 'keyring', 'oxe', 'time_sync',
+             'cpu_mem_monitor.sh', 'kuafu', 'psyche', 'tx2_web_server', 'gadgetman', 'lost+found', 'pulseaudioman',
+             'video_device.sh', 'health_skill', 'maintenance', 'README.txt', 'inuitive_xusb_detector', 'mapping_skill',
+             'scanner_skill', 'iot-gateway', 'navigation_skill', 'secbot'}
+    if res1.difference(skill):
+        pp(f"/opt/cosmos/bin目录下的文件检查有差异，差异项：{res1.difference(skill)}", color='r')
+    else:
+        pp(f"/opt/cosmos/bin目录下的文件检查:正常。", color='g')
+
+
+def iot():
+    res1 = set(exe_cmd('ls /opt/cosmos/bin/iot-gateway').split())
+    file = {'run.sh', 'stop.sh'}
+    if res1 & file != file:
+        pp(f"/opt/cosmos/bin/iot-gateway目录下的文件缺失，检查到的结果：{res1}", color='r')
+    else:
+        pp(f"/opt/cosmos/bin/iot-gateway目录下的文件检查:正常。", color='g')
+        for i in res1:
+            if 'iot-gateway' in i:
+                pp(f"当前机器人的iot-gateway版本是：{i}")
+
+
+def kuafu_file():
+    res1 = set(exe_cmd('ls /opt/cosmos/bin/kuafu').split())
+    file = {'run.sh'}
+    if res1 & file != file:
+        pp(f"/opt/cosmos/bin/kuafu目录下的文件缺失，检查到的结果：{res1}", color='r')
+    else:
+        pp(f"/opt/cosmos/bin/kuafu目录下的文件检查:正常。", color='g')
+        for i in res1:
+            if 'kuafu_gateway_classic' in i:
+                pp(f"当前机器人的kuafu_gateway_classic版本是：{i}")
 
 
 def model():
@@ -179,9 +215,19 @@ def model():
     }
     try:
         res = exe_cmd('cat /sys/robotInfo/Model')[:9]
-        pp(f"机器人Model是：{res}，对应机型：{model[res] if model.get(res) else '没有对应机型，请检查。'}",color='g')
+        pp(f"机器人Model是：{res}，对应机型：{model[res] if model.get(res) else '没有对应机型，请检查。'}", color='g')
     except TypeError:
-        pp(f"机器人Model查询结果返回异常，请检查。",color='r')
+        pp(f"机器人Model查询结果返回异常，请检查。", color='r')
+
+
+def user_color():
+    res = exe_cmd("grep -E 'force_color_prompt=yes' .bashrc")
+    if '#' in res:
+        exe_cmd("sed -e 's/#force_color_prompt=yes/force_color_prompt=yes/' .bashrc -n")
+        exe_cmd("source .bashrc")
+        pp(f"用户颜色未生效，修改同步完成。", color='r')
+    else:
+        pp(f"用户颜色已生效，未做修改。", color='g')
 
 
 def debug():
@@ -189,15 +235,22 @@ def debug():
 
 
 def main(ip='10.2.16.200', port=22):
-    sshLogin(ip=ip, port=port, username='developer', passwd='developer')
-    basic_info()
-    calibartion()
-    check_time()
-    diskUsage()
-    model()
-    env(ip=ip)
-    # debug()
-    sshClose()
+    try:
+        sshLogin(ip=ip, port=port, username='developer', passwd='developer')
+        basic_info()
+        calibartion()
+        check_time()
+        diskUsage()
+        model()
+        env(ip=ip)
+        skill_file()
+        kuafu_file()
+        iot()
+        user_color()
+        # debug()
+        sshClose()
+    except:
+        pass  # 登录函数会自己打印异常消息。
 
 
 if __name__ == '__main__':
@@ -210,9 +263,9 @@ if __name__ == '__main__':
         '梁龙·索隆': '10.2.8.211',
         '梁龙·佐助': '10.2.8.77',
     }
-    main(robot['雷龙·苏亚雷斯'])
+    # main(robot['雷龙·苏亚雷斯'])
     # main(robot['雷龙·齐达内'])
-    # main(robot['雷龙·C罗'])
+    main(robot['雷龙·C罗'])
     # main(robot['梁龙·鸣人'])
     # main(robot['梁龙·索隆'])
     # main(robot['梁龙·佐助'])
