@@ -101,7 +101,9 @@ def calibration():
     # 标定文件检查。
     res = exe_cmd("grep -E 'Sensors:' /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml")
     res2 = exe_cmd("ls -lh /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml").split()[4]
-    if res and res2:
+    if 'No such file or directory' in res:
+        pp(f"机器人的标定文件检查异常，文件不存在或为空。", color='r')
+    elif 'Sensors:' in res and res2 != '0':
         pp(f"机器人的标定文件正常。标定文件大小：{res2}", color='g')
     else:
         pp(f"机器人的标定文件检查异常，文件不存在或为空。", color='r')
@@ -215,7 +217,10 @@ def model():
     }
     try:
         res = exe_cmd('cat /sys/robotInfo/Model')[:9]
-        pp(f"机器人Model是：{res}，对应机型：{model[res] if model.get(res) else '没有对应机型，请检查。'}", color='g')
+        if model.get(res):
+            pp(f"机器人Model是：{res}，对应机型：{model[res]}")
+        else:
+            pp(f"机器人Model是：{res}，没有对应机型，请检查。", color='r')
     except TypeError:
         pp(f"机器人Model查询结果返回异常，请检查。", color='r')
 
@@ -263,9 +268,10 @@ if __name__ == '__main__':
         '梁龙·索隆': '10.2.8.211',
         '梁龙·佐助': '10.2.8.77',
     }
-    # main(robot['雷龙·苏亚雷斯'])
+    main(robot['雷龙·苏亚雷斯'])
+    # main(robot['雷龙·内马尔'])
     # main(robot['雷龙·齐达内'])
-    main(robot['雷龙·C罗'])
+    # main(robot['雷龙·C罗'])
     # main(robot['梁龙·鸣人'])
     # main(robot['梁龙·索隆'])
     # main(robot['梁龙·佐助'])

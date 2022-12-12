@@ -388,15 +388,20 @@ class TestKey():
         self.driver.swipe(wm['width'] * 0.8, wm['height'] * 0.5, wm['width'] * 0.2, wm['height'] * 0.5, duration)
         sleep(0.5)  # 滑动完,APP自动化性能太差.
 
-    def tap(self, locator=None):
-        size = self.find_element(locator).size
-        width = size['width']
-        height = size['height']
-        loc = self.element_loc(locator)
-        logger.debug(f"元素组件的尺寸是:{size},元素的坐标是:{loc}")
-        self.driver.tap([(loc['x'] + width / 2, loc['y'] + height / 2)])  # tap([(415,1400)]),原生方法需要这么传.
-        logger.debug(f"点击屏幕坐标位置: {(loc['x'], loc['y'])} 成功.如果没有后续操作,请检查是否位置坐标变化了.")
-        sleep(0.5)  # 点完做一下等待,APP自动化性能太差.
+    def tap(self, locator=None, binlocation=''):
+        if locator:
+            size = self.find_element(locator).size
+            width = size['width']
+            height = size['height']
+            loc = self.element_loc(locator)
+            logger.debug(f"元素组件的尺寸是:{size},元素的坐标是:{loc}")
+            self.driver.tap([(loc['x'] + width / 2, loc['y'] + height / 2)])  # tap([(415,1400)]),原生方法需要这么传.
+            logger.debug(f"点击屏幕坐标位置: {(loc['x'], loc['y'])} 成功.如果没有后续操作,请检查是否位置坐标变化了.")
+            sleep(0.5)  # 点完做一下等待,APP自动化性能太差.
+        else:
+            self.driver.tap([(binlocation[0], binlocation[1])])
+            logger.debug(f"点击屏幕坐标位置: {(binlocation[0], binlocation[1])} 成功.如果没有后续操作,请检查是否位置坐标变化了.")
+            sleep(0.5)
 
     # 获取元素对象的文本
     def app_elements_text(self, locator, wait=2, i=False, d=False, raise_except=False):
