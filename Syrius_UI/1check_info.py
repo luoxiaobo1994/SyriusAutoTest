@@ -105,9 +105,12 @@ def calibration():
 def check_time(repair=True):
     # 检查机器人时间
     res = exe_cmd("date +'%Y-%m-%d %H:%M:%S'")
-    pp(f"机器人当前时间：{res}", color='g')
-    now = str(datetime.datetime.now())
-    if res[:10] != now[:10]:
+    list_time = [int(i) for i in re.findall('\d+', res)]  # ['2022', '12', '15', '03', '07', '03']
+    bot_time = datetime.datetime(*list_time)  # 把时间数据转化为时间格式。
+    now = datetime.datetime.now()
+    time_gap = abs((now - bot_time).seconds - (8 * 60 * 60))
+    pp(f"机器人当前时间：{res}，与本机的时间差(UTC+0时区)是：{time_gap}秒。")  # 2022-12-15 03:07:03
+    if time_gap > 5:  # 8个小时的时间差。
         pp(f"机器人当前时间与实际UTC时间差距较大，请检查！", "WARNING", color='r')
         now1 = list(time.localtime())
         date = ''.join([str(i) for i in now1[:3]])
@@ -261,10 +264,10 @@ if __name__ == '__main__':
         '梁龙·索隆': '10.2.8.211',
         '梁龙·佐助': '10.2.8.77',
     }
-    main(robot['雷龙·苏亚雷斯'])
+    # main(robot['雷龙·苏亚雷斯'])
     # main(robot['雷龙·内马尔'])
     # main(robot['雷龙·齐达内'])
-    # main(robot['雷龙·C罗'])
+    main(robot['雷龙·C罗'])
     # main(robot['梁龙·鸣人'])
     # main(robot['梁龙·索隆'])
     # main(robot['梁龙·佐助'])

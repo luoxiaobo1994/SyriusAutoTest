@@ -20,7 +20,7 @@ class GGR():
             "apppackage": "com.syriusrobotics.platform.launcher",  # 包名
             "appActivity": "com.syriusrobotics.platform.launcher/com.syriusrobotics.platform.jarvis.MainFlutterActivity",
             "noReset": True,  # 不要重置
-            # "unicodeKeyboard": True,  # 不会吊起键盘。
+            "unicodeKeyboard": True,  # 不会吊起键盘。
             # "resetKeyboard": True,  # 恢复键盘
             'newCommandTimeout': 30000,  # 命令超时时间。给长一点
             'automationName': 'UiAutomator2'  # 可能是这里导致的常断开
