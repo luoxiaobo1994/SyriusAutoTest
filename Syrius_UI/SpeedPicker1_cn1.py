@@ -638,9 +638,9 @@ class SpeedPicker:
             if not self.driver.element_display((By.XPATH, '//android.widget.EditText'), wait=2):
                 log.debug(f"点击生效，输入框消失。")
                 input_loc2 = self.driver.element_loc((By.XPATH, '//*[starts-with(@text,"扫货品/输入")]'))
+                ls.append(2)
                 if input_loc2 == input_loc:
                     log.debug(f"输入按钮出现，坐标与未点击前一致。")
-                    ls.append(2)
                 else:
                     log.warning(f"输入按钮出现，坐标出现了变化，可能出现异常了。检查一下。")
                     exit(102)

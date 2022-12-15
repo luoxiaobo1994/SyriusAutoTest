@@ -11,13 +11,6 @@ import paramiko
 
 # 全局数据
 ssh = paramiko.SSHClient()  # 连接实例
-# 现有机器人列表。
-robot = {
-    '苏亚雷斯': '10.2.9.181',
-    '齐达内': '10.2.8.65',
-    '内马尔': '10.2.8.57',
-    '鸣人': '10.2.8.130'
-}
 
 
 def pp(msg, level='DEBUG', color='g'):
