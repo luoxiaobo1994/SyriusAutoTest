@@ -210,11 +210,13 @@ def model():
         'LMLDI0401': '高版梁龙2-雅滕电机-认证',
         'LMLDI0500': '高版梁龙2-雅滕电机-非认证',
         'LMLDI0501': '高版梁龙2-雅滕电机-非认证',
+        'LMLBA0100': '重龙PA版样机',
     }
     try:
         res = exe_cmd('cat /sys/robotInfo/Model')[:9]
+        res2 = exe_cmd('cat /opt/cosmos/etc/ota/model')
         if model.get(res):
-            pp(f"机器人Model是：{res}，对应机型：{model[res]}")
+            pp(f"机器人Model是：{res}，机型名称：{res2}，对应机型：{model[res]}")
         else:
             pp(f"机器人Model是：{res}，没有对应机型，请检查。", color='r')
     except TypeError:
@@ -224,15 +226,22 @@ def model():
 def user_color():
     res = exe_cmd("grep -E 'force_color_prompt=yes' .bashrc")
     if '#' in res:
-        exe_cmd("sed -e 's/#force_color_prompt=yes/force_color_prompt=yes/' .bashrc -n")
+        exe_cmd("sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' .bashrc")
+        exe_cmd("source .bashrc")
+        pp(f"用户颜色未生效，修改同步完成。", color='r')
+    else:
+        pp(f"用户颜色已生效，未做修改。")
+
+
+def debug():
+    # exe_cmd('sudo ls')
+    res = exe_cmd("grep -E 'force_color_prompt=yes' .bashrc")
+    if '#' in res:
+        exe_cmd("sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' .bashrc")
         exe_cmd("source .bashrc")
         pp(f"用户颜色未生效，修改同步完成。", color='r')
     else:
         pp(f"用户颜色已生效，未做修改。", color='g')
-
-
-def debug():
-    exe_cmd('sudo ls')
 
 
 def main(ip='10.2.16.200', port=22):
@@ -271,3 +280,4 @@ if __name__ == '__main__':
     # main(robot['梁龙·鸣人'])
     # main(robot['梁龙·索隆'])
     # main(robot['梁龙·佐助'])
+    # main('10.2.9.39')  # 重龙PA版样机。
