@@ -11,13 +11,6 @@ import paramiko
 
 # 全局数据
 ssh = paramiko.SSHClient()  # 连接实例
-# 现有机器人列表。
-robot = {
-    '苏亚雷斯': '10.2.9.181',
-    '齐达内': '10.2.8.65',
-    '内马尔': '10.2.8.57',
-    '鸣人': '10.2.8.130'
-}
 
 
 def pp(msg, level='DEBUG', color='g'):
@@ -45,7 +38,7 @@ def sshLogin(ip, port, username='developer', passwd='developer'):
         raise TimeoutError
 
 
-def exe_cmd(cmd='ls', isreturn=True, printres=False, timeout=3, username='factory', passwd='factory'):
+def exe_cmd(cmd='ls', isreturn=True, printres=False, timeout=3, username='developer', passwd='developer'):
     # 执行命令。只包含命令和是否返回结果两个参数，具体业务，再分函数细写。
     global ssh
     # pp(f"执行命令：{cmd}")
@@ -112,9 +105,12 @@ def calibration():
 def check_time(repair=True):
     # 检查机器人时间
     res = exe_cmd("date +'%Y-%m-%d %H:%M:%S'")
-    pp(f"机器人当前时间：{res}", color='g')
-    now = str(datetime.datetime.now())
-    if res[:10] != now[:10]:
+    list_time = [int(i) for i in re.findall('\d+', res)]  # ['2022', '12', '15', '03', '07', '03']
+    bot_time = datetime.datetime(*list_time)  # 把时间数据转化为时间格式。
+    now = datetime.datetime.now()
+    time_gap = abs((now - bot_time).seconds - (8 * 60 * 60))
+    pp(f"机器人当前时间：{res}，与本机的时间差(UTC+0时区)是：{time_gap}秒。")  # 2022-12-15 03:07:03
+    if time_gap > 5:  # 8个小时的时间差。
         pp(f"机器人当前时间与实际UTC时间差距较大，请检查！", "WARNING", color='r')
         now1 = list(time.localtime())
         date = ''.join([str(i) for i in now1[:3]])
@@ -214,11 +210,13 @@ def model():
         'LMLDI0401': '高版梁龙2-雅滕电机-认证',
         'LMLDI0500': '高版梁龙2-雅滕电机-非认证',
         'LMLDI0501': '高版梁龙2-雅滕电机-非认证',
+        'LMLBA0100': '重龙PA版样机',
     }
     try:
         res = exe_cmd('cat /sys/robotInfo/Model')[:9]
+        res2 = exe_cmd('cat /opt/cosmos/etc/ota/model')
         if model.get(res):
-            pp(f"机器人Model是：{res}，对应机型：{model[res]}")
+            pp(f"机器人Model是：{res}，机型名称：{res2}，对应机型：{model[res]}")
         else:
             pp(f"机器人Model是：{res}，没有对应机型，请检查。", color='r')
     except TypeError:
@@ -228,15 +226,22 @@ def model():
 def user_color():
     res = exe_cmd("grep -E 'force_color_prompt=yes' .bashrc")
     if '#' in res:
-        exe_cmd("sed -e 's/#force_color_prompt=yes/force_color_prompt=yes/' .bashrc -n")
+        exe_cmd("sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' .bashrc")
+        exe_cmd("source .bashrc")
+        pp(f"用户颜色未生效，修改同步完成。", color='r')
+    else:
+        pp(f"用户颜色已生效，未做修改。")
+
+
+def debug():
+    # exe_cmd('sudo ls')
+    res = exe_cmd("grep -E 'force_color_prompt=yes' .bashrc")
+    if '#' in res:
+        exe_cmd("sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' .bashrc")
         exe_cmd("source .bashrc")
         pp(f"用户颜色未生效，修改同步完成。", color='r')
     else:
         pp(f"用户颜色已生效，未做修改。", color='g')
-
-
-def debug():
-    exe_cmd('sudo ls')
 
 
 def main(ip='10.2.16.200', port=22):
@@ -268,10 +273,11 @@ if __name__ == '__main__':
         '梁龙·索隆': '10.2.8.211',
         '梁龙·佐助': '10.2.8.77',
     }
-    main(robot['雷龙·苏亚雷斯'])
+    # main(robot['雷龙·苏亚雷斯'])
     # main(robot['雷龙·内马尔'])
     # main(robot['雷龙·齐达内'])
     # main(robot['雷龙·C罗'])
-    # main(robot['梁龙·鸣人'])
+    main(robot['梁龙·鸣人'])
     # main(robot['梁龙·索隆'])
     # main(robot['梁龙·佐助'])
+    # main('10.2.9.39')  # 重龙PA版样机。

@@ -473,6 +473,7 @@ class SpeedPicker:
                                 if read_yaml('site_info.yaml', 'api_order'):
                                     log.debug("持续等待10s，机器人仍然等待任务，且开启了接口发送订单功能。")
                                     self.api_order()
+                                    sleep(30)
                         elif self.islosepos():
                             log.warning("机器人丢失定位。")
                             self.shoot()
@@ -857,7 +858,7 @@ class SpeedPicker:
             res = send_order(num=order_num, siteid=site)
             if 'successData' in res:
                 log.info("通过接口下发拣货任务成功。")
-                sleep(5)
+                sleep(10)
             else:
                 sleep(10)
                 log.debug("通过接口下发任务失败了，请检查一下.或者手动发单。")
