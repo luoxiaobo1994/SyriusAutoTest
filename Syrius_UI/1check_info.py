@@ -38,7 +38,7 @@ def sshLogin(ip, port, username='developer', passwd='developer'):
         raise TimeoutError
 
 
-def exe_cmd(cmd='ls', isreturn=True, printres=False, timeout=3, username='factory', passwd='factory'):
+def exe_cmd(cmd='ls', isreturn=True, printres=False, timeout=3, username='developer', passwd='developer'):
     # 执行命令。只包含命令和是否返回结果两个参数，具体业务，再分函数细写。
     global ssh
     # pp(f"执行命令：{cmd}")
@@ -276,8 +276,8 @@ if __name__ == '__main__':
     # main(robot['雷龙·苏亚雷斯'])
     # main(robot['雷龙·内马尔'])
     # main(robot['雷龙·齐达内'])
-    main(robot['雷龙·C罗'])
-    # main(robot['梁龙·鸣人'])
+    # main(robot['雷龙·C罗'])
+    main(robot['梁龙·鸣人'])
     # main(robot['梁龙·索隆'])
     # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。
