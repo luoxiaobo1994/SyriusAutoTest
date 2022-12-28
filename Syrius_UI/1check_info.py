@@ -273,11 +273,11 @@ if __name__ == '__main__':
         '梁龙·索隆': '10.2.8.211',
         '梁龙·佐助': '10.2.8.77',
     }
-    # main(robot['雷龙·苏亚雷斯'])
+    main(robot['雷龙·苏亚雷斯'])
     # main(robot['雷龙·内马尔'])
     # main(robot['雷龙·齐达内'])
     # main(robot['雷龙·C罗'])
-    main(robot['梁龙·鸣人'])
+    # main(robot['梁龙·鸣人'])
     # main(robot['梁龙·索隆'])
     # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。
