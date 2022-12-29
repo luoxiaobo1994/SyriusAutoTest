@@ -473,6 +473,7 @@ class SpeedPicker:
                                 if read_yaml('site_info.yaml', 'api_order'):
                                     log.debug("持续等待10s，机器人仍然等待任务，且开启了接口发送订单功能。")
                                     self.api_order()
+                                    sleep(10)
                         elif self.islosepos():
                             log.warning("机器人丢失定位。")
                             self.shoot()
@@ -593,14 +594,14 @@ class SpeedPicker:
             sleep(2)  # 确定要留足2s钟，不然检测早了。老是会刷点击失败的日志。
             tmp_text = self.get_text(wait=1)
             if text not in tmp_text or new_text in tmp_text:
-                log.info(f"强点击文本:[{text}]成功。")
+                log.debug(f"强点击文本:[{text}]成功。")
                 return
             elif self.driver.element_display(new_element):
-                log.info(f"强点击文本:[{text}]成功。")
+                log.debug(f"强点击文本:[{text}]成功。")
                 return
             else:
                 log.debug(f"强点操作，点击[{text}]失败。")
-                self.page_check(timeout=6, text=text, is_shoot=True, pagename=pagename, is_quit=False)
+                # self.page_check(timeout=10, text=text, is_shoot=False, pagename=pagename, is_quit=False)
                 count -= 1
         if count == 0:
             self.shoot()
@@ -615,6 +616,46 @@ class SpeedPicker:
                     log.warning("出现超时弹窗了，注意检查一下！！！")
 
     def picking(self, target='', checktarget=False, ismove=False):
+        # 调试键盘的脚本
+        count = 0
+        count1 = 0
+        while True:
+            ls = []  # 初始化顺序列表。
+            tmp_text = self.get_text()
+            if '扫货品/输入' in tmp_text:
+                input_loc = self.driver.element_loc((By.XPATH, '//*[starts-with(@text,"扫货品/输入")]'))
+                log.debug(f"未开始拣货，当前[扫货品/输入]仍然在界面中。")
+                log.debug(f"流程1----还未开始拣货.")
+                self.click_view_text("扫货品/输入", new_element=(By.XPATH, '//android.widget.EditText'))  # 点击输入按钮
+                if self.driver.element_display((By.XPATH, '//android.widget.EditText')):
+                    log.debug(f"点击生效，输出框正常弹出。输出框坐标：{self.driver.element_loc((By.XPATH, '//android.widget.EditText'))}")
+                    ls.append(1)
+                else:
+                    log.warning(f"点击后异常，未弹出输出框。请检查。")
+                    exit(101)
+            self.driver.tap((By.XPATH, '//*[starts-with(@text,"A0")]'))
+            log.debug(f"流程2----点击空白区域，收起键盘。")
+            if not self.driver.element_display((By.XPATH, '//android.widget.EditText'), wait=2):
+                log.debug(f"点击生效，输入框消失。")
+                input_loc2 = self.driver.element_loc((By.XPATH, '//*[starts-with(@text,"扫货品/输入")]'))
+                ls.append(2)
+                if input_loc2 == input_loc:
+                    log.debug(f"输入按钮出现，坐标与未点击前一致。")
+                else:
+                    log.warning(f"输入按钮出现，坐标出现了变化，可能出现异常了。检查一下。")
+                    exit(102)
+            else:
+                count1 += 1
+                log.warning(f"第{count1}次：点击储位码，输入框未消失，检查一下。")
+                # exit(103)
+            if ls == [1, 2]:
+                pass
+            else:
+                log.warning(f"流程顺序出现了一点问题，检查一下。")
+            count += 1
+            log.debug(f"当前运行，第{count}次。")
+
+    def picking1(self, target='', checktarget=False, ismove=False):
         if not target.startswith('A0') and target != '':  # 在拣货点开脚本，目标点是空的。
             log.debug(f"拣货点:目标点[{target}]检查不正确，退出拣货流程。")
             return  # 前往的目标点，不是货架区。说明不是拣货流程，直接跳出去。
@@ -857,7 +898,7 @@ class SpeedPicker:
             res = send_order(num=order_num, siteid=site)
             if 'successData' in res:
                 log.info("通过接口下发拣货任务成功。")
-                sleep(5)
+                sleep(10)
             else:
                 sleep(10)
                 log.debug("通过接口下发任务失败了，请检查一下.或者手动发单。")

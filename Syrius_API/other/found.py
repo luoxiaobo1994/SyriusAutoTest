@@ -65,7 +65,7 @@ def main():
     for i in data2:  # 一个个子列表
         j = f"{i[0]:{space}<10}{i[1]:{space}<15}{i[2]:{space}<10}{float(i[3]):{space}<10.2f}"
         if '-' in j:
-            print(f"\033[1;36m{j}\033[0m")
+            print(f"\033[1;36m{j:{space}<1}\033[0m")
         else:
             print(f"\033[1;31m{j}\033[0m")
     print(f"\n{get_time()} 预计收益：{total:.2f}元。")

@@ -128,9 +128,15 @@ def get_var(var):
 
 
 # 调试变量
-def pp(*args):
-    for item in args:
-        print("变量名为:{}, 变量类型:{}, 变量值:{}".format(get_var(item), type(item), item))
+def pp(msg, level='DEBUG', color='g'):
+    if not color:
+        # 充当log函数
+        print(f"{datetime.now()} [{level}] : {msg}")
+    else:
+        if color in ['g', 'green', 'GREEN', 'Green']:
+            print(f"\033[1;36m{datetime.now()} [{level}] : {msg}\033[0m")
+        elif color in ['r', 'red', 'RED', 'Red']:
+            print(f"\033[1;31m{datetime.now()} [{level}] : {msg}\033[0m")
 
 
 # 打印字典信息
