@@ -939,7 +939,8 @@ class SpeedPicker:
                     target_location = ''
                 self.picking(target=target_location, checktarget=True, ismove=move_flag)  # 封装成函数，单独处理。
                 move_flag = False
-            elif '跳过' not in view_ls and ('拣货执行结果' in view_ls or interset(['格口名称', '订单编号'], view_ls)):  #
+            elif '跳过' not in view_ls and (
+                    '拣货执行结果' in view_ls or interset(['格口名称', '订单编号'], view_ls)):  #
                 log.debug(f"拣货结果:{self.get_text()}")
                 # log.debug(f"拣货信息-content:{self.driver.app_elements_content_desc((By.XPATH, '//*'))}")
                 # self.press_ok()  # 确定波次.
@@ -988,6 +989,9 @@ class SpeedPicker:
                 else:
                     log.debug("当前配置不支持手动派单模式，退出脚本，若要启动脚本，请调整配置。")
                     exit(-102)
+            elif '载物箱编码：' in ls and '确定' in view_ls:
+                log.debug(f"拣货完成，确认订单信息页面。")
+                self.press_ok()
             else:
                 self.press_ok()  # 这里来点一下
                 sleep(5)
