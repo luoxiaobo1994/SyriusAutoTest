@@ -14,6 +14,8 @@ ssh = paramiko.SSHClient()  # 连接实例
 
 
 def pp(msg, level='DEBUG', color='g'):
+    with open('D:\checkLog\check_log.txt', 'a') as f:
+        f.write(f"{datetime.datetime.now()} [{level}] : {msg}\n")
     if not color:
         # 充当log函数
         print(f"{datetime.datetime.now()} [{level}] : {msg}")
@@ -63,7 +65,7 @@ def sshClose():
     global ssh
     ssh.close()
     pp(f"操作完毕，关闭ssh连接。", color='g')
-    pp('*-' * 20)
+    pp('*-' * 20 + '\n')
 
 
 # 以下是具体业务函数。-----------------------------------------------------------------
@@ -167,7 +169,7 @@ def skill_file():
     skill = {'bootstrapper', 'jinglebell', 'ota', 'share', 'calibration_skill', 'keyring', 'oxe', 'time_sync',
              'cpu_mem_monitor.sh', 'kuafu', 'psyche', 'tx2_web_server', 'gadgetman', 'lost+found', 'pulseaudioman',
              'video_device.sh', 'health_skill', 'maintenance', 'README.txt', 'inuitive_xusb_detector', 'mapping_skill',
-             'scanner_skill', 'iot-gateway', 'navigation_skill', 'secbot'}
+             'scanner_skill', 'iot-gateway', 'navigation_skill', 'secbot', 'cleaning_skill'}
     if res1.difference(skill):
         pp(f"/opt/cosmos/bin目录下的文件检查有差异，差异项：{res1.difference(skill)}", color='r')
     else:
@@ -274,10 +276,10 @@ if __name__ == '__main__':
         '梁龙·佐助': '10.2.8.77',
     }
     # main(robot['雷龙·苏亚雷斯'])
-    main(robot['雷龙·内马尔'])
+    # main(robot['雷龙·内马尔'])
     # main(robot['雷龙·齐达内'])
     # main(robot['雷龙·C罗'])
-    # main(robot['梁龙·鸣人'])
+    main(robot['梁龙·鸣人'])
     # main(robot['梁龙·索隆'])
     # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。

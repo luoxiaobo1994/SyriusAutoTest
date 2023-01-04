@@ -992,10 +992,6 @@ class SpeedPicker:
             elif '载物箱编码：' in ls and '确定' in view_ls:
                 log.debug(f"拣货完成，确认订单信息页面。")
                 self.press_ok()
-                log.debug(f"当前任务完成，取下载物箱。")
-                self.click_view_text("已取下")  # 强点.
-                log.info('-·' * 30 + '-' + '\n')
-                self.wait_moment('已取下')
             else:
                 self.press_ok()  # 这里来点一下
                 sleep(5)
