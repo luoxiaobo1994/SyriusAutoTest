@@ -13,7 +13,9 @@ import paramiko
 ssh = paramiko.SSHClient()  # 连接实例
 
 
-def pp(msg, level='DEBUG', color='g'):
+def pp(msg, level='DEBUG',color='g'):
+    with open('D:\checkLog\check_log.txt', 'a') as f:
+        f.write(f"{datetime.datetime.now()} [{level}] : {msg}\n")
     if not color:
         # 充当log函数
         print(f"{datetime.datetime.now()} [{level}] : {msg}")
@@ -31,11 +33,11 @@ def sshLogin(ip, port, username='developer', passwd='developer'):
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
         ssh.connect(ip, port, username, passwd, timeout=5)
-        pp(msg=f"开始连接：[{ip}], 端口为：[{str(port)}], 账号为：[{username}], 密码为：[{passwd}]。", color='g')
+        pp(msg=f"开始连接：[{ip}], 端口为：[{str(port)}], 账号为：[{username}], 密码为：[{passwd}]。")
         pp(f"连接[{ip}]成功。")
     except TimeoutError:
         pp(msg=f"连接{ip}失败，失败原因：超时。", level='WARNING', color='r')
-        raise TimeoutError
+        # raise TimeoutError
 
 
 def exe_cmd(cmd='ls', isreturn=True, printres=False, timeout=3, username='developer', passwd='developer'):
@@ -62,30 +64,30 @@ def sshClose():
     # 关闭远程连接。
     global ssh
     ssh.close()
-    pp(f"操作完毕，关闭ssh连接。", color='g')
-    pp('*-' * 20)
+    pp(f"操作完毕，关闭ssh连接。")
+    pp('*-' * 20 + '\n')
 
 
 # 以下是具体业务函数。-----------------------------------------------------------------
 def basic_info():
     # 检查MoveBase版本
     MoveBase = exe_cmd('cat /opt/cosmos/etc/ota/version')
-    pp(f'MoveBase版本：{MoveBase}', color='g')
+    pp(f'MoveBase版本：{MoveBase}')
     # 检查L4T信息
     L4T = exe_cmd("grep -E 'build date:(.*?)$' /etc/version.yaml")
-    pp(f"L4T信息：{L4T}", color='g')
+    pp(f"L4T信息：{L4T}")
     # 检查SN
     SN = exe_cmd('cat /sys/robotInfo/RobotSN')
     SN = SN.split()[0]  # 直接替换换行符有点问题。
-    pp(f"机器人的SN：{SN}", color='g')
+    pp(f"机器人的SN：{SN}")
     # 检查ID
     ID = exe_cmd('dbus-send --system --print-reply=literal --type=method_call --dest=com.'
                  'syriusrobotics.secbot /buzzard/secbot com.syriusrobotics.secbot.ISecBot.getDroidId')
-    pp(f"机器人的ID：{ID.split()[0]}", color='g')  # 去掉  int32 0
+    pp(f"机器人的ID：{ID.split()[0]}")  # 去掉  int32 0
     # 检查Java进程数量
     java_process = exe_cmd('ps -aux | grep java | wc -l')
     if java_process >= '10':
-        pp(f"Java进程数量：{java_process}，{'正常。'}", color='g')
+        pp(f"Java进程数量：{java_process}，{'正常。'}")
     else:
         pp(f"Java进程数量：{java_process}，{'正常。'}", color='r')
 
@@ -95,11 +97,14 @@ def calibration():
     res = exe_cmd("grep -E 'Sensors:' /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml")
     res2 = exe_cmd("ls -lh /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml").split()[4]
     if 'No such file or directory' in res:
-        pp(f"机器人的标定文件检查异常，文件不存在或为空。", color='r')
+        pp(f"机器人的标定文件检查异常，文件不存在或为空。")
     elif 'Sensors:' in res and res2 != '0':
-        pp(f"机器人的标定文件正常。标定文件大小：{res2}", color='g')
+        if res2 > '3':
+            pp(f"机器人的标定文件正常。标定文件大小：{res2}")
+        else:
+            pp(f"标定文件大小有异常：{res2}", color='r')
     else:
-        pp(f"机器人的标定文件检查异常，文件不存在或为空。", color='r')
+        pp(f"机器人的标定文件检查异常，文件不存在或为空。")
 
 
 def check_time(repair=True):
@@ -150,14 +155,14 @@ def env(ip, port='22', count=3):
     res2 = exe_cmd('cat /opt/cosmos/bin/iot-gateway/application.yml')
     res3 = exe_cmd('cat /opt/cosmos/bin/secbot/application.yml')
     if 'env: test' in res1 and res1 == res2 == res3:
-        pp(f"机器人的环境为：{res1}", color='g')
+        pp(f"机器人的环境为：{res1}")
     else:
         pp(f"机器人的环境文件缺失，使用echo创建测试环境配置文件。", color='r')
         try:
             exe_cmd("echo 'env: test' > /opt/cosmos/bin/secbot/application.yml")
             exe_cmd("echo 'env: test' > /opt/cosmos/bin/iot-gateway/application.yml")
             exe_cmd("echo 'env: test' > /opt/cosmos/bin/ota/checker/application.yml")
-            pp(f"环境配置文件创建完成。", color='g')
+            pp(f"环境配置文件创建完成。")
         except TimeoutError:
             pp(f"环境配置文件创建失败，请检查。", color='r')
 
@@ -167,11 +172,11 @@ def skill_file():
     skill = {'bootstrapper', 'jinglebell', 'ota', 'share', 'calibration_skill', 'keyring', 'oxe', 'time_sync',
              'cpu_mem_monitor.sh', 'kuafu', 'psyche', 'tx2_web_server', 'gadgetman', 'lost+found', 'pulseaudioman',
              'video_device.sh', 'health_skill', 'maintenance', 'README.txt', 'inuitive_xusb_detector', 'mapping_skill',
-             'scanner_skill', 'iot-gateway', 'navigation_skill', 'secbot'}
+             'scanner_skill', 'iot-gateway', 'navigation_skill', 'secbot', 'cleaning_skill'}
     if res1.difference(skill):
         pp(f"/opt/cosmos/bin目录下的文件检查有差异，差异项：{res1.difference(skill)}", color='r')
     else:
-        pp(f"/opt/cosmos/bin目录下的文件检查:正常。", color='g')
+        pp(f"/opt/cosmos/bin目录下的文件检查:正常。")
 
 
 def iot():
@@ -180,7 +185,7 @@ def iot():
     if res1 & file != file:
         pp(f"/opt/cosmos/bin/iot-gateway目录下的文件缺失，检查到的结果：{res1}", color='r')
     else:
-        pp(f"/opt/cosmos/bin/iot-gateway目录下的文件检查:正常。", color='g')
+        pp(f"/opt/cosmos/bin/iot-gateway目录下的文件检查:正常。")
         for i in res1:
             if 'iot-gateway' in i:
                 pp(f"当前机器人的iot-gateway版本是：{i}")
@@ -192,7 +197,7 @@ def kuafu_file():
     if res1 & file != file:
         pp(f"/opt/cosmos/bin/kuafu目录下的文件缺失，检查到的结果：{res1}", color='r')
     else:
-        pp(f"/opt/cosmos/bin/kuafu目录下的文件检查:正常。", color='g')
+        pp(f"/opt/cosmos/bin/kuafu目录下的文件检查:正常。")
         for i in res1:
             if 'kuafu_gateway_classic' in i:
                 pp(f"当前机器人的kuafu_gateway_classic版本是：{i}")
@@ -241,7 +246,7 @@ def debug():
         exe_cmd("source .bashrc")
         pp(f"用户颜色未生效，修改同步完成。", color='r')
     else:
-        pp(f"用户颜色已生效，未做修改。", color='g')
+        pp(f"用户颜色已生效，未做修改。")
 
 
 def main(ip='10.2.16.200', port=22):
@@ -259,8 +264,8 @@ def main(ip='10.2.16.200', port=22):
         user_color()
         # debug()
         sshClose()
-    except:
-        pass  # 登录函数会自己打印异常消息。
+    except Exception as e:
+        pp(f"发生了一些异常：{e}",color='r')  # 登录函数会自己打印异常消息。其他异常，需要刷一下。
 
 
 if __name__ == '__main__':
@@ -274,10 +279,10 @@ if __name__ == '__main__':
         '梁龙·佐助': '10.2.8.77',
     }
     # main(robot['雷龙·苏亚雷斯'])
-    main(robot['雷龙·内马尔'])
+    # main(robot['雷龙·内马尔'])
     # main(robot['雷龙·齐达内'])
     # main(robot['雷龙·C罗'])
-    # main(robot['梁龙·鸣人'])
+    main(robot['梁龙·鸣人'])
     # main(robot['梁龙·索隆'])
     # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。

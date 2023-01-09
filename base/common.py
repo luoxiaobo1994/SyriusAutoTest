@@ -409,7 +409,7 @@ def app_screenshot(device='', file_name=''):
 
 
 def app_screenrecord(device='', file_name='', timeout=30):
-    # 录屏
+    # 录屏 adb shell screenrecord --time-limit 180 /sdcard/screenrecord/demo1.mp4
     # 注意:部分设备,禁用了录屏命令. screenrecord not found
     if not get_devices():
         logger.warning("当前电脑没有连接任何一个Android设备,无法进行截屏操作.请检查设备连接情况.")
