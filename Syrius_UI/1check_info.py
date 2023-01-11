@@ -81,9 +81,13 @@ def basic_info():
     SN = SN.split()[0]  # 直接替换换行符有点问题。
     pp(f"机器人的SN：{SN}")
     # 检查ID
-    ID = exe_cmd('dbus-send --system --print-reply=literal --type=method_call --dest=com.'
+    ID_res = exe_cmd('dbus-send --system --print-reply=literal --type=method_call --dest=com.'
                  'syriusrobotics.secbot /buzzard/secbot com.syriusrobotics.secbot.ISecBot.getDroidId')
-    pp(f"机器人的ID：{ID.split()[0]}")  # 去掉  int32 0
+    ID = ID_res.split()[0]
+    if ID == 'Error' or len(ID) <= 30:  # 长度是32的数字字母组合，如：747cd6f5d33e4c1cac045de78852c79d
+        pp(f"机器人的ID异常，请检查一下，拿到的值：{ID}",color='r')  # 去掉  int32 0
+    else:
+        pp(f"机器人的ID：{ID}")
     # 检查Java进程数量
     java_process = exe_cmd('ps -aux | grep java | wc -l')
     if java_process >= '10':
@@ -254,7 +258,7 @@ def main(ip='10.2.16.200', port=22):
         sshLogin(ip=ip, port=port, username='developer', passwd='developer')
         basic_info()
         calibration()
-        check_time()
+        # check_time()
         diskUsage()
         model()
         env(ip=ip)
@@ -279,10 +283,10 @@ if __name__ == '__main__':
         '梁龙·佐助': '10.2.8.77',
     }
     # main(robot['雷龙·苏亚雷斯'])
-    # main(robot['雷龙·内马尔'])
+    main(robot['雷龙·内马尔'])
     # main(robot['雷龙·齐达内'])
     # main(robot['雷龙·C罗'])
-    main(robot['梁龙·鸣人'])
+    # main(robot['梁龙·鸣人'])
     # main(robot['梁龙·索隆'])
     # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。
