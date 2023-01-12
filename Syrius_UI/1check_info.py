@@ -97,7 +97,7 @@ def calibration():
     res = exe_cmd("grep -E 'Sensors:' /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml")
     res2 = exe_cmd("ls -lh /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml").split()[4]
     if 'No such file or directory' in res:
-        pp(f"机器人的标定文件检查异常，文件不存在或为空。")
+        pp(f"机器人的标定文件检查异常，文件不存在或为空。",color='r')
     elif 'Sensors:' in res and res2 != '0':
         if res2 > '3':
             pp(f"机器人的标定文件正常。标定文件大小：{res2}")
@@ -254,7 +254,7 @@ def main(ip='10.2.16.200', port=22):
         sshLogin(ip=ip, port=port, username='developer', passwd='developer')
         basic_info()
         calibration()
-        check_time()
+        # check_time()
         diskUsage()
         model()
         env(ip=ip)
@@ -272,7 +272,7 @@ if __name__ == '__main__':
     robot = {
         '雷龙·苏亚雷斯': '10.2.9.181',
         '雷龙·内马尔': '10.2.8.255',
-        '雷龙·齐达内': '10.2.8.65',
+        '雷龙·布里茨': '10.2.9.125',
         '雷龙·C罗': '10.2.8.118',
         '梁龙·鸣人': '10.2.8.103',
         '梁龙·索隆': '10.2.8.211',
@@ -280,9 +280,9 @@ if __name__ == '__main__':
     }
     # main(robot['雷龙·苏亚雷斯'])
     # main(robot['雷龙·内马尔'])
-    # main(robot['雷龙·齐达内'])
+    main(robot['雷龙·布里茨'])
     # main(robot['雷龙·C罗'])
-    main(robot['梁龙·鸣人'])
+    # main(robot['梁龙·鸣人'])
     # main(robot['梁龙·索隆'])
     # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。

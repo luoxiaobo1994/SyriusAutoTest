@@ -473,6 +473,7 @@ class SpeedPicker:
                                 if read_yaml('site_info.yaml', 'api_order'):
                                     log.debug("持续等待10s，机器人仍然等待任务，且开启了接口发送订单功能。")
                                     self.api_order()
+                                    sleep(30)
                         elif self.islosepos():
                             log.warning("机器人丢失定位。")
                             self.shoot()
@@ -548,12 +549,12 @@ class SpeedPicker:
                 return 1  # 页面变化了.
         if pagename == "拣货完成":
             tmp_text = self.get_text()
-            if '/' in tmp_text:
+            if '/' in tmp_text[:-1]:
                 index_1 = tmp_text.index('/')
                 if tmp_text[index_1 - 1].isdigit() and tmp_text[index_1 + 1].isdigit():
                     log.warning(f"没有开启快速拣货，脚本不能顺利执行。请开启快速拣货，退出脚本。")
                     self.shoot()
-                    exit(-100)
+                    # exit(-100)
         elif text == "已取下":
             if '上传结果失败' in self.get_text():
                 count = self.get_config()['res_report_times']  # 配置化。
@@ -620,6 +621,8 @@ class SpeedPicker:
             return  # 前往的目标点，不是货架区。说明不是拣货流程，直接跳出去。
         # self.press_ok()  # 异常耗时了。
         view_ls = self.get_text()
+        view_ls2 = self.driver.app_elements_text(locator=(By.XPATH, 'android.widget.TextView'))
+        logger.debug(f"调试程序，拣货过程中的wdgetText:{view_ls2}")
         if target in view_ls and checktarget and ismove:
             log.debug(f"移动中前往的目标点位：{target}，与当前到达的拣货点一致。")
         elif target and target not in view_ls and ismove:
@@ -630,10 +633,14 @@ class SpeedPicker:
             if '跳过' in self.get_text():
                 log.debug(f"触发随机事件，跳过当前商品的捡取。")
                 self.driver.click_element((By.XPATH, f'//*[@text="跳过"]'))
-                self.press_ok()
+                self.driver.click_element((By.XPATH, f'//*[@text="确定"]'), wait=2)
                 return  # 结束当前商品拣货
-        if '扫货品/输入' in view_ls:  # 1.还没扫码，有输入按钮。
+        if '扫货品/输入' in view_ls or '扫货品/输入' in view_ls2:  # 1.还没扫码，有输入按钮。
             log.info("拣货场景1，SpeedPicker尚未开始捡取当前商品。")
+            if '跳过此处，稍后拣选？' in view_ls:
+                self.driver.click_element((By.XPATH, f'//*[@text="确定"]'), wait=2)
+                log.debug(f"跳过当前商品拣货。")
+                return
             if self.random_trigger(n=self.get_config()['pick_psb'], process='输入商品码'):  # 概率，上报异常。
                 self.report_err()
                 return  # 结束拣货流程.
@@ -666,20 +673,22 @@ class SpeedPicker:
                 else:
                     # log.debug(f"相同商品连续捡取完毕。")
                     break
-            self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
+            self.driver.click_element((By.XPATH, '//*[starts-with(@text, "完成")]'))
             log.debug(f"通过点击[完成]，完成拣货。")
         elif self.driver.element_display((By.XPATH, '//android.widget.EditText'), wait=1):
+            # print(2222)
             # 拣货情形2,点开了输入框,但是没有输入商品码
             log.debug(f"拣货场景2，点击了输入按钮，弹出输入框，但未输入商品码。本次输入万能码。")
             self.inputcode(code='199103181516')
-            self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
+            self.driver.click_element((By.XPATH, '//*[starts-with(@text, "完成")]'))
         else:
             # 拣货情形3,都捡完了,只是没点完成.
-            self.driver.click_element((By.XPATH, '//*[@text="完成"]'))
+            # print(11111)
+            self.driver.click_element((By.XPATH, '//*[starts-with(@text, "完成")]'))
             log.debug(f"拣货场景3，商品已捡取，未点击[完成]，通过点击[完成]，快速完成拣货。")
         # 页面检查函数，页面名称是拣货完成，有单独判断。这里名称不要随便改。 会校验：是否开启了快速拣货。
-        self.page_check(timeout=6, pagename='拣货完成', is_shoot=True, text='完成', new_text='前往',
-                        new_text2='扫货品/输入')  # 这里比较容易卡. 在这里检查一下.
+        self.page_check(timeout=10, pagename='拣货完成', is_shoot=True, text='完成', new_text='前往',
+                        new_text2='完成并继续')  # 这里比较容易卡. 在这里检查一下.
         # self.go_to()
 
     def check_time(self):
@@ -849,7 +858,7 @@ class SpeedPicker:
             res = send_order(num=order_num, siteid=site)
             if 'successData' in res:
                 log.info("通过接口下发拣货任务成功。")
-                sleep(5)
+                sleep(10)
             else:
                 sleep(10)
                 log.debug("通过接口下发任务失败了，请检查一下.或者手动发单。")
@@ -922,7 +931,7 @@ class SpeedPicker:
                     self.pause_move()  # 暂停移动。
                 self.wait_moment("前往")
                 log.debug(f"机器人到达：{locate}。")
-            elif any_one(self.get_config()['bind_text'], view_ls):
+            elif any_one(self.get_config()['bind_text'], view_ls) and '前往' not in view_ls:
                 self.bind_container()
             elif len_diff(view_ls, use_text) > 4 and re.findall('×[\d]+', ls):
                 # 进入拣货判断逻辑：1.界面文本有非SP特征文本至少4个。2.界面文本包含至少包含2个拣货流程的特定文本。
@@ -930,7 +939,8 @@ class SpeedPicker:
                     target_location = ''
                 self.picking(target=target_location, checktarget=True, ismove=move_flag)  # 封装成函数，单独处理。
                 move_flag = False
-            elif '拣货执行结果' in view_ls or interset(['格口名称', '订单编号'], view_ls):  #
+            elif '跳过' not in view_ls and (
+                    '拣货执行结果' in view_ls or interset(['格口名称', '订单编号'], view_ls)):  #
                 log.debug(f"拣货结果:{self.get_text()}")
                 # log.debug(f"拣货信息-content:{self.driver.app_elements_content_desc((By.XPATH, '//*'))}")
                 # self.press_ok()  # 确定波次.
@@ -979,6 +989,9 @@ class SpeedPicker:
                 else:
                     log.debug("当前配置不支持手动派单模式，退出脚本，若要启动脚本，请调整配置。")
                     exit(-102)
+            elif '载物箱编码：' in ls and '确定' in view_ls:
+                log.debug(f"拣货完成，确认订单信息页面。")
+                self.press_ok()
             else:
                 self.press_ok()  # 这里来点一下
                 sleep(5)
@@ -1006,8 +1019,8 @@ if __name__ == '__main__':
             reset_keyboard(SpeedPicker().device_num()[0])  # 重置键盘.
         except TypeError:
             log.debug(f"抓取到的类型异常，可能是抓空了，或者界面异常了。检查一下截图。")
-            if sp.err_notify():  # 检查是否发生了一些异常。
-                exit(-100)
+            # if sp.err_notify():  # 检查是否发生了一些异常。
+            #     exit(-100)
             app_screenshot()  # 不管如何，截图记录一下当时的情况。
             sleep(3)  # 短暂等待一下，再继续跑。
             continue
