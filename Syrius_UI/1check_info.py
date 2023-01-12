@@ -81,9 +81,13 @@ def basic_info():
     SN = SN.split()[0]  # 直接替换换行符有点问题。
     pp(f"机器人的SN：{SN}")
     # 检查ID
-    ID = exe_cmd('dbus-send --system --print-reply=literal --type=method_call --dest=com.'
+    ID_res = exe_cmd('dbus-send --system --print-reply=literal --type=method_call --dest=com.'
                  'syriusrobotics.secbot /buzzard/secbot com.syriusrobotics.secbot.ISecBot.getDroidId')
-    pp(f"机器人的ID：{ID.split()[0]}")  # 去掉  int32 0
+    ID = ID_res.split()[0]
+    if ID == 'Error' or len(ID) <= 30:  # 长度是32的数字字母组合，如：747cd6f5d33e4c1cac045de78852c79d
+        pp(f"机器人的ID异常，请检查一下，拿到的值：{ID}",color='r')  # 去掉  int32 0
+    else:
+        pp(f"机器人的ID：{ID}")
     # 检查Java进程数量
     java_process = exe_cmd('ps -aux | grep java | wc -l')
     if java_process >= '10':
@@ -97,7 +101,7 @@ def calibration():
     res = exe_cmd("grep -E 'Sensors:' /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml")
     res2 = exe_cmd("ls -lh /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml").split()[4]
     if 'No such file or directory' in res:
-        pp(f"机器人的标定文件检查异常，文件不存在或为空。",color='r')
+        pp(f"机器人的标定文件检查异常，文件不存在或为空。")
     elif 'Sensors:' in res and res2 != '0':
         if res2 > '3':
             pp(f"机器人的标定文件正常。标定文件大小：{res2}")
@@ -272,15 +276,15 @@ if __name__ == '__main__':
     robot = {
         '雷龙·苏亚雷斯': '10.2.9.181',
         '雷龙·内马尔': '10.2.8.255',
-        '雷龙·布里茨': '10.2.9.125',
+        '雷龙·齐达内': '10.2.8.65',
         '雷龙·C罗': '10.2.8.118',
         '梁龙·鸣人': '10.2.8.103',
         '梁龙·索隆': '10.2.8.211',
         '梁龙·佐助': '10.2.8.77',
     }
     # main(robot['雷龙·苏亚雷斯'])
-    # main(robot['雷龙·内马尔'])
-    main(robot['雷龙·布里茨'])
+    main(robot['雷龙·内马尔'])
+    # main(robot['雷龙·齐达内'])
     # main(robot['雷龙·C罗'])
     # main(robot['梁龙·鸣人'])
     # main(robot['梁龙·索隆'])
