@@ -108,7 +108,7 @@ def calibration():
         else:
             pp(f"标定文件大小有异常：{res2}", color='r')
     else:
-        pp(f"机器人的标定文件检查异常，文件不存在或为空。")
+        pp(f"机器人的标定文件检查异常，文件不存在或为空。",color='r')
 
 
 def check_time(repair=True):
@@ -287,9 +287,9 @@ if __name__ == '__main__':
     }
     # main(robot['雷龙·苏亚雷斯'])
     # main(robot['雷龙·内马尔'])
-    main(robot['雷龙·布里茨'])
+    # main(robot['雷龙·布里茨'])
     # main(robot['雷龙·C罗'])
-    # main(robot['梁龙·鸣人'])
+    main(robot['梁龙·鸣人'])
     # main(robot['梁龙·索隆'])
     # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。
