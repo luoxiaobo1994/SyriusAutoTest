@@ -13,7 +13,7 @@ import paramiko
 ssh = paramiko.SSHClient()  # 连接实例
 
 
-def pp(msg, level='DEBUG',color='g'):
+def pp(msg, level='DEBUG', color='g'):
     with open('D:\checkLog\check_log.txt', 'a') as f:
         f.write(f"{datetime.datetime.now()} [{level}] : {msg}\n")
     if not color:
@@ -82,10 +82,10 @@ def basic_info():
     pp(f"机器人的SN：{SN}")
     # 检查ID
     ID_res = exe_cmd('dbus-send --system --print-reply=literal --type=method_call --dest=com.'
-                 'syriusrobotics.secbot /buzzard/secbot com.syriusrobotics.secbot.ISecBot.getDroidId')
+                     'syriusrobotics.secbot /buzzard/secbot com.syriusrobotics.secbot.ISecBot.getDroidId')
     ID = ID_res.split()[0]
     if ID == 'Error' or len(ID) <= 30:  # 长度是32的数字字母组合，如：747cd6f5d33e4c1cac045de78852c79d
-        pp(f"机器人的ID异常，请检查一下，拿到的值：{ID}",color='r')  # 去掉  int32 0
+        pp(f"机器人的ID异常，请检查一下，拿到的值：{ID}", color='r')  # 去掉  int32 0
     else:
         pp(f"机器人的ID：{ID}")
     # 检查Java进程数量
@@ -101,14 +101,14 @@ def calibration():
     res = exe_cmd("grep -E 'Sensors:' /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml")
     res2 = exe_cmd("ls -lh /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml").split()[4]
     if 'No such file or directory' in res:
-        pp(f"机器人的标定文件检查异常，文件不存在或为空。",color='r')
+        pp(f"机器人的标定文件检查异常，文件不存在或为空。", color='r')
     elif 'Sensors:' in res and res2 != '0':
         if res2 > '3':
             pp(f"机器人的标定文件正常。标定文件大小：{res2}")
         else:
             pp(f"标定文件大小有异常：{res2}", color='r')
     else:
-        pp(f"机器人的标定文件检查异常，文件不存在或为空。",color='r')
+        pp(f"机器人的标定文件检查异常，文件不存在或为空。", color='r')
 
 
 def check_time(repair=True):
@@ -133,7 +133,7 @@ def check_time(repair=True):
             try:
                 res = exe_cmd(f'sudo date -s "{writetime}"')
             except:
-                pp(f"设置机器人时间出现了异常：{res}",color='r')
+                pp(f"设置机器人时间出现了异常：{res}", color='r')
 
     else:
         return 1
@@ -148,6 +148,8 @@ def diskUsage():
         pp(f"机器人的磁盘占用大于{threshold}，执行:1.日志清除命令。2.删除home目录下的更新包", color='r')
         exe_cmd('sudo journalctl --vacuum-size=1K')
         exe_cmd('rm -rf ./update_*')
+    else:
+        pp(f"机器人磁盘占用空间正常，当前占用：{percent}")
 
 
 def clearOTA():
@@ -272,7 +274,7 @@ def main(ip='10.2.16.200', port=22):
         # debug()
         sshClose()
     except Exception as e:
-        pp(f"发生了一些异常：{e}",color='r')  # 登录函数会自己打印异常消息。其他异常，需要刷一下。
+        pp(f"发生了一些异常：{e}", color='r')  # 登录函数会自己打印异常消息。其他异常，需要刷一下。
 
 
 if __name__ == '__main__':
@@ -285,11 +287,11 @@ if __name__ == '__main__':
         '梁龙·索隆': '10.2.8.211',
         '梁龙·佐助': '10.2.8.77',
     }
-    main(robot['雷龙·苏亚雷斯'])
+    # main(robot['雷龙·苏亚雷斯'])
     # main(robot['雷龙·内马尔'])
-    main(robot['雷龙·布里茨'])
+    # main(robot['雷龙·布里茨'])
     # main(robot['雷龙·C罗'])
     # main(robot['梁龙·鸣人'])
-    # main(robot['梁龙·索隆'])
+    main(robot['梁龙·索隆'])
     # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。

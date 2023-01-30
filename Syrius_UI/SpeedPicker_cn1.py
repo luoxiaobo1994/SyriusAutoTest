@@ -469,7 +469,7 @@ class SpeedPicker:
                                 self.reset_timer()
                                 return
                         elif '等待任务中' in view_ls:
-                            wait_time = 10
+                            wait_time = 20
                             sleep(wait_time)
                             if '等待任务中' in self.get_text():
                                 if read_yaml('site_info.yaml', 'api_order'):
