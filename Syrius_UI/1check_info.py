@@ -190,13 +190,13 @@ def skill_file():
 
 def iot():
     res1 = set(exe_cmd('ls /opt/cosmos/bin/iot-gateway').split())
-    file = {'run.sh', 'stop.sh'}
+    file = {'iot-gateway', 'iot-gateway.sh', 'application.yml', 'stop.sh'}
     if res1 & file != file:
         pp(f"/opt/cosmos/bin/iot-gateway目录下的文件缺失，检查到的结果：{res1}", color='r')
     else:
         pp(f"/opt/cosmos/bin/iot-gateway目录下的文件检查:正常。")
         for i in res1:
-            if 'iot-gateway' in i:
+            if 'iot-gateway' in i and '.' in i:
                 pp(f"当前机器人的iot-gateway版本是：{i}")
 
 
@@ -291,7 +291,7 @@ if __name__ == '__main__':
     # main(robot['雷龙·内马尔'])
     # main(robot['雷龙·布里茨'])
     # main(robot['雷龙·C罗'])
-    # main(robot['梁龙·鸣人'])
-    main(robot['梁龙·索隆'])
+    main(robot['梁龙·鸣人'])
+    # main(robot['梁龙·索隆'])
     # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。

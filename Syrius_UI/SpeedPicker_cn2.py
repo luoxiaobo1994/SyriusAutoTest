@@ -217,7 +217,7 @@ class SpeedPicker:
         count = 20  # 有个限制.
         while count > 0:
             count -= 1  # 避免死循环
-            view_ls = self.driver.app_elements_text(self.view, wait)  # 拿到异常类型的文本。文本也是view.View类型的。
+            view_ls = self.driver.app_elements_text((By.XPATH, '//*'), wait)  # 拿到异常类型的文本。文本也是view.View类型的。
             try:
                 view_ls = [i for i in view_ls if i != '']  # 去重。会抓到空文本。
                 if view_ls:  # 抓到才出去.在sp里,必定是会有文本页面的.
@@ -374,7 +374,7 @@ class SpeedPicker:
     def do_err(self, err=''):
         # 上报异常的冗余函数.
         tmp_text = self.get_text()
-        if tmp_text[0] != '异常上报':
+        if '异常上报' not in tmp_text:
             log.warning("当前在异常上报流程，但是不在异常上报界面了。去检查一下。")
             return
         if err:
@@ -974,7 +974,7 @@ class SpeedPicker:
                 log.debug(f"异常信息如下:{self.get_text()}")
                 self.click_view_text("确定")  #
                 self.press_ok()  # 这里可能有波次完成需要确定.再点一次,确保流程正常流转.
-            elif self.sp_text[0] == "异常上报":  # 异常上报界面.
+            elif "异常上报" in self.sp_text[:2]:  # 异常上报界面.
                 log.info("当前处于异常上报流程。")
                 self.do_err()
             elif '当前作业被取消' in self.sp_text:

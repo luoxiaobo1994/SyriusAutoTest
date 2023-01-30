@@ -400,7 +400,8 @@ class TestKey():
             sleep(0.5)  # 点完做一下等待,APP自动化性能太差.
         else:
             self.driver.tap([(binlocation[0], binlocation[1])])
-            logger.debug(f"点击屏幕坐标位置: {(binlocation[0], binlocation[1])} 成功.如果没有后续操作,请检查是否位置坐标变化了.")
+            logger.debug(
+                f"点击屏幕坐标位置: {(binlocation[0], binlocation[1])} 成功.如果没有后续操作,请检查是否位置坐标变化了.")
             sleep(0.5)
 
     # 获取元素对象的文本
@@ -430,14 +431,17 @@ class TestKey():
         if i:
             logger.debug("获取App组件的Content-desc文本信息.")
         content_desc = []
-        for ele in elements:
-            try:
-                desc = ele.get_attribute("contentDescription")
-                if desc:
-                    content_desc.append(desc)
-            except:
-                pass
-        return content_desc
+        try:
+            for ele in elements:
+                try:
+                    desc = ele.get_attribute("contentDescription")
+                    if desc:
+                        content_desc.append(desc)
+                except:
+                    pass
+            return content_desc
+        except:
+            logger.warning(f"抓取Content-desc出错。")
 
     # APP的命令事件
     def app_command(self, num=66):
@@ -448,7 +452,8 @@ class TestKey():
         if num:
             os.system(f"adb shell input keyevent {num}")
         else:
-            print("请输入正确的命令值,参考:3--HOME键 4--返回键 24/25--增/减音量 187--切换应用 223--系统休眠 224--点亮屏幕")
+            print(
+                "请输入正确的命令值,参考:3--HOME键 4--返回键 24/25--增/减音量 187--切换应用 223--系统休眠 224--点亮屏幕")
 
     # 长按事件,定位,寻找来按
     def longpress_element(self, locator, wait=5, duration=1000):
