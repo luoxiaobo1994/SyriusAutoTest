@@ -32,6 +32,7 @@ class SpeedPicker:
         self.start_time = time.time()  # 一个初始的计时器。
         self.time_count = [0]  # 检查文本时的时间计时列表。
         self.sp_text = []
+        self.shoot_text = []
 
     def init_driver(self):
         device = self.device_num()[0]  # 10.111.150.202:5555 这种格式.
@@ -875,11 +876,10 @@ class SpeedPicker:
     def shoot(self):
         # 如何避免重复截图？1.不能通过activity去判断，持续观察发现，都是GoGoReady的，SpeedPicker流程变化，这个值不会变化。
         # 最好还是看SpeedPicker当前的文本变化情况去判断是否变化了。
-        tem_view = []
-        if self.sp_text != tem_view:  # 文本不一致了。就截图。
+        if self.sp_text and self.sp_text != self.shoot_text:  # 文本不一致了。就截图。
             # 截图
             app_screenshot(device=self.device_num()[0])
-            tem_view = self.get_text()  # 截图之后，刷新这次截图时的文本。 当然，有风险，要是下次还是在这个界面卡了。经验看，不会
+            self.shoot_text = self.sp_text  # 截图之后，刷新这次截图时的文本。 当然，有风险，要是下次还是在这个界面卡了。经验看，不会
         else:
             log.debug(f"截图流程，由于界面上的SpeedPicker文本没有产生变化，没有执行截图流程。当前文本：{self.sp_text}")
 
