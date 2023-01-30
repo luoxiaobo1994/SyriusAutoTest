@@ -55,6 +55,9 @@ sp_text:
   - 请取下载物箱 或 卸载载具上的货物
   - 跳过
   - 扫货品/输入
+  - speed_picker
+  - picking_code.8cfdd8bd
+  - ic_btn_scan.74060d4d
 picking_text:
   - 编码
   - 输入

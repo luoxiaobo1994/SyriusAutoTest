@@ -217,7 +217,7 @@ class SpeedPicker:
         count = 20  # 有个限制.
         while count > 0:
             count -= 1  # 避免死循环
-            view_ls = self.driver.app_elements_text(self.view, wait)  # 拿到异常类型的文本。文本也是view.View类型的。
+            view_ls = self.driver.app_elements_text((By.XPATH, '//*'), wait)  # 拿到异常类型的文本。文本也是view.View类型的。
             try:
                 view_ls = [i for i in view_ls if i != '']  # 去重。会抓到空文本。
                 if view_ls:  # 抓到才出去.在sp里,必定是会有文本页面的.

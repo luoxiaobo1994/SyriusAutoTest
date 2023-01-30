@@ -25,7 +25,7 @@ class GGR():
             'newCommandTimeout': 30000,  # 命令超时时间。给长一点
             'automationName': 'UiAutomator2'  # 可能是这里导致的常断开
         }
-        br = webdriver.Remote(f"http://localhost:{port}/wd/hub", app_data)
+        br = webdriver.Remote(f"http://localhost:{port}", app_data)
         driver = TestKey(br)
         return driver
 
