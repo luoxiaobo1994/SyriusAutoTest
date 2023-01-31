@@ -104,10 +104,23 @@ def dd():
 
 # 计算运行时长,把代码块封装成函数,传到计算函数里.
 def cal_time(func):
+    # 计算函数的运行时间
     start = time.time()
     func()
     end = time.time()
     dp('代码块的运行时长是:%0.2f秒' % (end - start))
+
+
+def time_diff(strtime, now=datetime.now()):
+    # 计算指定时间与当前时间的相差时间。
+    if isinstance(strtime, str):  # 传入字符串类型。
+        dtime = datetime.strptime(strtime, '%Y-%m-%d %H:%M:%S')
+    elif isinstance(strtime, list):  # 列表类型
+        pass
+    else:
+        logger.warning(f"请检查传入的时间格式，当前支持：字符串方式和列表形式。")
+        return 0
+
 
 
 # 错误行
