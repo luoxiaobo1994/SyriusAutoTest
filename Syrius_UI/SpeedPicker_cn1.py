@@ -282,18 +282,22 @@ class SpeedPicker:
                 while True:
                     if self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"日志上传完成")]')):
                         log.debug("机器人日志已上传完成，请自行前往解决异常，恢复机器人移动。")
-                        app_screenshot(device=self.device_num()[0])
+                        self.shoot()
                         log.debug("即将通过脚本返回Jarvis主界面，请确保机器人无异常产生。保证业务正常进行。")
                         for i in range(3):
-                            os.system("adb shell input keyevent 4")  # 连续3次,才能返回到桌面.到桌面,再按一次.也不会到系统桌面
+                            os.system(
+                                f"adb -s {self.device_num()[0]} shell input keyevent 4")  # 连续3次,才能返回到桌面.到桌面,再按一次.也不会到系统桌面
                             sleep(1)
                         break  # 返回完了,退出去
-                    else:
-                        schedule = self.driver.app_elements_content_desc(self.view)
+                    elif self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"请稍后")]')):
+                        schedule = self.driver.app_elements_content_desc((By.XPATH, '//*'))
                         for i in schedule:
-                            if i.startswith('请稍后...'):
-                                log.debug(f"日志仍在上传中，{i}。")
-                        sleep(30)
+                            if i.startswith('请稍后'):
+                                log.debug(f"日志正在上传，{i}...")
+                        sleep(3)
+                    elif self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"正在准备日志文件")]')):
+                        log.debug(f"下位机日志准备中...")  # 转圈的准备过程
+                        sleep(60)
                     # exit(100)
             elif self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"SkillSpace")]')):
                 log.info("机器人在Javis Launcher主界面，尝试重新打开SpeedPicker。")
@@ -873,12 +877,17 @@ class SpeedPicker:
     def get_config(self):
         return YamlReader('2speedpicker_config.yaml').data
 
-    def shoot(self):
+    def shoot(self, file_name=''):
         # 如何避免重复截图？1.不能通过activity去判断，持续观察发现，都是GoGoReady的，SpeedPicker流程变化，这个值不会变化。
+        if self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"日志上传完成")]'), wait=1) and len(
+                self.shoot_text) == 0:  # 启动脚本在截图界面时，截图文本是空的，要这个做控制。
+            app_screenshot(device=self.device_num()[0], file_name=file_name)
+            log.debug(f"已截取机器人下位机日志。文件名称：{file_name}")
+            self.shoot_text = ['截图完成']  # 占位，做判断。其他界面，会刷新
         # 最好还是看SpeedPicker当前的文本变化情况去判断是否变化了。
-        if self.sp_text and self.sp_text != self.shoot_text:  # 文本不一致了。就截图。
+        elif self.sp_text and self.sp_text != self.shoot_text:  # 文本不一致了。就截图。
             # 截图
-            app_screenshot(device=self.device_num()[0])
+            app_screenshot(device=self.device_num()[0], file_name=file_name)
             self.shoot_text = self.sp_text  # 截图之后，刷新这次截图时的文本。 当然，有风险，要是下次还是在这个界面卡了。经验看，不会
         else:
             log.debug(f"截图流程，由于界面上的SpeedPicker文本没有产生变化，没有执行截图流程。当前文本：{self.sp_text}")
@@ -965,7 +974,7 @@ class SpeedPicker:
                     self.click_view_text("已取下")  # 强点.
                     log.info("完成一单，不错!")
                     log.info('-·' * 30 + '-' + '\n')
-                log.debug(f'调试日志，点击确定完成。')
+                # log.debug(f'调试日志，点击确定完成。')
             # elif '跳过' not in self.sp_text and (   # SpeedPicker更新，已经不展示格口信息。
             #         '拣货执行结果' in self.sp_text or interset(['格口名称', '订单编号'], self.sp_text)):  #
             #     log.debug(f"拣货结果:{self.get_text()}")
@@ -978,7 +987,7 @@ class SpeedPicker:
             #         log.info('-·' * 30 + '-' + '\n')
             #         self.wait_moment('已取下')
             #     self.click_view_text("确定")  # 强点.
-            elif '安装载具' in self.sp_text:   # 文本比对，不占用时间，保留。
+            elif '安装载具' in self.sp_text:  # 文本比对，不占用时间，保留。
                 log.debug("处于切换载具流程。")
                 self.click_view_text("完成")
             elif len(set(self.get_config()['err_text']) & set_view) > 0:  # 异常处理区.

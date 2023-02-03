@@ -476,7 +476,7 @@ class SpeedPicker:
                                 if read_yaml('site_info.yaml', 'api_order'):
                                     log.debug(f"持续等待{wait_time}s，机器人仍然等待任务，且开启了接口发送订单功能。")
                                     self.api_order()
-                                    sleep(30)
+                                    sleep(40)
                         elif self.islosepos():
                             log.warning("机器人丢失定位。")
                             self.shoot()
@@ -925,7 +925,7 @@ class SpeedPicker:
                     self.other_situation()
             elif '等待任务中' in self.sp_text:  # 文本比对，不占用时间，保留。
                 log.info("SpeedPicker当前没有任务，等待10s。若仍无任务，将会通过接口下发订单。\n")
-                # sleep(10)
+                sleep(10)
                 self.wait_moment("等待任务中")
             elif '前往' in self.sp_text:  # 文本比对，不占用时间，保留。
                 move_flag = True
