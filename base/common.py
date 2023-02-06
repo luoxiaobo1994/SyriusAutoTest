@@ -53,25 +53,13 @@ def get_date():
     return date_1
 
 
-def time_difference(sometime, isreturn=False, compare=False, time_threshold=5, method='>'):
-    # 计算两个时间差,传入的时间参数格式“2022-10-22 13:15:55”
-    t1 = datetime.now()
-    t2 = datetime.strptime(sometime, "%Y-%m-%d %H:%M:%S")
-    difference = (t1 - t2).total_seconds()
-    abs_time = abs(difference)
-    logger.debug(f"传入计算的时间，与当前时间相差为：{'慢' if difference > 0 else '快'}{abs_time:.2f}秒。")
-    if compare:
-        if method == '>':
-            if abs_time > time_threshold:
-                logger.warning(f"传入的时间与当前时间相比，差值大于：{time_threshold}秒，请注意检查。")
-        elif method == '<':
-            if abs_time < time_threshold:
-                logger.warning(f"传入的时间与当前时间相比，差值小于：{time_threshold}秒，请注意检查。")
-        else:
-            if abs_time == time_threshold:
-                logger.warning(f"传入的时间与当前时间相比，差值超等于：{time_threshold}秒，请注意检查。")
-    if isreturn:
-        return abs(difference)
+def time_difference(time1, time2):
+    try:
+        t1 = datetime.strptime(time1, '%Y-%m-%d %H:%M:%S')
+        t2 = datetime.strptime(time2, '%Y-%m-%d %H:%M:%S')
+        return (t2 - t1).seconds
+    except:
+        pp(f"时间比较函数，传入参数异常，传入格式为：'%Y-%m-%d %H:%M:%S'，如：'2023-02-06 03:10:39'", color='r')
 
 
 # 调试打印,带时间戳
@@ -120,7 +108,6 @@ def time_diff(strtime, now=datetime.now()):
     else:
         logger.warning(f"请检查传入的时间格式，当前支持：字符串方式和列表形式。")
         return 0
-
 
 
 # 错误行

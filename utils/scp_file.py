@@ -33,14 +33,15 @@ def scp_navi(device, file, path, port=22, username='syrius', password='syrius', 
 
 
 if __name__ == '__main__':
-    def xx():
+    def main():
+        # 机器人IP清单，如有分组，不同组传不同配置，则分组写入机器人IP。 或者集中在一起也可。
         devices_A = ['10.111.150.216', '10.111.150.193', '10.111.150.204', '10.111.150.205', '10.111.150.211',
                      '10.111.150.210', '10.111.150.201', '10.111.150.206', '10.111.150.214', '10.111.150.213']
         devices_B = ['10.111.150.203', '10.111.150.104', '10.111.150.209', '10.111.150.102', '10.111.150.106',
                      '10.111.150.195', '10.111.150.202', '10.111.150.212']
         devices_C = ['10.111.150.215', '10.111.150.111', '10.111.150.108', '10.111.150.125', '10.111.150.121',
                      '10.111.150.117', '10.111.150.207', '10.111.150.208']
-        all_devices = devices_A + devices_B + devices_C
+        all_devices = devices_A + devices_B + devices_C  # 所有的机器人列表合集。
         # 命令执行前,注意加路径.
         # command_ls = ['chmod 755 /usr/local/bin/navigation_skill', 'killall navigation_skill']
         command_ls = ['tar xvf /etc/syriusconfig_tree.tar.gz']
@@ -54,4 +55,4 @@ if __name__ == '__main__':
                 print(e)
 
 
-    xx()
+    main()

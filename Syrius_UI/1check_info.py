@@ -6,15 +6,19 @@
 import datetime
 import re
 import time
-
+import os
 import paramiko
+import pytz
 
 # 全局数据
 ssh = paramiko.SSHClient()  # 连接实例
 
 
 def pp(msg, level='DEBUG', color='g'):
-    with open('D:\checkLog\check_log.txt', 'a') as f:
+    file = 'D:\checkLog\check_log.txt'
+    if not os.path.exists(file):
+        file = './check_log.txt'  # 如果没有，就在当前目录创建日志文件。
+    with open(file, 'a') as f:
         f.write(f"{datetime.datetime.now()} [{level}] : {msg}\n")
     if not color:
         # 充当log函数
@@ -24,6 +28,15 @@ def pp(msg, level='DEBUG', color='g'):
             print(f"\033[1;36m{datetime.datetime.now()} [{level}] : {msg}\033[0m")
         elif color in ['r', 'red', 'RED', 'Red']:
             print(f"\033[1;31m{datetime.datetime.now()} [{level}] : {msg}\033[0m")
+
+
+def time_difference(time1, time2):
+    try:
+        t1 = datetime.datetime.strptime(time1, '%Y-%m-%d %H:%M:%S')
+        t2 = datetime.datetime.strptime(time2, '%Y-%m-%d %H:%M:%S')
+        return (t2 - t1).seconds
+    except:
+        pp(f"时间比较函数，传入参数异常，传入格式为：'%Y-%m-%d %H:%M:%S'，如：'2023-02-06 03:10:39'", color='r')
 
 
 def sshLogin(ip, port, username='developer', passwd='developer'):
@@ -43,15 +56,16 @@ def sshLogin(ip, port, username='developer', passwd='developer'):
 def exe_cmd(cmd='ls', isreturn=True, printres=False, timeout=3, username='developer', passwd='developer'):
     # 执行命令。只包含命令和是否返回结果两个参数，具体业务，再分函数细写。
     global ssh
-    # pp(f"执行命令：{cmd}")
+    # pp(f"执行的命令：{cmd}")  # , get_pty=True, timeout=timeout
     stdin, stdout, stderr = ssh.exec_command(cmd, get_pty=True, timeout=timeout)  # get_pty参数，是为了sudo命令输入密码使用的。
+    if cmd.startswith('sudo'):
+        pp(f'执行的命令带有sudo，写入用户密码...')
+        stdin.write(passwd + '\n')
+        time.sleep(1)
+        stdin.flush()
     result = stdout.read().decode('utf-8')
     result = result.strip()  # 删除前后空格
     result.replace('\n', '')
-    if cmd.startswith('sudo'):
-        stdin.write(passwd + '\n')
-        time.sleep(0.5)
-        stdin.flush()
     if 'Permission denied' in result:
         pp(f'执行命令：{cmd}的权限不够，请检查。', 'WARNING', color='r')
     if isreturn:
@@ -98,45 +112,32 @@ def basic_info():
 
 def calibration():
     # 标定文件检查。
-    res = exe_cmd("grep -E 'Sensors:' /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml")
+    res = exe_cmd("sudo grep -E 'Sensors:' /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml")
+    # pp(f"res:{res}")
     res2 = exe_cmd("ls -lh /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml").split()[4]
+    # pp(f"res2:{res2}")
     if 'No such file or directory' in res:
-        pp(f"机器人的标定文件检查异常，文件不存在或为空。", color='r')
+        pp(f"机器人的标定文件检查异常，文件不存在。", color='r')
+    elif 'Permission denied' in res:
+        pp(f"无权限查看标定文件。标定文件的大小是：{res2}")
     elif 'Sensors:' in res and res2 != '0':
         if res2 > '3':
             pp(f"机器人的标定文件正常。标定文件大小：{res2}")
         else:
             pp(f"标定文件大小有异常：{res2}", color='r')
     else:
-        pp(f"机器人的标定文件检查异常，文件不存在或为空。", color='r')
+        pp(f"机器人的标定文件检查异常，脚本未查询到相关数据，请手动检查。", color='r')
 
 
 def check_time(repair=True):
     # 检查机器人时间
-    res = exe_cmd("date +'%Y-%m-%d %H:%M:%S'")
-    list_time = [int(i) for i in re.findall('\d+', res)]  # ['2022', '12', '15', '03', '07', '03']
-    bot_time = datetime.datetime(*list_time)  # 把时间数据转化为时间格式。
-    now = datetime.datetime.now()
-    time_gap = abs((now - bot_time).seconds - (8 * 60 * 60))
-    pp(f"机器人当前时间：{res}，与本机的时间差(UTC+0时区)是：{time_gap}秒。")  # 2022-12-15 03:07:03
-    if time_gap > 5:  # 8个小时的时间差。
+    robot_time = exe_cmd("date +'%Y-%m-%d %H:%M:%S'")
+    # pp(f"拿到的时间：{res}")  # 拿到的时间：2023-02-06 03:05:10
+    utc_time = datetime.datetime.now(pytz.timezone('UTC')).strftime('%Y-%m-%d %H:%M:%S')  # '2023-02-06 03:10:39'
+    time_gap = time_difference(robot_time, utc_time)  # 机器人时间与当前UTC0时间差距。
+    pp(f"机器人当前时间：{robot_time}，与本机的时间差(UTC+0时区)是：{time_gap}秒。")  # 2022-12-15 03:07:03
+    if time_gap > 10:  #
         pp(f"机器人当前时间与实际UTC时间差距较大，请检查！", "WARNING", color='r')
-        now1 = list(time.localtime())
-        date = ''.join([str(i) for i in now1[:3]])
-        h = now1[3] - 8  # 基本是上班时间才会去检查。所以减8没问题。半夜做，就有BUG。
-        m = now1[4]
-        s = now1[5]
-        writetime = date + ' ' + ':'.join([str(h), str(m), str(s)])
-        # print(writetime)
-        if repair:
-            pp(f"脚本即将设置时间到当前时间:{writetime}，时间时区为UTC0。")
-            try:
-                res = exe_cmd(f'sudo date -s "{writetime}"')
-            except:
-                pp(f"设置机器人时间出现了异常：{res}", color='r')
-
-    else:
-        return 1
 
 
 def diskUsage():
@@ -291,7 +292,7 @@ if __name__ == '__main__':
     # main(robot['雷龙·内马尔'])
     # main(robot['雷龙·布里茨'])
     # main(robot['雷龙·C罗'])
-    # main(robot['梁龙·鸣人'])
+    main(robot['梁龙·鸣人'])
     # main(robot['梁龙·索隆'])
-    main(robot['梁龙·佐助'])
+    # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。

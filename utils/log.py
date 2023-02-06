@@ -24,9 +24,12 @@ class Logger(object):
         self.create_logdir()  # 判断是否有文件夹,没有就先创建一个.
 
     def create_logdir(self):
-        dir = "D:\AutomationLog"
-        if not os.path.exists(dir):
-            os.makedirs("D:\AutomationLog")
+        try:
+            dir = "D:\AutomationLog"
+            if not os.path.exists(dir):
+                os.makedirs("D:\AutomationLog")
+        except:
+            os.makedirs("./AutomationLog")  # 不是windows系统时，在当前目录创建。
 
     def file_day(self):
         # 按天生成文件.
