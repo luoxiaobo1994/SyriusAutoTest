@@ -8,51 +8,44 @@ import scp
 from utils.log import logger
 
 
-def scp_navi(device, file, path, port=22, username='syrius', password='syrius', setup_cmd='ls', commands=[]):
+def scp_file(device, file, path, port=22, username='developer', password='developer', commands=[]):
     ssh_client = paramiko.SSHClient()
-    logger.debug(f"开始连接：{device}...")
+    logger.debug(f"开始连接：[{device}], 端口为：[{str(port)}], 账号为：[{username}], 密码为：[{password}]。")
     ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy)
-    ssh_client.connect(device, port=port, username=username, password=password)
+    try:
+        ssh_client.connect(device, port=port, username=username, password=password,timeout=15)
+    except TimeoutError:
+        logger.warning(f"连接[{device}]超时，请检查是否能正常连接该设备。")
+        return
     scp_client = scp.SCPClient(ssh_client.get_transport(), socket_timeout=15)
-    ssh_client.exec_command(command=setup_cmd, bufsize=-1, timeout=60, get_pty=False,
-                            environment=None)
     try:
         scp_client.put(files=file, remote_path=path)
     except FileNotFoundError as e:
-        logger.error(f"{e}:{file}")
+        logger.error(f"找不到传输的文件，请检查。{e}:{file}")
     else:
-        logger.debug(f"文件：{file} 传输到{device}的路径：{path}成功。")
-    if commands:
+        logger.debug(f"文件：[{file}]成功传输到设备[{device}]的[{path}]目录下成功。")
+    if commands:  # 传完之后，还需要做一些操作，如：查看大小，修改权限之类的。
         for cmd in commands:
-            stdin, stdout, stderr = ssh_client.exec_command(cmd, bufsize=-1, timeout=60, get_pty=False,
-                                                            environment=None)
-            logger.debug(f"执行命令: {cmd} 完成")
-            logger.debug(f"执行结果:{stdout.readlines()[:5]}")  # 前五行就行了.
-        logger.debug("执行完成命令。")
+            stdin, stdout, stderr = ssh_client.exec_command(cmd, get_pty=True)
+            logger.debug(f"执行命令: '{cmd}' 完成")
+            result = stdout.read().decode('utf-8').strip()  # 返回的结果
+            if result:
+                logger.debug(f"命令的返回值：'{result}'")
+            else:
+                logger.debug(f"该命令没有返回值。")
+        logger.debug("执行完成所有命令。")
     ssh_client.close()
 
 
 if __name__ == '__main__':
     def main():
         # 机器人IP清单，如有分组，不同组传不同配置，则分组写入机器人IP。 或者集中在一起也可。
-        devices_A = ['10.111.150.216', '10.111.150.193', '10.111.150.204', '10.111.150.205', '10.111.150.211',
-                     '10.111.150.210', '10.111.150.201', '10.111.150.206', '10.111.150.214', '10.111.150.213']
-        devices_B = ['10.111.150.203', '10.111.150.104', '10.111.150.209', '10.111.150.102', '10.111.150.106',
-                     '10.111.150.195', '10.111.150.202', '10.111.150.212']
-        devices_C = ['10.111.150.215', '10.111.150.111', '10.111.150.108', '10.111.150.125', '10.111.150.121',
-                     '10.111.150.117', '10.111.150.207', '10.111.150.208']
-        all_devices = devices_A + devices_B + devices_C  # 所有的机器人列表合集。
-        # 命令执行前,注意加路径.
-        # command_ls = ['chmod 755 /usr/local/bin/navigation_skill', 'killall navigation_skill']
-        command_ls = ['tar xvf /etc/syriusconfig_tree.tar.gz']
-        rm_file = 'rm -rf /etc/syrius/config_tree'  # 删除原有的文件。
-        for device in devices_C:
-            try:
-                scp_navi(device=device, file=r"C:\Users\luoxiaobo\111.txt",
-                         path="/etc/syrius/offline_map/map_01/common/",
-                         commands=[])
-            except Exception as e:
-                print(e)
+        robots = ['10.2.9.181', '10.2.8.103']  # 机器人IP，用列表和字典或集合都行，只要循环取到IP即可。
+        file = "./log.py"  # 需要传输的文件，填好绝对/相对路径。
+        path = '~/'  # 需要传到目标机器人的哪个目录下
+        for bot in robots:  # 循环遍历列表传送即可。
+            scp_file(device=bot, file=file, path=path, commands=['chmod 777 ~/log.py','ls -lh ~/log.py'])
+            logger.debug(f"机器人[{bot}]执行完成。\n")
 
 
     main()

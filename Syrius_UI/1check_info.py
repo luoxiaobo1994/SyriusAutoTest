@@ -20,14 +20,10 @@ def pp(msg, level='DEBUG', color='g'):
         file = './check_log.txt'  # 如果没有，就在当前目录创建日志文件。
     with open(file, 'a') as f:
         f.write(f"{datetime.datetime.now()} [{level}] : {msg}\n")
-    if not color:
-        # 充当log函数
-        print(f"{datetime.datetime.now()} [{level}] : {msg}")
-    else:
-        if color in ['g', 'green', 'GREEN', 'Green']:
-            print(f"\033[1;36m{datetime.datetime.now()} [{level}] : {msg}\033[0m")
-        elif color in ['r', 'red', 'RED', 'Red']:
-            print(f"\033[1;31m{datetime.datetime.now()} [{level}] : {msg}\033[0m")
+    if color in ['g', 'green', 'GREEN', 'Green']:
+        print(f"\033[1;36m{datetime.datetime.now()} [{level}] : {msg}\033[0m")
+    elif color in ['r', 'red', 'RED', 'Red']:
+        print(f"\033[1;31m{datetime.datetime.now()} [{level}] : {msg}\033[0m")
 
 
 def time_difference(time1, time2):
@@ -70,7 +66,7 @@ def exe_cmd(cmd='ls', isreturn=True, printres=False, timeout=3, username='develo
         pp(f'执行命令：{cmd}的权限不够，请检查。', 'WARNING', color='r')
     if isreturn:
         if printres:
-            pp(f"命令的返回结果：{result}", 'DEBUG', color='r')
+            pp(f"命令的返回结果：{result}", 'DEBUG')
         return result
 
 
@@ -88,8 +84,12 @@ def basic_info():
     MoveBase = exe_cmd('cat /opt/cosmos/etc/ota/version')
     pp(f'MoveBase版本：{MoveBase}')
     # 检查L4T信息
-    L4T = exe_cmd("grep -E 'build date:(.*?)$' /etc/version.yaml")
-    pp(f"L4T信息：{L4T}")
+    L4T_date = exe_cmd("grep -E 'build date:(.*?)$' /etc/version.yaml")
+    L4t_version = exe_cmd('cat /etc/jurassic_release')
+    if L4t_version:
+        pp(f"L4T构建日期：{L4T_date}，版本：{L4t_version}")
+    else:
+        pp(f"L4T构建日期：{L4T_date}。")
     # 检查SN
     SN = exe_cmd('cat /sys/robotInfo/RobotSN')
     SN = SN.split()[0]  # 直接替换换行符有点问题。
@@ -99,7 +99,7 @@ def basic_info():
                      'syriusrobotics.secbot /buzzard/secbot com.syriusrobotics.secbot.ISecBot.getDroidId')
     ID = ID_res.split()[0]
     if ID == 'Error' or len(ID) <= 30:  # 长度是32的数字字母组合，如：747cd6f5d33e4c1cac045de78852c79d
-        pp(f"机器人的ID异常，请检查一下，拿到的值：{ID}", color='r')  # 去掉  int32 0
+        pp(f"机器人的ID异常，请检查一下，拿到的值：{ID}", "WARNING", color='r')  # 去掉  int32 0
     else:
         pp(f"机器人的ID：{ID}")
     # 检查Java进程数量
@@ -107,7 +107,7 @@ def basic_info():
     if java_process >= '10':
         pp(f"Java进程数量：{java_process}，{'正常。'}")
     else:
-        pp(f"Java进程数量：{java_process}，{'正常。'}", color='r')
+        pp(f"Java进程数量：{java_process}，{'正常。'}", "WARNING", color='r')
 
 
 def calibration():
@@ -117,16 +117,16 @@ def calibration():
     res2 = exe_cmd("ls -lh /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml").split()[4]
     # pp(f"res2:{res2}")
     if 'No such file or directory' in res:
-        pp(f"机器人的标定文件检查异常，文件不存在。", color='r')
+        pp(f"机器人的标定文件检查异常，文件不存在。", level='WARNING', color='r')
     elif 'Permission denied' in res:
         pp(f"无权限查看标定文件。标定文件的大小是：{res2}")
     elif 'Sensors:' in res and res2 != '0':
         if res2 > '3':
             pp(f"机器人的标定文件正常。标定文件大小：{res2}")
         else:
-            pp(f"标定文件大小有异常：{res2}", color='r')
+            pp(f"标定文件大小有异常：{res2}", level='WARNING', color='r')
     else:
-        pp(f"机器人的标定文件检查异常，脚本未查询到相关数据，请手动检查。", color='r')
+        pp(f"机器人的标定文件检查异常，脚本未查询到相关数据，请手动检查。", level='WARNING', color='r')
 
 
 def check_time(repair=True):
@@ -142,15 +142,20 @@ def check_time(repair=True):
 
 def diskUsage():
     # 检查磁盘占用率
-    res = exe_cmd('df | head -2 | grep /')
-    percent = re.findall('\d+%', res)[0]
+    res = exe_cmd('df | head -2 | grep /')  # 总磁盘占用率。
+    res2 = exe_cmd('df -h | grep "[0-9]\?[0-9]\?[0-9]%" -o').split('\r\n')  # 查找出所有目录的磁盘占用率,处理成列表
+    total_percent = re.findall('\d+%', res)[0]
     threshold = '85%'
-    if percent > threshold:
+    if total_percent > threshold:
         pp(f"机器人的磁盘占用大于{threshold}，执行:1.日志清除命令。2.删除home目录下的更新包", color='r')
         exe_cmd('sudo journalctl --vacuum-size=1K')
         exe_cmd('rm -rf ./update_*')
+    for percent in res2:
+        if percent > "90%":  # 90% 做门限值。
+            pp(f"有目录占用率达到{percent}，可能影响功能使用，请检查。", "WARNING", color='r')
+            pp(f"目录信息：{exe_cmd(f'df -h | grep {percent}')}")
     else:
-        pp(f"机器人磁盘占用空间正常，当前占用：{percent}")
+        pp(f"机器人磁盘占用空间正常，当前占用：{total_percent}")
 
 
 def clearOTA():
@@ -167,14 +172,14 @@ def env(ip, port='22', count=3):
     if 'env: test' in res1 and res1 == res2 == res3:
         pp(f"机器人的环境为：{res1}")
     else:
-        pp(f"机器人的环境文件缺失，使用echo创建测试环境配置文件。", color='r')
+        pp(f"机器人的环境文件缺失，使用echo创建测试环境配置文件。", "WARNING", color='r')
         try:
             exe_cmd("echo 'env: test' > /opt/cosmos/bin/secbot/application.yml")
             exe_cmd("echo 'env: test' > /opt/cosmos/bin/iot-gateway/application.yml")
             exe_cmd("echo 'env: test' > /opt/cosmos/bin/ota/checker/application.yml")
             pp(f"环境配置文件创建完成。")
         except TimeoutError:
-            pp(f"环境配置文件创建失败，请检查。", color='r')
+            pp(f"环境配置文件创建失败，请检查。", "WARNING", color='r')
 
 
 def skill_file():
@@ -184,7 +189,7 @@ def skill_file():
              'video_device.sh', 'health_skill', 'maintenance', 'README.txt', 'inuitive_xusb_detector', 'mapping_skill',
              'scanner_skill', 'iot-gateway', 'navigation_skill', 'secbot', 'cleaning_skill'}
     if res1.difference(skill):
-        pp(f"/opt/cosmos/bin目录下的文件检查有差异，差异项：{res1.difference(skill)}", color='r')
+        pp(f"/opt/cosmos/bin目录下的文件检查有差异，差异项：{res1.difference(skill)}", "WARNING", color='r')
     else:
         pp(f"/opt/cosmos/bin目录下的文件检查:正常。")
 
@@ -193,7 +198,7 @@ def iot():
     res1 = set(exe_cmd('ls /opt/cosmos/bin/iot-gateway').split())
     file = {'iot-gateway', 'iot-gateway.sh', 'application.yml', 'stop.sh'}
     if res1 & file != file:
-        pp(f"/opt/cosmos/bin/iot-gateway目录下的文件缺失，检查到的结果：{res1}", color='r')
+        pp(f"/opt/cosmos/bin/iot-gateway目录下的文件缺失，检查到的结果：{res1}", "WARNING", color='r')
     else:
         pp(f"/opt/cosmos/bin/iot-gateway目录下的文件检查:正常。")
         for i in res1:
@@ -205,7 +210,7 @@ def kuafu_file():
     res1 = set(exe_cmd('ls /opt/cosmos/bin/kuafu').split())
     file = {'run.sh'}
     if res1 & file != file:
-        pp(f"/opt/cosmos/bin/kuafu目录下的文件缺失，检查到的结果：{res1}", color='r')
+        pp(f"/opt/cosmos/bin/kuafu目录下的文件缺失，检查到的结果：{res1}", "WARNING", color='r')
     else:
         pp(f"/opt/cosmos/bin/kuafu目录下的文件检查:正常。")
         for i in res1:
@@ -233,9 +238,9 @@ def model():
         if model.get(res):
             pp(f"机器人Model是：{res}，机型名称：{res2}，对应机型：{model[res]}")
         else:
-            pp(f"机器人Model是：{res}，没有对应机型，请检查。", color='r')
+            pp(f"机器人Model是：{res}，没有对应机型，请检查。", "WARNING", color='r')
     except TypeError:
-        pp(f"机器人Model查询结果返回异常，请检查。", color='r')
+        pp(f"机器人Model查询结果返回异常，请检查。", "WARNING", color='r')
 
 
 def user_color():
@@ -243,7 +248,7 @@ def user_color():
     if '#' in res:
         exe_cmd("sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' .bashrc")
         exe_cmd("source .bashrc")
-        pp(f"用户颜色未生效，修改同步完成。", color='r')
+        pp(f"用户颜色未生效，修改同步完成。", "WARNING", color='r')
     else:
         pp(f"用户颜色已生效，未做修改。")
 
@@ -254,7 +259,7 @@ def debug():
     if '#' in res:
         exe_cmd("sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' .bashrc")
         exe_cmd("source .bashrc")
-        pp(f"用户颜色未生效，修改同步完成。", color='r')
+        pp(f"用户颜色未生效，修改同步完成。", "WARNING", color='r')
     else:
         pp(f"用户颜色已生效，未做修改。")
 
@@ -288,11 +293,11 @@ if __name__ == '__main__':
         '梁龙·索隆': '10.2.8.211',
         '梁龙·佐助': '10.2.8.77',
     }
-    # main(robot['雷龙·苏亚雷斯'])
+    main(robot['雷龙·苏亚雷斯'])
     # main(robot['雷龙·内马尔'])
     # main(robot['雷龙·布里茨'])
     # main(robot['雷龙·C罗'])
-    main(robot['梁龙·鸣人'])
+    # main(robot['梁龙·鸣人'])
     # main(robot['梁龙·索隆'])
     # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。
