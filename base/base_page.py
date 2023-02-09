@@ -428,7 +428,7 @@ class TestKey():
         # else:
         #     return []
 
-    def app_elements_content_desc(self, locator, wait=2, i=False, d=False):
+    def app_elements_content_desc(self, locator, wait=2, i=False, d=False, where=''):
         elements = self.find_elements(locator, wait)
         if i:
             logger.debug("获取App组件的Content-desc文本信息.")
@@ -443,7 +443,7 @@ class TestKey():
                     pass
             return content_desc
         except:
-            logger.warning(f"抓取Content-desc出错。")
+            logger.warning(f"{where}流程抓取Content-desc出错。")
 
     # APP的命令事件
     def app_command(self, num=66):

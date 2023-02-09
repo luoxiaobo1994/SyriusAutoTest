@@ -69,9 +69,9 @@ class SpeedPicker:
 
     def open_sp(self):
         log.debug(f"脚本启动成功，检查是否需要脚本启动SpeedPicker。")
-        # 先判断是否有异常.
-        if self.err_notify():  # 异常函数会自己报异常.
-            exit(-404)  # 走不动了,直接停吧.
+        # 先判断是否有异常.   更新：异常通知改为系统悬浮窗，appium抓不到。不再检查。
+        # if self.err_notify():  # 异常函数会自己报异常.
+        #     exit(-404)  # 走不动了,直接停吧.
         # 抓取界面的小程序.
         try:
             desc = self.driver.app_elements_content_desc(self.view)
@@ -126,7 +126,7 @@ class SpeedPicker:
 
     def err_notify(self):
         try:
-            notify = self.driver.app_elements_content_desc(self.image, wait=1)  # 不用抓太久.
+            notify = self.driver.app_elements_content_desc(self.image, wait=2, where='检查异常通知')  # 不用抓太久.
             if notify:
                 for i in notify:
                     if (len(i) > 3 and '机器人' in i) or (len(i) > 3 and '平板' in i):
@@ -379,6 +379,7 @@ class SpeedPicker:
 
     def do_err(self, err=''):
         # 上报异常的冗余函数.
+        sleep(1)  # 点太快了。脚本进来时，文本还没刷新。做个等待。
         tmp_text = self.get_text()
         if '异常上报' not in tmp_text:
             log.warning("当前在异常上报流程，但是不在异常上报界面了。去检查一下。")

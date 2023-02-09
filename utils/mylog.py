@@ -5,11 +5,12 @@
 
 import os
 from datetime import datetime
+from base.common import get_date
 
 
 class Logger():
 
-    def __init__(self, name='Syrius', file="D:\checkLog\debuglog.txt", level=0, path=''):
+    def __init__(self, name='Syrius', file=f"D:\checkLog\{get_date()}debuglog.txt", level=0, path=''):
         self.level = level
         self.file = file
         self.path = path
@@ -35,9 +36,12 @@ class Logger():
                 file.write('\n')
                 file.close()
             except:
-                file = './check_log.txt'
+                file = f'./{get_date()}check_log.txt'
         with open(file, 'a', encoding='utf8') as f:  # 需要指定utf8编码，不然写一些特殊字符会挂掉。
-            f.write(f"{self.name} {datetime.now()} [{rank}] : {message}\n")
+            try:
+                f.write(f"{self.name} {datetime.now()} [{rank}] : {message}\n")
+            except:
+                print(f"\033[1;31m{self.name} {datetime.now()} [{rank}] : 日志写入失败，请检查：{message}\033[0m")
         if isprint >= self.level:  # 控制是否在控制台打印。
             if color in ['g', 'green', 'GREEN', 'Green']:  # debug
                 print(f"\033[1;36m{self.name} {datetime.now()} [{rank}] : {message}\033[0m")
@@ -50,7 +54,7 @@ class Logger():
 
 
 if __name__ == '__main__':
-    log = Logger(name='luoxiaobo', file='./log.txt', level=0)
+    log = Logger(name='luoxiaobo', file=f'tempData/{get_date()}log.txt', level=0)
     log.debug('111')
     log.info('222')
     log.warning('333')

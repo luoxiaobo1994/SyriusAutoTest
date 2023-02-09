@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/Syrius_UI/SpeedPicker_cn1.txt" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/Syrius_UI/SpeedPicker_cn2.txt" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/Syrius_UI/check_log.txt" charset="GBK" />
     <file url="file://D:/Downloads/Picking-seq (1).csv" charset="GBK" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
