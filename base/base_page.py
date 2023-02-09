@@ -18,7 +18,9 @@ from selenium.webdriver.support import expected_conditions as EC, select
 from selenium.webdriver.support.wait import WebDriverWait as wdw
 
 from base.common import *
-from utils.log import logger
+from utils.mylog import Logger
+
+logger = Logger(name='Syrius', file='../../tempData/TestKeyLog.txt')
 
 
 class TestKey():
