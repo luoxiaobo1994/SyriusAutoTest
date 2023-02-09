@@ -8,9 +8,9 @@ import pytest
 
 from base.Requests_API import RequestUtil
 from base.common import read_yaml
-from utils.log2 import Logger
+from utils.mylog import Logger
 
-logger = Logger(file='callonduty.txt').get_logger()
+logger = Logger(file='./callonduty.txt')
 
 
 class Test_CallOnDuty:

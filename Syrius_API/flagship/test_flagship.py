@@ -3,9 +3,9 @@
 # TIME: 2022/8/4 13:46
 # Desc: Flagship API
 
-from utils.log2 import Logger
+from utils.mylog import Logger
 
-logger = Logger().get_logger()
+logger = Logger(file='../../tempData/flagshiplog.txt')
 
 
 class Test_FlagshipAPI():
