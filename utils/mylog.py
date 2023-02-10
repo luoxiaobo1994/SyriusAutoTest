@@ -33,7 +33,7 @@ class Logger():
         if not os.path.exists(file):
             try:
                 file = open(self.file, 'w')  # 如果没有，就在当前目录创建日志文件。
-                file.write('\n')
+                file.write(f'{self.name} {datetime.now()} [{rank}] : 开始记录日志。')  # 随便写一行，开始记录。不然会报错。
                 file.close()
             except:
                 file = f'./{get_date()}check_log.txt'
