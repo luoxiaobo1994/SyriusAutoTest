@@ -37,12 +37,12 @@ class Logger():
                 file.close()
             except:
                 file = f'./{get_date()}check_log.txt'
-        with open(file, 'a', encoding='utf8') as f:  # 需要指定utf8编码，不然写一些特殊字符会挂掉。
-            try:
+        try:
+            with open(file, 'a', encoding='utf8') as f:  # 需要指定utf8编码，不然写一些特殊字符会挂掉。
                 f.write(f"{self.name} {datetime.now()} [{rank}] : {message}\n")
-            except Exception as e:
-                print(f"\033[1;31m{self.name} {datetime.now()} [{rank}] :"
-                      f" 发生异常：{e}。日志写入失败，请检查：{message}\033[0m")
+        except Exception as e:
+            print(f"\033[1;31m{self.name} {datetime.now()} [{rank}] :"
+                  f" 发生异常：{e}。日志写入失败，请检查：{message}\033[0m")
         if isprint >= self.level:  # 控制是否在控制台打印。
             if color in ['g', 'green', 'GREEN', 'Green']:  # debug
                 print(f"\033[1;36m{self.name} {datetime.now()} [{rank}] : {message}\033[0m")
