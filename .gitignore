@@ -6,5 +6,5 @@
 *.iml
 *.txt
 /Syrius_UI/1devices_pad.py
-/IDLE.py
+/ignore__IDLE.py
 ignore*
