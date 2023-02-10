@@ -5,10 +5,9 @@
 import copy
 import re
 from time import sleep
-
+from base.base_page import TestKey
 from selenium.webdriver.common.by import By
-
-from GGR import GGR
+from appium import webdriver
 from Syrius_API.flagship.SendOrder import send_order
 from base.common import *
 from utils.file_reader import YamlReader
@@ -16,6 +15,29 @@ from utils.mylog import Logger
 
 file = "D:\AutomationLog\\" + __file__.split('\\')[-1].replace('.py', '.txt')
 log = Logger(name='SpeedPicker', file=file, level=0)
+
+
+class GGR():
+    def __init__(self):
+        pass
+
+    def browser(self, devices='xxx', port='4723', platformversion='8'):
+        app_data = {
+            "platformName": "Android",  # 平台
+            "udid": devices,
+            "platformVersion": platformversion,  # 注意调试平板的安卓版本
+            "deviceName": 'c5',  # 注意调试平板的IP,参数化来控制多设备。
+            "apppackage": "com.syriusrobotics.platform.launcher",  # 包名
+            "appActivity": "com.syriusrobotics.platform.launcher/com.syriusrobotics.platform.jarvis.MainFlutterActivity",
+            "noReset": True,  # 不要重置
+            "unicodeKeyboard": True,  # 不会吊起键盘。
+            # "resetKeyboard": True,  # 恢复键盘
+            'newCommandTimeout': 30000,  # 命令超时时间。给长一点
+            'automationName': 'UiAutomator2'  # 可能是这里导致的常断开
+        }
+        br = webdriver.Remote(f"http://localhost:{port}", app_data)
+        driver = TestKey(br, file=file)  # 传入脚本日志写在哪，确保单个机器人写的日志都集中在一起。
+        return driver
 
 
 class SpeedPicker:

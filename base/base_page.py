@@ -20,13 +20,13 @@ from selenium.webdriver.support.wait import WebDriverWait as wdw
 from base.common import *
 from utils.mylog import Logger
 
-logger = Logger(name='Syrius', file='../../tempData/TestKeyLog.txt')
-
 
 class TestKey():
 
     # 初始化关键字驱动类
-    def __init__(self, driver):  # 传入一个浏览器驱动,至于是网页的还是APP都OK 不能一个动作生成一个浏览器
+    def __init__(self, driver, file='../../tempData/TestKeyLog.txt'):  # 传入一个浏览器驱动,至于是网页的还是APP都OK 不能一个动作生成一个浏览器
+        global logger
+        logger = Logger(name='Syrius', file=file)
         logger.debug("启动脚本...")
         time.sleep(1)  # 有时候莫名其妙的卡一下,给个等待吧.
         self.driver = driver
