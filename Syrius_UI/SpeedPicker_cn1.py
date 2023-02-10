@@ -13,7 +13,8 @@ from base.common import *
 from utils.file_reader import YamlReader
 from utils.mylog import Logger
 
-file = "D:\AutomationLog\\" + __file__.split('\\')[-1].replace('.py', '.txt')
+# 日志目录，文件。
+file = "D:\AutomationLog\\" + get_date() + __file__.split('\\')[-1].replace('.py', '.txt')
 log = Logger(name='SpeedPicker', file=file, level=0)
 
 
