@@ -56,7 +56,7 @@ class Logger():
 
 if __name__ == '__main__':
     log = Logger(name='luoxiaobo', file=f'tempData/{get_date()}log.txt', level=0)
-    log.debug('111')
+    log.debug('启动脚本...')
     log.info('222')
     log.warning('333')
     log.error('444')
