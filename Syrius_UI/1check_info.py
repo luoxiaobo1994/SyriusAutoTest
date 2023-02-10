@@ -32,7 +32,7 @@ def time_difference(time1, time2):
         t2 = datetime.datetime.strptime(time2, '%Y-%m-%d %H:%M:%S')
         return (t2 - t1).seconds
     except:
-        pp(f"时间比较函数，传入参数异常，传入格式为：'%Y-%m-%d %H:%M:%S'，如：'2023-02-06 03:10:39'", color='r')
+        pp(f"时间比较函数，传入参数异常，传入格式为：'%Y-%m-%d %H:%M:%S'，如：'2023-02-06 03:10:39'", "WARNING",color='r')
 
 
 def sshLogin(ip, port, username='developer', passwd='developer'):
@@ -66,7 +66,7 @@ def exe_cmd(cmd='ls', isreturn=True, printres=False, timeout=3, username='develo
         pp(f'执行命令：{cmd}的权限不够，请检查。', 'WARNING', color='r')
     if isreturn:
         if printres:
-            pp(f"命令的返回结果：{result}", 'DEBUG')
+            pp(f"命令的返回结果：{result}")
         return result
 
 
@@ -147,7 +147,7 @@ def diskUsage():
     total_percent = re.findall('\d+%', res)[0]
     threshold = '85%'
     if total_percent > threshold:
-        pp(f"机器人的磁盘占用大于{threshold}，执行:1.日志清除命令。2.删除home目录下的更新包", color='r')
+        pp(f"机器人的磁盘占用大于{threshold}，执行:1.日志清除命令。2.删除home目录下的更新包", "WARNING",color='r')
         exe_cmd('sudo journalctl --vacuum-size=1K')
         exe_cmd('rm -rf ./update_*')
     for percent in res2:
@@ -280,7 +280,7 @@ def main(ip='10.2.16.200', port=22):
         # debug()
         sshClose()
     except Exception as e:
-        pp(f"发生了一些异常：{e}", color='r')  # 登录函数会自己打印异常消息。其他异常，需要刷一下。
+        pp(f"发生了一些异常：{e}", level='ERROR', color='r')  # 登录函数会自己打印异常消息。其他异常，需要刷一下。
 
 
 if __name__ == '__main__':
@@ -293,11 +293,11 @@ if __name__ == '__main__':
         '梁龙·索隆': '10.2.8.211',
         '梁龙·佐助': '10.2.8.77',
     }
-    main(robot['雷龙·苏亚雷斯'])
+    # main(robot['雷龙·苏亚雷斯'])
     # main(robot['雷龙·内马尔'])
     # main(robot['雷龙·布里茨'])
     # main(robot['雷龙·C罗'])
-    # main(robot['梁龙·鸣人'])
+    main(robot['梁龙·鸣人'])
     # main(robot['梁龙·索隆'])
     # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。
