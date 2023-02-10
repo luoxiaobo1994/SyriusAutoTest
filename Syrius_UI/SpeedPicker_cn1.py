@@ -14,7 +14,7 @@ from utils.file_reader import YamlReader
 from utils.mylog import Logger
 
 # 日志目录，文件。
-file = "D:\AutomationLog\\" + get_date() + __file__.split('\\')[-1].replace('.py', '.txt')
+file = r"D:\AutomationLog\\" + get_date() + __file__.split('\\')[-1].replace('.py', '.txt')
 log = Logger(name='SpeedPicker', file=file, level=0)
 
 

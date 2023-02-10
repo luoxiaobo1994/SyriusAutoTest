@@ -10,7 +10,7 @@ from base.common import get_date
 
 class Logger():
 
-    def __init__(self, name='Syrius', file=f"D:\checkLog\{get_date()}debuglog.txt", level=0, path=''):
+    def __init__(self, name='Syrius', file=rf"D:\checkLog\{get_date()}debuglog.txt", level=0, path=''):
         self.level = level
         self.file = file
         self.path = path
@@ -29,20 +29,13 @@ class Logger():
         self.pp(message, rank=rank, isprint=level, color=color)
 
     def pp(self, message, rank='DEBUG', color='g', isprint=0):
-        file = self.file
-        if not os.path.exists(file):
-            try:
-                file = open(self.file, 'w')  # 如果没有，就在当前目录创建日志文件。
-                file.write(f'{self.name} {datetime.now()} [{rank}] : 开始记录日志。')  # 随便写一行，开始记录。不然会报错。
-                file.close()
-            except:
-                file = f'./{get_date()}check_log.txt'
+        data = f"{self.name} {datetime.now()} [{rank}] : {message}\n"
         try:
-            with open(file, 'a', encoding='utf8') as f:  # 需要指定utf8编码，不然写一些特殊字符会挂掉。
-                f.write(f"{self.name} {datetime.now()} [{rank}] : {message}\n")
+            with open(self.file, 'a', encoding='utf-8') as f:  # 需要指定utf8编码，不然写一些特殊字符会挂掉。
+                f.write(data)
         except Exception as e:
             print(f"\033[1;31m{self.name} {datetime.now()} [{rank}] :"
-                  f" 发生异常：{e}。日志写入失败，请检查：{message}\033[0m")
+                  f" 发生异常：{e}。日志写入失败，请检查：[{data}]\033[0m")
         if isprint >= self.level:  # 控制是否在控制台打印。
             if color in ['g', 'green', 'GREEN', 'Green']:  # debug
                 print(f"\033[1;36m{self.name} {datetime.now()} [{rank}] : {message}\033[0m")
