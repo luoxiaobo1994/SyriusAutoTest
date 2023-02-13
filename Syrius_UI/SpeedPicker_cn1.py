@@ -348,7 +348,7 @@ class SpeedPicker:
             if len(interset(view_text, self.get_text())) == 0:
                 log.warning("SpeedPicker可能白屏了。或者进入别的界面了。请检查。")
                 self.shoot()
-            log.debug(f"抓到了什么奇怪的content:{x}")
+            log.warning(f"抓到了什么奇怪的content:{x}")
             if len(interset(self.get_config()['jarvis_soft'], ''.join(x).split('\n'))) > 1:
                 log.debug('异常返回了Jarvis主界面,脚本重启SpeedPicker。')
                 self.open_sp()
