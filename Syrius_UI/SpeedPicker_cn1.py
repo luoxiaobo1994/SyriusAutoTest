@@ -13,8 +13,18 @@ from base.common import *
 from utils.file_reader import YamlReader
 from utils.mylog import Logger
 
+
+def pad_ip():
+    num = int(__file__.split('\\')[-1].split('.')[0].split('cn')[-1]) - 1  # 序号从0开始
+    devices_ls = get_devices()
+    try:
+        return devices_ls[num].replace(':5555', '')  # 只拿PAD的IP
+    except:
+        pp("获取设备UDID失败了，检查一下。", level='WARNING', color='r')
+
+
 # 日志目录，文件。
-file = r"D:\AutomationLog\\" + get_date() + __file__.split('\\')[-1].replace('.py', '.txt')
+file = r"D:\AutomationLog\\" + get_date() + '_' + pad_ip() + '.txt'
 log = Logger(name='SpeedPicker', file=file, level=0)
 
 
@@ -58,12 +68,12 @@ class SpeedPicker:
         self.shoot_text = []
 
     def init_driver(self):
-        device = self.device_num()[0]  # 10.111.150.202:5555 这种格式.
-        appium_port = self.device_num()[1]
+        pad_ip = self.device_num()[0]  # 10.111.150.202:5555 这种格式.
+        appium_port = self.device_num()[1] or '4725'
         # 在这里填入安卓版本,避免跑不起来.
-        browser = GGR().browser(devices=device, platformversion=get_android_version(device),
+        browser = GGR().browser(devices=pad_ip, platformversion=get_android_version(pad_ip),
                                 port=appium_port)  # 自己获取安卓版本
-        log.info(f"脚本当前连接的平板:{device}，安卓版本：{get_android_version(device)}，Appium端口:{appium_port}")
+        log.info(f"脚本当前连接的平板:{pad_ip}，安卓版本：{get_android_version(pad_ip)}，Appium端口:{appium_port}")
         return browser
 
     def reset_timer(self):
@@ -306,7 +316,7 @@ class SpeedPicker:
                 while True:
                     if self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"日志上传完成")]')):
                         log.debug("机器人日志已上传完成，请自行前往解决异常，恢复机器人移动。")
-                        self.shoot()
+                        self.shoot(just_shoot=True)
                         log.debug("即将通过脚本返回Jarvis主界面，请确保机器人无异常产生。保证业务正常进行。")
                         for i in range(3):
                             os.system(
@@ -468,7 +478,7 @@ class SpeedPicker:
     def wait_moment(self, text, wait=3, timeout=2, i=True, without=None):
         # 持续去抓某个文本，直到这个文本不再这个页面了。说明流程变了。
         # 这里可能是影响效率的地方，想办法怎么优化一下。
-        log.info(f"持续检查文本[{text}]是否还在当前页面。")
+        log.debug(f"持续检查文本[{text}]是否还在当前页面。")
         count = self.time_count
         err = 20
         err_num = copy.copy(err)  # err 一直在自减，这里要拷贝一下。
@@ -903,8 +913,12 @@ class SpeedPicker:
     def get_config(self):
         return YamlReader('2speedpicker_config.yaml').data
 
-    def shoot(self, file_name=''):
-        # 如何避免重复截图？1.不能通过activity去判断，持续观察发现，都是GoGoReady的，SpeedPicker流程变化，这个值不会变化。
+    def shoot(self, file_name='', just_shoot=False):
+        if just_shoot:  # 有些时候，不问为什么，就是要截图。
+            app_screenshot(device=self.device_num()[0], file_name=file_name)
+            log.debug(f"已截取机器人下位机日志。文件名称：{file_name}")
+            return
+            # 如何避免重复截图？1.不能通过activity去判断，持续观察发现，都是GoGoReady的，SpeedPicker流程变化，这个值不会变化。
         if self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"日志上传完成")]'), wait=1) and len(
                 self.shoot_text) == 0:  # 启动脚本在截图界面时，截图文本是空的，要这个做控制。
             app_screenshot(device=self.device_num()[0], file_name=file_name)
