@@ -27,8 +27,8 @@ class Solution():
         res = ''
         for tmp in zip(*strs):  # 一个迭代器：[(f,f,f),(l,l,l),(o,e,u)...]
             tmp_set = set(tmp)
-            if len(tmp_set) == 1:
-                res += tmp[0]
+            if len(tmp_set) == 1:  # 全是相同的值，说明这个位大家都一样。
+                res += tmp[0]  # 截取到的结果加上这个值
             else:
                 break
         return res
