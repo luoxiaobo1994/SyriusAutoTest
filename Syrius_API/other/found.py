@@ -12,7 +12,7 @@ import requests
 from base.common import get_time
 from utils.file_reader import YamlReader
 
-data = YamlReader('ignore_found_data.yaml').data  # 需要爬取的数据
+data = YamlReader('found_data.yaml').data  # 需要爬取的数据
 space = chr(12288)
 total = 0  # 当日收益
 result = []  # 结果集合
