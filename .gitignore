@@ -8,3 +8,5 @@
 ignore*
 *_cn2.py
 *_cn3.py
+AutoTest.iml
+misc.xml

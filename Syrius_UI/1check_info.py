@@ -140,6 +140,12 @@ def check_time(repair=True):
     pp(f"机器人当前时间：{robot_time}，与本机的时间差(UTC+0时区)是：{time_gap}秒。")  # 2022-12-15 03:07:03
     if time_gap > 10:  #
         pp(f"机器人当前时间与实际UTC时间差距较大，请检查！", "WARNING", color='r')
+    pad_robot_timestamp = exe_cmd("adb shell date +%s%3N && date +%s%3N").split()
+    time_diff = abs(int(pad_robot_timestamp[0]) - int(pad_robot_timestamp[1]))
+    if time_diff > 2000:
+        pp(f"上下位机的时间戳相差超过2s，请检查一下。", level='WARNING', color='r')
+    else:
+        pp(f"上下位机的时间戳相差为：{time_diff}毫秒。")
 
 
 def diskUsage():
@@ -256,14 +262,15 @@ def user_color():
 
 
 def debug():
+    pass
     # exe_cmd('sudo ls')
-    res = exe_cmd("grep -E 'force_color_prompt=yes' .bashrc")
-    if '#' in res:
-        exe_cmd("sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' .bashrc")
-        exe_cmd("source .bashrc")
-        pp(f"用户颜色未生效，修改同步完成。", "WARNING", color='r')
-    else:
-        pp(f"用户颜色已生效，未做修改。")
+    # res = exe_cmd("grep -E 'force_color_prompt=yes' .bashrc")
+    # if '#' in res:
+    #     exe_cmd("sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' .bashrc")
+    #     exe_cmd("source .bashrc")
+    #     pp(f"用户颜色未生效，修改同步完成。", "WARNING", color='r')
+    # else:
+    #     pp(f"用户颜色已生效，未做修改。")
 
 
 def main(ip='10.2.16.200', port=22):
@@ -279,7 +286,7 @@ def main(ip='10.2.16.200', port=22):
         kuafu_file()
         iot()
         user_color()
-        # debug()
+        debug()
         sshClose()
     except Exception as e:
         pp(f"发生了一些异常：{e}", level='ERROR', color='r')  # 登录函数会自己打印异常消息。其他异常，需要刷一下。
@@ -297,10 +304,10 @@ if __name__ == '__main__':
     }
     # main(robot['雷龙·苏亚雷斯'])
     # main(robot['雷龙·内马尔'])
-    main(robot['雷龙·布里茨'])
+    # main(robot['雷龙·布里茨'])
     # main(robot['雷龙·C罗'])
     main(robot['梁龙·鸣人'])
     # main(robot['网卡211'])
     # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。
-    main('10.2.9.82')  # 网卡
+    # main('10.2.9.82')  # 网卡
