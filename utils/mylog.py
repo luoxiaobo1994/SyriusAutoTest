@@ -31,7 +31,7 @@ class Logger():
     def pp(self, message, rank='DEBUG', color='g', isprint=0):
         data = f"{self.name} {datetime.now()} [{rank}] : {message}\n"
         try:
-            with open(self.file, 'a', encoding='utf-8') as f:  # 需要指定utf8编码，不然写一些特殊字符会挂掉。
+            with open(file=self.file, mode='a', encoding='utf-8') as f:  # 需要指定utf8编码，不然写一些特殊字符会挂掉。
                 f.write(data)
         except Exception as e:
             print(f"\033[1;31m{self.name} {datetime.now()} [{rank}] :"

@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 # Author: luoxiaobo
 # TIME: 2022/1/5 11:14
+import time
 
 import paramiko
 import scp
@@ -8,12 +9,12 @@ import scp
 from utils.log import logger
 
 
-def scp_file(device, file, path, port=22, username='developer', password='developer', commands=[]):
+def scp_file(device, file, path, port=22, username='developer', password='developer', commands=[], get_result=False):
     ssh_client = paramiko.SSHClient()
     logger.debug(f"开始连接：[{device}], 端口为：[{str(port)}], 账号为：[{username}], 密码为：[{password}]。")
     ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy)
     try:
-        ssh_client.connect(device, port=port, username=username, password=password,timeout=15)
+        ssh_client.connect(device, port=port, username=username, password=password, timeout=15)
     except TimeoutError:
         logger.warning(f"连接[{device}]超时，请检查是否能正常连接该设备。")
         return
@@ -28,11 +29,13 @@ def scp_file(device, file, path, port=22, username='developer', password='develo
         for cmd in commands:
             stdin, stdout, stderr = ssh_client.exec_command(cmd, get_pty=True)
             logger.debug(f"执行命令: '{cmd}' 完成")
-            result = stdout.read().decode('utf-8').strip()  # 返回的结果
-            if result:
-                logger.debug(f"命令的返回值：'{result}'")
-            else:
-                logger.debug(f"该命令没有返回值。")
+            if get_result:
+                result = stdout.read().decode('utf-8').strip()  # 返回的结果
+                if result:
+                    logger.debug(f"命令的返回值：'{result}'")
+                else:
+                    logger.debug(f"该命令没有返回值。")
+                time.sleep(0.3)
         logger.debug("执行完成所有命令。")
     ssh_client.close()
 
@@ -44,7 +47,7 @@ if __name__ == '__main__':
         file = "./log.py"  # 需要传输的文件，填好绝对/相对路径。
         path = '~/'  # 需要传到目标机器人的哪个目录下
         for bot in robots:  # 循环遍历列表传送即可。
-            scp_file(device=bot, file=file, path=path, commands=['chmod 777 ~/log.py','ls -lh ~/log.py'])
+            scp_file(device=bot, file=file, path=path, commands=['chmod 777 ~/log.py', 'ls -lh ~/log.py'])
             logger.debug(f"机器人[{bot}]执行完成。\n")
 
 

@@ -130,15 +130,15 @@ def get_var(var):
 
 
 # 调试变量
-def pp(msg, level='DEBUG', color='g'):
-    if not color:
-        # 充当log函数
-        print(f"{datetime.now()} [{level}] : {msg}")
-    else:
-        if color in ['g', 'green', 'GREEN', 'Green']:
-            print(f"\033[1;36m{datetime.now()} [{level}] : {msg}\033[0m")
-        elif color in ['r', 'red', 'RED', 'Red']:
-            print(f"\033[1;31m{datetime.now()} [{level}] : {msg}\033[0m")
+def pp(msg, level='DEBUG', color='g', file='D:\checkLog\check_log_debug.txt'):
+    if not os.path.exists(file):
+        file = './check_log.txt'  # 如果没有，就在当前目录创建日志文件。
+    with open(file, 'a') as f:
+        f.write(f"{datetime.now()} [{level}] : {msg}\n")
+    if color in ['g', 'green', 'GREEN', 'Green']:
+        print(f"\033[1;36m{datetime.now()} [{level}] : {msg}\033[0m")
+    elif color in ['r', 'red', 'RED', 'Red']:
+        print(f"\033[1;31m{datetime.now()} [{level}] : {msg}\033[0m")
 
 
 # 打印字典信息

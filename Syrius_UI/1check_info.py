@@ -114,39 +114,65 @@ def basic_info():
 
 def calibration():
     # 标定文件检查。
-    res = exe_cmd("sudo grep -E 'Sensors:' /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml")
+    detail = exe_cmd("sudo grep -E 'Sensors:' /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml")
     # pp(f"res:{res}")
-    res2 = exe_cmd("ls -lh /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml").split()[4]
+    file_size = exe_cmd("ls -lh /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml").split()[4]
     # pp(f"res2:{res2}")
-    if 'No such file or directory' in res:
+    if 'No such file or directory' in detail:
         pp(f"机器人的标定文件检查异常，文件不存在。", level='WARNING', color='r')
-    elif 'Permission denied' in res:
-        pp(f"无权限查看标定文件。标定文件的大小是：{res2}")
-    elif 'Sensors:' in res and res2 != '0':
-        if res2 > '3':
-            pp(f"机器人的标定文件正常。标定文件大小：{res2}")
+    elif 'Permission denied' in detail:
+        pp(f"无权限查看标定文件。标定文件的大小是：{file_size}")
+    elif 'Sensors:' in detail and file_size != '0':
+        if file_size > '3':
+            pp(f"机器人的标定文件正常。标定文件大小：{file_size}")
         else:
-            pp(f"标定文件大小有异常：{res2}", level='WARNING', color='r')
+            pp(f"标定文件大小有异常：{file_size}", level='WARNING', color='r')
     else:
         pp(f"机器人的标定文件检查异常，脚本未查询到相关数据，请手动检查。", level='WARNING', color='r')
+    carrier = exe_cmd("cat /opt/cosmos/data/robot/storage.yaml").replace('\r\n', '，')
+    carrier_size = re.findall('\d{1,2}\.', carrier)
+    pp(f"载具信息：{carrier}")
 
 
 def check_time(repair=True):
+    # 先检查是否开启了时钟同步功能。
+    is_time_sync = exe_cmd("sudo systemctl is-active systemd-timesyncd").split('\r\n')
+    if 'inactive' in is_time_sync:
+        pp(f"当前机器人时钟同步进程未开启：{is_time_sync[-1]}，有严重运行风险，请检查！！！", 'WARNING', 'r')
+    else:
+        pp(f"当前机器人时钟同步进程为激活状态：{is_time_sync[-1]}，开始检查时钟同步情况。")
     # 检查机器人时间
     robot_time = exe_cmd("date +'%Y-%m-%d %H:%M:%S'")
     utc_time = datetime.datetime.now(pytz.timezone('UTC')).strftime('%Y-%m-%d %H:%M:%S')  # '2023-02-06 03:10:39'
     pp(f"机器人时间：{robot_time}，UTC—0时间：{utc_time}")  # 拿到的时间：2023-02-06 03:05:10
     time_gap = time_difference(robot_time, utc_time)  # 机器人时间与当前UTC0时间差距。
-    pp(f"机器人当前时间：{robot_time}，与本机的时间差(UTC+0时区)是：{time_gap}秒。")  # 2022-12-15 03:07:03
-    if time_gap > 10:  #
+    if time_gap > 10:
+        pp(f"机器人当前时间：{robot_time}，与本机的时间差(UTC+0时区)是：{time_gap}秒。", 'WARNING',
+           color='r')  # 2022-12-15 03:07:03
         pp(f"机器人当前时间与实际UTC时间差距较大，请检查！", "WARNING", color='r')
-    pad_robot_timestamp = exe_cmd("adb shell date +%s%3N && date +%s%3N").split()
-    time_diff = abs(int(pad_robot_timestamp[0]) - int(pad_robot_timestamp[1]))
-    if time_diff > 2000:
-        pp(f"上下位机的时间戳相差超过2s，请检查一下。", level='WARNING', color='r')
     else:
-        pp(f"上下位机的时间戳相差为：{time_diff}毫秒。")
+        pp(f"机器人当前时间：{robot_time}，与本机的时间差(UTC+0时区)是：{time_gap}秒。")
+    pad_robot_timestamp = ''
+    date_command = "adb shell date +%s%3N && date +%s%3N"
+    try:
+        pad_robot_timestamp = exe_cmd(date_command).split()
+        time_diff = abs(int(pad_robot_timestamp[0]) - int(pad_robot_timestamp[1]))
+        if time_diff > 2000:
+            pp(f"上下位机的时间戳相差超过2s，请检查一下。", level='WARNING', color='r')
+        else:
+            pp(f"上下位机的时间戳相差为：{time_diff}毫秒。")
+    except Exception as e:
+        pp(f"获取时间命令：{date_command}返回结果异常，请检查：{pad_robot_timestamp}。异常类型：{e}。", "WARNING", 'r')
 
+
+def check_time_sync():
+    while True:
+        is_time_sync = exe_cmd("sudo systemctl is-active systemd-timesyncd").split('\r\n')
+        if 'inactive' in is_time_sync:
+            pp(f"当前机器人时钟同步进程未开启：{is_time_sync[-1]}，有严重运行风险，请检查！！！", 'WARNING', 'r')
+        else:
+            pp(f"当前机器人时钟同步进程为激活状态：{is_time_sync[-1]}，注意检查时钟同步情况。")
+        time.sleep(10)
 
 def diskUsage():
     # 检查磁盘占用率
@@ -261,16 +287,14 @@ def user_color():
         pp(f"用户颜色已生效，未做修改。")
 
 
+def startAgent():
+    pass
+
+
 def debug():
     pass
-    # exe_cmd('sudo ls')
-    # res = exe_cmd("grep -E 'force_color_prompt=yes' .bashrc")
-    # if '#' in res:
-    #     exe_cmd("sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/g' .bashrc")
-    #     exe_cmd("source .bashrc")
-    #     pp(f"用户颜色未生效，修改同步完成。", "WARNING", color='r')
-    # else:
-    #     pp(f"用户颜色已生效，未做修改。")
+    # res = exe_cmd("sudo systemctl is-active systemd-timesyncd").split('\r\n')
+    # pp(f"res:{res}")
 
 
 def main(ip='10.2.16.200', port=22):
@@ -286,7 +310,7 @@ def main(ip='10.2.16.200', port=22):
         kuafu_file()
         iot()
         user_color()
-        debug()
+        # debug()
         sshClose()
     except Exception as e:
         pp(f"发生了一些异常：{e}", level='ERROR', color='r')  # 登录函数会自己打印异常消息。其他异常，需要刷一下。
@@ -301,13 +325,18 @@ if __name__ == '__main__':
         '梁龙·鸣人': '10.2.8.103',
         '网卡211': '10.2.8.211',
         '梁龙·佐助': '10.2.8.77',
+        '网卡82': '10.2.9.82',
+        '网卡242': '10.2.8.242',
     }
     # main(robot['雷龙·苏亚雷斯'])
     # main(robot['雷龙·内马尔'])
     # main(robot['雷龙·布里茨'])
     # main(robot['雷龙·C罗'])
-    main(robot['梁龙·鸣人'])
+    # main(robot['梁龙·鸣人'])
     # main(robot['网卡211'])
+    # main(robot['网卡82'])
+    main(robot['网卡242'])
     # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。
     # main('10.2.9.82')  # 网卡
+#
