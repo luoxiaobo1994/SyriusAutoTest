@@ -75,6 +75,9 @@ class MySSH:
         self.log.debug('*-' * 20 + '\n')
         self.ssh.close()
 
+    def close(self):
+        self.ssh.close()
+
 
 if __name__ == '__main__':
     robots = {

@@ -8,7 +8,7 @@ from utils.mylog import Logger
 from base.common import *
 
 base_url = 'https://flagship-sqa-test.flexgalaxy.com'  # 填写你当前环境的场地. 这个是SQA的,不是这个环境的,一定要改.
-logger = Logger(name='SpeedPicker', file='../../tempData/order.txt')
+logger = Logger(name='SpeedPicker', file='order.txt')
 
 
 def get_token():
@@ -134,6 +134,6 @@ def send_order(num=0, least=1, most=20, siteid="202"):
 
 
 if __name__ == '__main__':
-    print(send_order(num=100, siteid="2"))
+    print(send_order(num=1, siteid="2"))
     # print(type(binlocation()))
     # id_num()

@@ -7,7 +7,7 @@ import time
 from utils.ssh_linux import MySSH
 from utils.mylog import Logger
 
-file = "E:\工作\测试资料\ServerAgent-2.2.3.zip"
+file = "E:\工作\测试资料\ServerAgent-2.2.3.zip"  # 工具在当前电脑的存放位置
 log = Logger('scp_serverAgentLog.txt')
 
 
@@ -23,21 +23,25 @@ def startServerAgent(robot):
         log.debug(f"当前机器人：{robot}，已经有serverAgent工具。直接开启测试。")
     ssh.exe_cmd('chmod +x ./ServerAgent-2.2.3/startAgent.sh')
     time.sleep(1)  # 等待一下。
-    ssh.exe_cmd('python3 ./ServerAgent-2.2.3/startAgent.py')
+    try:
+        ssh.exe_cmd('ServerAgent-2.2.3/startAgent.sh', timeout=2)  # 因为是脚本打开的连接窗口，无需放到后台运行。不要加 &
+    except TimeoutError:
+        log.debug(f"startAgent.sh脚本启动成功，已经在刷新日志。结束本次操作。")
+        ssh.close()
     # check_is_alive = ssh.exe_cmd("ps -aux | grep '/bin/sh ./ServerAgent-2.2.3/startAgent.sh'")
     # log.debug(check_is_alive)
 
 
 if __name__ == '__main__':
     robots = {
-        # '雷龙·苏亚雷斯': '10.2.9.181',
-        '雷龙·内马尔': '10.2.8.255',
+        '雷龙·苏亚雷斯': '10.2.9.181',
+        # '雷龙·内马尔': '10.2.8.255',
         # '雷龙·布里茨': '10.2.9.125',
         # '雷龙·C罗': '10.2.8.118',
         # '梁龙·鸣人': '10.2.8.103',
         # '网卡211': '10.2.8.211',
         # '梁龙·佐助': '10.2.8.77',
-        '网卡82': '10.2.9.82',
+        # '网卡82': '10.2.9.82',
         # '网卡242': '10.2.8.242',
     }
     for robot in robots:
