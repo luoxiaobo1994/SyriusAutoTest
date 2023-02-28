@@ -12,7 +12,7 @@ from atexit import register
 
 class MySSH:
 
-    def __init__(self, ip, port=22, username='developer', password='developer', logfile='ssh_log.txt'):
+    def __init__(self, ip, port=22, username='developer', password='developer', logfile='ssh_log.txt', timeout=5):
         self.log = Logger(logfile)
         self.username = username
         self.password = password
@@ -23,7 +23,7 @@ class MySSH:
         self.ssh = paramiko.SSHClient()
         self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         try:
-            self.ssh.connect(ip, port, username, password, timeout=5)
+            self.ssh.connect(ip, port, username, password, timeout=timeout)
             self.log.debug(f"开始连接：[{ip}], 端口为：[{str(port)}], 账号为：[{username}], 密码为：[{password}]。")
             self.log.debug(f"连接[{ip}]成功。")
         except TimeoutError:
@@ -75,8 +75,6 @@ class MySSH:
         self.log.debug('*-' * 20 + '\n')
         self.ssh.close()
 
-    def close(self):
-        self.ssh.close()
 
 
 if __name__ == '__main__':

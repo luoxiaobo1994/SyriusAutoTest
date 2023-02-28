@@ -58,10 +58,11 @@ def time_difference(time1, time2):
         t1 = datetime.strptime(time1, '%Y-%m-%d %H:%M:%S')
         t2 = datetime.strptime(time2, '%Y-%m-%d %H:%M:%S')
         if t1 < t2:  # 两个都是字符串，直接比较。
-            return (t2 - t1).seconds
-        return (t1 - t2).seconds
+            return [(t2 - t1).days, (t2 - t1).seconds]  # 返回天和秒。
+        return [(t1 - t2).days, (t1 - t2).seconds]
     except:
-        pp(f"时间比较函数，传入参数异常，传入格式为：'%Y-%m-%d %H:%M:%S'，如：'2023-02-06 03:10:39'", color='r')
+        pp(f"时间比较函数，传入参数异常，传入格式为：'%Y-%m-%d %H:%M:%S'，如：'2023-02-06 03:10:39'", "WARNING", color='r')
+
 
 
 # 调试打印,带时间戳

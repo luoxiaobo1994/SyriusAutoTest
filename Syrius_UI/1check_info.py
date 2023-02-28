@@ -31,8 +31,8 @@ def time_difference(time1, time2):
         t1 = datetime.datetime.strptime(time1, '%Y-%m-%d %H:%M:%S')
         t2 = datetime.datetime.strptime(time2, '%Y-%m-%d %H:%M:%S')
         if t1 < t2:  # 两个都是字符串，直接比较。
-            return (t2 - t1).seconds
-        return (t1 - t2).seconds
+            return [(t2 - t1).days, (t2 - t1).seconds]  # 返回天和秒。
+        return [(t1 - t2).days, (t1 - t2).seconds]
     except:
         pp(f"时间比较函数，传入参数异常，传入格式为：'%Y-%m-%d %H:%M:%S'，如：'2023-02-06 03:10:39'", "WARNING", color='r')
 
@@ -131,7 +131,10 @@ def calibration():
         pp(f"机器人的标定文件检查异常，脚本未查询到相关数据，请手动检查。", level='WARNING', color='r')
     carrier = exe_cmd("cat /opt/cosmos/data/robot/storage.yaml").replace('\r\n', '，')
     carrier_size = re.findall('\d{1,2}\.', carrier)
-    pp(f"载具信息：{carrier}")
+    if 'No such file or directory' in carrier:
+        pp(f"载具信息：{carrier}", 'WARNING', 'R')
+    else:
+        pp(f"载具信息：{carrier}")
 
 
 def check_time(repair=True):
@@ -146,21 +149,30 @@ def check_time(repair=True):
     utc_time = datetime.datetime.now(pytz.timezone('UTC')).strftime('%Y-%m-%d %H:%M:%S')  # '2023-02-06 03:10:39'
     pp(f"机器人时间：{robot_time}，UTC—0时间：{utc_time}")  # 拿到的时间：2023-02-06 03:05:10
     time_gap = time_difference(robot_time, utc_time)  # 机器人时间与当前UTC0时间差距。
-    if time_gap > 10:
-        pp(f"机器人当前时间：{robot_time}，与本机的时间差(UTC+0时区)是：{time_gap}秒。", 'WARNING',
-           color='r')  # 2022-12-15 03:07:03
+    if time_gap[-1] > 10:
+        pp(f"机器人当前时间：{robot_time}，与本机的时间差(UTC+0)是：{time_gap[0]}天{time_gap[-1]}秒。", 'WARNING',
+           color='r')
         pp(f"机器人当前时间与实际UTC时间差距较大，请检查！", "WARNING", color='r')
     else:
-        pp(f"机器人当前时间：{robot_time}，与本机的时间差(UTC+0时区)是：{time_gap}秒。")
+        pp(f"机器人当前时间：{robot_time}，与本机的时间差(UTC+0)是：{time_gap[-1]}秒。")
     pad_robot_timestamp = ''
     date_command = "adb shell date +%s%3N && date +%s%3N"
     try:
         pad_robot_timestamp = exe_cmd(date_command).split()
-        time_diff = abs(int(pad_robot_timestamp[0]) - int(pad_robot_timestamp[1]))
-        if time_diff > 2000:
-            pp(f"上下位机的时间戳相差超过2s，请检查一下。", level='WARNING', color='r')
+        if pad_robot_timestamp[0][-2:] == '3N':  # 安卓版本的时间戳获取会异常，3N不能正常转化。
+            pad_timestamp = pad_robot_timestamp[0].replace('3N', '')  #
+            robot_timestamp = pad_robot_timestamp[1][:len(pad_timestamp)]
+            time_diff = abs(int(pad_timestamp) - int(robot_timestamp))  # 这种情况下，拿到的时间差是秒。
+            if time_diff >= 2:
+                pp(f"上下位机的时间戳相差超过2s，请检查一下。", level='WARNING', color='r')
+            else:
+                pp(f"上下位机的时间戳相差为：{time_diff}秒。")
         else:
-            pp(f"上下位机的时间戳相差为：{time_diff}毫秒。")
+            time_diff = abs(int(pad_robot_timestamp[0]) - int(pad_robot_timestamp[1]))  # 这种情况下，拿到的时间差是毫秒。
+            if time_diff > 2000:
+                pp(f"上下位机的时间戳相差超过2s，请检查一下。", level='WARNING', color='r')
+            else:
+                pp(f"上下位机的时间戳相差为：{time_diff}毫秒。")
     except Exception as e:
         pp(f"获取时间命令：{date_command}返回结果异常，请检查：{pad_robot_timestamp}。异常类型：{e}。", "WARNING", 'r')
 
@@ -173,6 +185,7 @@ def check_time_sync():
         else:
             pp(f"当前机器人时钟同步进程为激活状态：{is_time_sync[-1]}，注意检查时钟同步情况。")
         time.sleep(10)
+
 
 def diskUsage():
     # 检查磁盘占用率
@@ -329,12 +342,12 @@ if __name__ == '__main__':
         '网卡242': '10.2.8.242',
     }
     # main(robot['雷龙·苏亚雷斯'])
-    main(robot['雷龙·内马尔'])
+    # main(robot['雷龙·内马尔'])
     # main(robot['雷龙·布里茨'])
     # main(robot['雷龙·C罗'])
-    # main(robot['梁龙·鸣人'])
+    main(robot['梁龙·鸣人'])
     # main(robot['网卡211'])
-    main(robot['网卡82'])
+    # main(robot['网卡82'])
     # main(robot['网卡242'])
     # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。
