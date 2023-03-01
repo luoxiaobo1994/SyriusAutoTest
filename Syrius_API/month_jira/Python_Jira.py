@@ -8,8 +8,8 @@ from jira import JIRA, Issue
 
 
 class JiraTool:
-    def __init__(self, username, password, project=None):
-        self.server = 'https://***:***'
+    def __init__(self, username='luoxiaobo', password='qwe123123', project='SQA'):
+        self.server = 'https://jira.syriusrobotics.cn/'
         self.username = username
         self.password = password
         self.project = project
@@ -89,7 +89,7 @@ class JiraTool:
             'description': issuefields.description,
             'created': issuefields.created,
             'versions': issuefields.versions,
-            'fixVersions': issuefields.fixVersions
+            'fixVersions': issuefields.fixVersions  # 没有标注这个。
         }
         return fields
 
@@ -213,11 +213,23 @@ class JiraTool:
 
 
 if __name__ == '__main__':
-    jiratool = JiraTool(username='******', password='******')
-    data = jiratool.get_issue('PJT-7669')
+    jiratool = JiraTool()
+    # print(jiratool.project)
+    # data = jiratool.get_issue('PJT-7669')
     # # 获取用户所有project
     # projects = jiratool.get_projects()
     # print(projects)
+    #
+    # issues = jiratool.search_jira_jql(
+    #     jql='project = SQA AND issuetype = Bug AND created >= 2023-02-01 AND created <= 2023-02-28 ORDER BY key DESC, priority DESC, updated DESC')
+    # print(len(issues))
+
+    SQA_5431 = jiratool.get_issuefields('SQA-5415')
+    print(SQA_5431)
+
+
+
+
     # for p in projects:
     #     print(p.key,p.id,p.name)
 
@@ -304,20 +316,20 @@ if __name__ == '__main__':
     # jiratool.add_version(jira_key,"PJT_V14.1.0")
 
     # 添加修复版本
-    jira_key = "PJT-11454"
+    # jira_key = "PJT-11454"
     # jiratool.add_fixversions(jira_key,"PJT_V14.1.0")
-
-    versions = jiratool.get_versions(jira_key)
-    print(versions)
+    #
+    # versions = jiratool.get_versions(jira_key)
+    # print(versions)
 
     # versions = jiratool.del_version(jira_key,"PJT_V14.1.0")
     # print(versions)
-    fixversions = jiratool.get_fixversions(jira_key)
-    print(fixversions)
-    jiratool.add_fixversions(jira_key, "PJT_V14.1.0")
-    fixversions = jiratool.get_fixversions(jira_key)
-    print(fixversions)
-
-    jiratool.del_fixversions(jira_key, "PJT_V14.1.0")
-    fixversions = jiratool.get_fixversions(jira_key)
-    print(fixversions)
+    # fixversions = jiratool.get_fixversions(jira_key)
+    # print(fixversions)
+    # jiratool.add_fixversions(jira_key, "PJT_V14.1.0")
+    # fixversions = jiratool.get_fixversions(jira_key)
+    # print(fixversions)
+    #
+    # jiratool.del_fixversions(jira_key, "PJT_V14.1.0")
+    # fixversions = jiratool.get_fixversions(jira_key)
+    # print(fixversions)
