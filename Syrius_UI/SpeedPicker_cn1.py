@@ -25,7 +25,7 @@ def pad_ip():
 
 # 日志目录，文件。
 file = r"D:\AutomationLog\\" + get_date() + '_' + pad_ip() + '.txt'
-log = Logger(name='SpeedPicker', file=file, level=0)
+log = Logger(name='SpeedPicker', file=file)
 
 
 class GGR():

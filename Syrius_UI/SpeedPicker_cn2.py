@@ -25,7 +25,7 @@ def pad_ip():
 
 # 日志目录，文件。
 file = r"D:\AutomationLog\\" + get_date() + '_' + pad_ip() + '.txt'
-log = Logger(name='SpeedPicker', file=file, level=0)
+log = Logger(name='SpeedPicker', file=file)
 
 
 class GGR():
@@ -316,7 +316,7 @@ class SpeedPicker:
                 while True:
                     if self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"日志上传完成")]')):
                         log.debug("机器人日志已上传完成，请自行前往解决异常，恢复机器人移动。")
-                        self.shoot()
+                        self.shoot(just_shoot=True)
                         log.debug("即将通过脚本返回Jarvis主界面，请确保机器人无异常产生。保证业务正常进行。")
                         for i in range(3):
                             os.system(
@@ -913,8 +913,12 @@ class SpeedPicker:
     def get_config(self):
         return YamlReader('2speedpicker_config.yaml').data
 
-    def shoot(self, file_name=''):
-        # 如何避免重复截图？1.不能通过activity去判断，持续观察发现，都是GoGoReady的，SpeedPicker流程变化，这个值不会变化。
+    def shoot(self, file_name='', just_shoot=False):
+        if just_shoot:  # 有些时候，不问为什么，就是要截图。
+            app_screenshot(device=self.device_num()[0], file_name=file_name)
+            log.debug(f"已截取机器人下位机日志。文件名称：{file_name}")
+            return
+            # 如何避免重复截图？1.不能通过activity去判断，持续观察发现，都是GoGoReady的，SpeedPicker流程变化，这个值不会变化。
         if self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"日志上传完成")]'), wait=1) and len(
                 self.shoot_text) == 0:  # 启动脚本在截图界面时，截图文本是空的，要这个做控制。
             app_screenshot(device=self.device_num()[0], file_name=file_name)

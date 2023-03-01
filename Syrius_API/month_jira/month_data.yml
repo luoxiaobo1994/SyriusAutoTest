@@ -1,0 +1,42 @@
+2023.02:
+  致命:
+    total: 29
+    solve: 22
+    unsole: 7
+    unanalyzed: 7
+  严重:
+    total: 66
+    solve: 28
+    unsole: 38
+    unanalyzed: 29
+  一般:
+    total: 57
+    solve: 24
+    unsole: 33
+    unanalyzed: 0
+  提示:
+    total: 7
+    solve: 3
+    unsole: 4
+    unanalyzed: 0
+2023.03:
+  致命:
+    total: 1
+    solve: 1
+    unsole: 1
+    unanalyzed: 1
+  严重:
+    total: 1
+    solve: 1
+    unsole: 1
+    unanalyzed: 1
+  一般:
+    total: 1
+    solve: 1
+    unsole: 1
+    unanalyzed: 0
+  提示:
+    total: 1
+    solve: 1
+    unsole: 1
+    unanalyzed: 0

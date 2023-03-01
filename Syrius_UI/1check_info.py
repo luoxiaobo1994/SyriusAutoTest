@@ -106,10 +106,10 @@ def basic_info():
         pp(f"机器人的ID：{ID}")
     # 检查Java进程数量
     java_process = exe_cmd('ps -aux | grep java | wc -l')
-    if java_process >= '10':
+    if int(java_process) >= 10:
         pp(f"Java进程数量：{java_process}，{'正常。'}")
     else:
-        pp(f"Java进程数量：{java_process}，{'正常。'}", "WARNING", color='r')
+        pp(f"Java进程数量：{java_process}，{'不正常。'}", "WARNING", color='r')
 
 
 def calibration():

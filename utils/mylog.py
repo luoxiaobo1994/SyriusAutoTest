@@ -38,11 +38,11 @@ class Logger():
                   f" 发生异常：{e}。日志写入失败，请检查：[{data}]\033[0m")
         if isprint >= self.isprint:  # 控制是否在控制台打印。
             if color in ['g', 'green', 'GREEN', 'Green']:  # debug
-                print(f"\033[1;36m{self.name} {datetime.now()} [{level}] : {message}\033[0m")
+                print(f"\033[1;32m{self.name} {datetime.now()} [{level}] : {message}\033[0m")
             elif color in ['p', 'purple', 'PURPLE', 'Purple']:  # info
-                print(f"\033[1;35m{self.name} {datetime.now()} [{level}] : {message}\033[0m")
+                print(f"\033[1;36m{self.name} {datetime.now()} [{level}] : {message}\033[0m")
             elif color in ['y', 'yellow', 'YELLOW', 'Yellow']:  # warning
-                print(f"\033[1;33m{self.name} {datetime.now()} [{level}] : {message}\033[0m")
+                print(f"\033[1;93m{self.name} {datetime.now()} [{level}] : {message}\033[0m")
             elif color in ['r', 'red', 'RED', 'Red']:  # error
                 print(f"\033[1;31m{self.name} {datetime.now()} [{level}] : {message}\033[0m")
 
