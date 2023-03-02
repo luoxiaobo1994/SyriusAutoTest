@@ -341,8 +341,8 @@ if __name__ == '__main__':
         '网卡82': '10.2.9.82',
         '网卡242': '10.2.8.242',
     }
-    # main(robot['雷龙·苏亚雷斯'])
-    # main(robot['雷龙·内马尔'])
+    main(robot['雷龙·苏亚雷斯'])
+    main(robot['雷龙·内马尔'])
     # main(robot['雷龙·布里茨'])
     # main(robot['雷龙·C罗'])
     main(robot['梁龙·鸣人'])

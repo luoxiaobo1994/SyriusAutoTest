@@ -1,0 +1,58 @@
+syntax = "proto3";
+package com.syriusrobotics.bootstrapper;
+
+import "com/syriusrobotics/bootstrapper/common.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "OTAProto";
+
+
+service OTAService {
+  // The shortcut to query if the system has the latest versions of software
+  rpc HasLatestSoftwareVersions(CommonRequest) returns (CommonBooleanResponse) {}
+
+  // Actions on Downloader. These calls are simply redirect to Downloader.
+  rpc StartDownload(CommonRequest) returns (CommonResponse) {}
+  rpc SubscribeProgressOfDownload(CommonRequest) returns(stream Progress) {}
+  rpc IsDownloadInProgress(CommonRequest) returns (CommonBooleanResponse) {}
+
+  // Actions on Upgrader. These calls are simply redirect to Upgrader.
+  rpc StartUpgrade(CommonRequest) returns (CommonResponse) {}
+  rpc SubscribeProgressOfUpgrade(CommonRequest) returns (stream Progress) {}
+  rpc IsUpgradeInProgress(CommonRequest) returns (CommonBooleanResponse) {}
+  rpc CouldStartUpgrade(CommonRequest) returns (CommonBooleanResponse) {}
+
+  // Cancel any operations, such as downloading or upgrading.
+  rpc CancelCurrentOperation(CommonRequest) returns (CommonResponse) {}
+
+  // Actions on the built-in scheduler.
+  rpc HasOTATaskScheduled(CommonRequest) returns (CommonBooleanResponse) {}
+  rpc ScheduleOneOTATask(OTATask) returns (CommonResponse) {}
+  rpc CancelAllTasksScheduled(CommonRequest) returns (CommonResponse) {}
+}
+
+
+message Progress {
+  double percentage = 1;
+  uint32 nthStep = 2;
+  uint32 totalSteps = 3;
+  uint64 timestamp = 4;
+  uint32 errorCode = 5;
+  string errorMsg = 6;
+}
+
+message OTATask {
+  string uuid = 1;
+  repeated OTATarget targets = 2;
+}
+
+message OTATarget {
+  string name = 1;
+  string version = 2;
+  repeated OTATargetProperty properties = 3;
+}
+
+message OTATargetProperty {
+  string key = 1;
+  string value = 3;
+}

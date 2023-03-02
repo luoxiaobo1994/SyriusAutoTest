@@ -1,0 +1,25 @@
+syntax = "proto3";
+package com.syriusrobotics.rs.kuafu.peripheral;
+
+option java_multiple_files = true;
+option java_outer_classname = "PrinterProto";
+
+service Printer {
+  rpc createPrintTask (PrintTaskRequest) returns (PrintTaskResponse) {}
+}
+
+message PrintTaskRequest {
+  int64 timestamp = 1;
+  string taskId = 2;
+  bytes content = 3;  // file to be printed in byte[] format
+}
+
+message PrintTaskResponse {
+  int64 timestamp = 1;
+  Status status = 2;
+  enum Status {
+    ACCEPTED = 0;
+    NOT_ACCEPTABLE = 1;
+  }
+  string msg = 3;
+}

@@ -1,0 +1,53 @@
+syntax = "proto3";
+package com.syriusrobotics.rs.kuafu.map;
+
+import "com/syriusrobotics/rs/kuafu/common.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "MapperProto";
+
+service Mapper {
+  rpc deprStart (Empty) returns (CommonResponse) {}
+  rpc deprSetLocating (Empty) returns (CommonResponse) {}
+  rpc deprSetAreaType (SetAreaTypeRequest) returns (CommonResponse) {}
+  rpc depreListenPose (Empty) returns (stream Pose) {}
+  rpc deprListenMap (Empty) returns (stream MapPackageFile) {}
+  rpc deprGetMapAddress (Empty) returns (stream MapAddress) {}
+}
+message SetModeRequest {
+  int64 timestamp = 1;
+  repeated MapperMode modes = 2;
+}
+
+enum MapperMode {
+  RECORDING = 0;
+  LOCATING = 1;
+}
+
+message SetAreaTypeRequest {
+  int64 timestamp = 1;
+  AreaType areaType = 2;
+}
+
+enum AreaType {
+  NORMAL = 0;
+  RELOCALIZATION = 1;
+}
+
+message Pose {
+  int64 timestamp = 1; // utc, milliseconds.
+  float x = 2;
+  float y = 3;
+  float theta = 4;
+}
+
+message MapPackageFile {
+  int64 timestamp = 1;
+  bytes content = 2;
+}
+
+message MapAddress {
+  int64 timestamp = 1;
+  string filePath = 2;
+  Status status = 3;
+}

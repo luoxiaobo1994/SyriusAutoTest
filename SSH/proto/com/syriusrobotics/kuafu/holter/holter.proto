@@ -1,0 +1,27 @@
+syntax = "proto3";
+package com.syriusrobotics.kuafu.holter;
+
+import "com/syriusrobotics/kuafu/common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.syriusrobotics.kuafu.holter";
+option java_outer_classname = "HolterProto";
+
+service Holter {
+  rpc getBatteryStatus (Empty) returns (BatteryStatusResponse) {}
+}
+
+message BatteryStatusResponse {
+  int64 timestamp = 1; // utc, milliseconds.
+  Status status = 2;
+  enum Status {
+    DISCHARGING = 0;
+    CHARGING = 1;
+    FULL = 2;
+    NOT_CHARGING = 3;
+    UNKNOWN = 4;
+  }
+  int64 powerPercentage = 3;
+  int64 remainingChargingTime = 4;
+  int64 remainingDischargingTime = 5;
+}

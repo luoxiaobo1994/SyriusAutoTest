@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+import "com/syriusrobotics/cornerstone/common.proto";
+
+package com.syriusrobotics.cornerstone.ota;
+
+option java_multiple_files = true;
+option java_outer_classname = "OtaV4Proto";
+
+service OtaV4 {
+
+  rpc fetchOtaTaskV4(FetchOtaTaskV4Request) returns (FetchOtaTaskV4Response) {}
+
+  rpc registerClientV4(RegisterClientV4Request) returns (CommonResponse) {}
+
+}
+
+message RegisterClientV4Request {
+
+  uint64 timestamp = 1;
+
+  string otaClientId = 2;
+
+  repeated Property properties = 3;
+
+}
+
+message FetchOtaTaskV4Request {
+
+  string otaClientId = 1;
+
+  uint64 timestamp = 2;
+
+}
+
+message FetchOtaTaskV4Response {
+
+  string otaTaskId = 1;
+
+  string otaClientId = 2;
+
+  repeated Artifact targetArtifacts = 3;
+
+  message Artifact {
+
+    string id = 1;
+
+    string name = 2;
+
+    string version = 3;
+
+    repeated Property properties = 4;
+
+  }
+
+  uint64 timestamp = 4;
+
+  int32 errorCode = 5;
+
+  string errorMsg = 6;
+
+}
+
+message Property {
+  string key = 1;
+  string value = 2;
+}
+
+
+

@@ -1,0 +1,25 @@
+syntax = "proto3";
+package com.syriusrobotics.cornerstone.pki;
+
+import "com/syriusrobotics/cornerstone/common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.syriusrobotics.cornerstone.pki";
+option java_outer_classname = "PkiServerProto";
+
+
+service IotPki {
+    rpc applyCertificate(ApplyCertificateRequest) returns (ApplyCertificateResponse) {}
+}
+
+message ApplyCertificateRequest {
+    int64 timestamp = 1;
+    string csr = 2;
+}
+
+message ApplyCertificateResponse {
+    int64 timestamp = 1;
+    string certificate = 2;
+    Status status = 3;
+    string errorMessage = 4;
+}

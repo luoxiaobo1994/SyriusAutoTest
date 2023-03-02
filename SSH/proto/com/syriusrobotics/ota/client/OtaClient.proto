@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+import "com/syriusrobotics/ota/client/common.proto";
+
+package com.syriusrobotics.cornerstone.ota;
+option java_multiple_files = true;
+option java_outer_classname = "OtaClientProto";
+
+
+service OtaClient {
+  // fetch ota task from ota-server ,return  artifactGroup metadata
+  rpc fetchOtaTask(FetchOtaTaskRequest) returns (FetchOtaTaskResponse) {}
+
+
+  // report ota result when ota process has be finished
+  rpc reportOtaTaskResult(ReportOtaTaskResultRequest) returns (Empty) {}
+
+  rpc registerClient(RegisterClientRequest) returns (CommonResponse) {}
+}
+
+message Empty {}
+
+message FetchOtaTaskRequest{
+  string otaClientId = 1;
+  int64 timestamp = 2;
+}
+
+
+message FetchOtaTaskResponse {
+
+  message Artifactregistry {
+    string baseUrl = 1;
+    string name = 2;
+  }
+
+  message Bootstrap {
+    string script = 1;
+    string targetDeviceModel = 2;
+  }
+
+  message Tags {
+    string key = 1;
+    string value = 2;
+  }
+
+  message Artifact {
+    string artifactId = 1;
+    Bootstrap bootstrap = 2;
+    uint64 createdAt = 3;
+    string distributorId = 4;
+    repeated Tags tags = 5;
+    string version = 6;
+  }
+
+  message Manifestitems {
+    Artifact artifact = 1;
+    uint32 otaOrder = 2;
+  }
+
+  message Manifest {
+    Artifactregistry artifactRegistry = 1;
+    repeated Manifestitems manifestItems = 2;
+  }
+
+  message Artifactpackage {
+    string downloadUrl = 1;
+    string id = 2;
+    Manifest manifest = 3;
+    string version = 4;
+  }
+
+  string id = 1;
+  string otaClientId = 2;
+  string jobTriggerRecordId = 3;
+  Artifactpackage artifactPackage = 4;
+  map<string, string> preference = 5;
+  string remark = 6;
+  TaskStatus status = 7;
+  uint64 createdTime = 8;
+  uint64 updatedTime = 9;
+  int64 timestamp = 10;
+}
+
+enum TaskStatus{
+  CREATED = 0;
+  SUCCESS = 1;
+  FAILURE = 2;
+  CLOSED = 3;
+}
+message ReportOtaTaskResultRequest{
+  TaskStatus status = 1;
+  string otaClientId = 2;
+  string remark = 3;
+  string taskId = 4;
+}
+
+message RegisterClientRequest {
+  string otaClientId = 1;
+  string status = 2;
+  int64 timestamp = 3; // utc, milliseconds.
+  repeated ClientTag tags = 4;
+}
+
+message ClientTag {
+  string key = 1;
+  string value = 2;
+}

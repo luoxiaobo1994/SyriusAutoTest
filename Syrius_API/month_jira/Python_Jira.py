@@ -89,7 +89,10 @@ class JiraTool:
             'description': issuefields.description,
             'created': issuefields.created,
             'versions': issuefields.versions,
-            'fixVersions': issuefields.fixVersions  # 没有标注这个。
+            'fixVersions': issuefields.fixVersions,  # 没有标注这个。
+            'components': issuefields.components,  # 没有标注这个。
+            'comment': issuefields.comment.comments,  # 评论
+            'customfield': issuefields.customfield_10907  # 评论
         }
         return fields
 
@@ -179,7 +182,12 @@ class JiraTool:
         comments = self.jira_conn.issue(issue_id).fields.comment.comments
         # return { comment.id:comment.author for comment in comments}
         # return { comment.id:comment.body for comment in comments}
-        return comments
+        return { comment.body for comment in comments}
+        # return comments
+    def get_issue_level(self,issue_id=None):
+        level = self.jira_conn.issue(issue_id)
+        return level
+
 
     def add_comment(self, jira_key, context, picpath=None):
         """添加comment"""
@@ -208,6 +216,8 @@ class JiraTool:
         issue = self.jira_conn.issue(issue_id)
         self.jira_conn.transition_issue(issue, status, **kwargs)
 
+
+
     def close_client(self):  # 关闭链接
         self.jira_conn.close()
 
@@ -219,117 +229,116 @@ if __name__ == '__main__':
     # # 获取用户所有project
     # projects = jiratool.get_projects()
     # print(projects)
-    #
-    # issues = jiratool.search_jira_jql(
-    #     jql='project = SQA AND issuetype = Bug AND created >= 2023-02-01 AND created <= 2023-02-28 ORDER BY key DESC, priority DESC, updated DESC')
-    # print(len(issues))
+    # 拿到jql搜到的所有问题的key
+    issues = jiratool.search_jira_jql(jql='project = SQA AND issuetype = Bug AND created >= 2023-02-01 AND created <= 2023-02-28')
+    for issue in issues[:10]:
+        print(issue)  # 拿到的是key，如：SQA-5457
 
-    SQA_5431 = jiratool.get_issuefields('SQA-5415')
-    print(SQA_5431)
+    # SQA_5431 = jiratool.get_issuefields('SQA-5415')
+    # print(SQA_5431)
 
+# 以下为其他功能。暂未使用 ----------------------------------------------------------------------------------
 
+# for p in projects:
+#     print(p.key,p.id,p.name)
 
+# # 获取project信息
+# project = jiratool.get_project('PJT')
+# print(project)
 
-    # for p in projects:
-    #     print(p.key,p.id,p.name)
+# # jql查询jira问题
+# jql = '********'
+# issues = jiratool.search_jira_jql(jql)
+# print(issues)
+# # jira_key
+# for i in issues:
+#     print(i.key)
+# jira_key = [i.key for i in issues]
+# print(jira_key)
 
-    # # 获取project信息
-    # project = jiratool.get_project('PJT')
-    # print(project)
+# labels = []
+# for issue in issues:
+#     issueinfo = jiratool.get_issuefields(issue)
+#     labels.extend(list(issueinfo['labels']))
+#     print(issue,','.join(list(issueinfo['labels'])))
+#
+# keys = sorted(set(labels)-set(('***','***')))
+# print(keys)
+# dd = {k:labels.count(k) for k in keys}
+#
+# for k in keys:
+#     print(k,labels.count(k))
+# print(sum(list(dd.values())))
 
-    # # jql查询jira问题
-    # jql = '********'
-    # issues = jiratool.search_jira_jql(jql)
-    # print(issues)
-    # # jira_key
-    # for i in issues:
-    #     print(i.key)
-    # jira_key = [i.key for i in issues]
-    # print(jira_key)
+# # 添加附件
+# picpath = r'E:\Attachments\PJT-7533.png'
+# jiratool.add_attachment('PJT-7984',picpath)
+#
+# # 添加注释+附件
+# context = r"版本回归Pass，\n汇总：******"
+# jiratool.add_comment('PJT-7984',context,picpath)
 
-    # labels = []
-    # for issue in issues:
-    #     issueinfo = jiratool.get_issuefields(issue)
-    #     labels.extend(list(issueinfo['labels']))
-    #     print(issue,','.join(list(issueinfo['labels'])))
-    #
-    # keys = sorted(set(labels)-set(('***','***')))
-    # print(keys)
-    # dd = {k:labels.count(k) for k in keys}
-    #
-    # for k in keys:
-    #     print(k,labels.count(k))
-    # print(sum(list(dd.values())))
+# # # 获取issue信息
+# issueinfo = jiratool.get_issuefields('PJT-9676')
+# print(issueinfo)
+# # labels = list(issueinfo['labels'])
 
-    # # 添加附件
-    # picpath = r'E:\Attachments\PJT-7533.png'
-    # jiratool.add_attachment('PJT-7984',picpath)
-    #
-    # # 添加注释+附件
-    # context = r"版本回归Pass，\n汇总：******"
-    # jiratool.add_comment('PJT-7984',context,picpath)
+# jira_key = 'PJT-7669'
+#
+# # # 查询当前权限下问题流程可操作节点
+# transitions = jiratool.get_transitions(jira_key)
+# print(transitions)
+#
+# # # 获取issue-status信息
+# status = str(jiratool.get_status(jira_key))
+# assignee = jiratool.get_assignee(jira_key)
+# print(assignee)
+# print(status,type(status))
+# # 修改状态
+# jiratool.update_status(jira_key, 31, customfield_12017=examine)
 
-    # # # 获取issue信息
-    # issueinfo = jiratool.get_issuefields('PJT-9676')
-    # print(issueinfo)
-    # # labels = list(issueinfo['labels'])
+# # 获取issue-description信息,修改描述信息
+# description = jiratool.find_description('PJT-12537')
+# print(description,type(description))
+# description = description + "\n版本号：v10.0.1 test"
+# jiratool.update_issue('PJT-12537',{'description': description})
 
-    # jira_key = 'PJT-7669'
-    #
-    # # # 查询当前权限下问题流程可操作节点
-    # transitions = jiratool.get_transitions(jira_key)
-    # print(transitions)
-    #
-    # # # 获取issue-status信息
-    # status = str(jiratool.get_status(jira_key))
-    # assignee = jiratool.get_assignee(jira_key)
-    # print(assignee)
-    # print(status,type(status))
-    # # 修改状态
-    # jiratool.update_status(jira_key, 31, customfield_12017=examine)
+# 获取issue-标签
+# labels = jiratool.get_issuelabels(issue)
+# # 添加或删除标签
+# labels.append("CICD")
+# # labels.remove("CICD")
+# jiratool.update_issue('PJT-9676',{'labels': labels})
 
-    # # 获取issue-description信息,修改描述信息
-    # description = jiratool.find_description('PJT-12537')
-    # print(description,type(description))
-    # description = description + "\n版本号：v10.0.1 test"
-    # jiratool.update_issue('PJT-12537',{'description': description})
+# # 修改优先级
+# jiratool.update_issue('PJT-9676',{'priority': {'name': 'High'}})
 
-    # 获取issue-标签
-    # labels = jiratool.get_issuelabels(issue)
-    # # 添加或删除标签
-    # labels.append("CICD")
-    # # labels.remove("CICD")
-    # jiratool.update_issue('PJT-9676',{'labels': labels})
+# # # 获取comment
+# comments = jiratool.get_comments('PJT-7470')
+# print(comments)
+# for comment in comments:
+#     if comment.author.displayName in ('***','***'):
+#         print(comment.id,comment.body)
 
-    # # 修改优先级
-    # jiratool.update_issue('PJT-9676',{'priority': {'name': 'High'}})
+# 添加影响版本
+# jira_key = "PJT-9145"
+# jiratool.add_version(jira_key,"PJT_V14.1.0")
 
-    # # # 获取comment
-    # comments = jiratool.get_comments('PJT-7470')
-    # print(comments)
-    # for comment in comments:
-    #     if comment.author.displayName in ('***','***'):
-    #         print(comment.id,comment.body)
+# 添加修复版本
+# jira_key = "PJT-11454"
+# jiratool.add_fixversions(jira_key,"PJT_V14.1.0")
+#
+# versions = jiratool.get_versions(jira_key)
+# print(versions)
 
-    # 添加影响版本
-    # jira_key = "PJT-9145"
-    # jiratool.add_version(jira_key,"PJT_V14.1.0")
-
-    # 添加修复版本
-    # jira_key = "PJT-11454"
-    # jiratool.add_fixversions(jira_key,"PJT_V14.1.0")
-    #
-    # versions = jiratool.get_versions(jira_key)
-    # print(versions)
-
-    # versions = jiratool.del_version(jira_key,"PJT_V14.1.0")
-    # print(versions)
-    # fixversions = jiratool.get_fixversions(jira_key)
-    # print(fixversions)
-    # jiratool.add_fixversions(jira_key, "PJT_V14.1.0")
-    # fixversions = jiratool.get_fixversions(jira_key)
-    # print(fixversions)
-    #
-    # jiratool.del_fixversions(jira_key, "PJT_V14.1.0")
-    # fixversions = jiratool.get_fixversions(jira_key)
-    # print(fixversions)
+# versions = jiratool.del_version(jira_key,"PJT_V14.1.0")
+# print(versions)
+# fixversions = jiratool.get_fixversions(jira_key)
+# print(fixversions)
+# jiratool.add_fixversions(jira_key, "PJT_V14.1.0")
+# fixversions = jiratool.get_fixversions(jira_key)
+# print(fixversions)
+#
+# jiratool.del_fixversions(jira_key, "PJT_V14.1.0")
+# fixversions = jiratool.get_fixversions(jira_key)
+# print(fixversions)

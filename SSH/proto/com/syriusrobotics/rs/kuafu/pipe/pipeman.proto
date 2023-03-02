@@ -1,0 +1,30 @@
+syntax = "proto3";
+package com.syriusrobotics.rs.kuafu.pipe;
+
+import "com/syriusrobotics/rs/kuafu/common.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "PipeManProto";
+
+service PipeMan {
+  rpc getCurrentPipe(Empty) returns (CurrentPipeResponse) {}
+  rpc setPipe(SetPipeRequest) returns (CommonResponse) {}
+}
+
+message CurrentPipeResponse {
+  int64 timestamp = 1;
+  Pipe pipe = 2;
+}
+
+message SetPipeRequest {
+  int64 timestamp = 1;
+  Pipe pipe = 2;
+}
+
+enum Pipe {
+  IDLE = 0;
+  NAVIGATION = 1;
+  MAPPING = 2;
+  SELF_TEST = 3;
+  CALIBRATION = 4;
+}

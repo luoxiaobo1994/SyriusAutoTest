@@ -1,0 +1,40 @@
+syntax = "proto3";
+package com.syriusrobotics.rs.kuafu.system;
+
+import "com/syriusrobotics/rs/kuafu/common.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "FileProto";
+
+service File {
+  rpc upload(stream FileUploadRequest) returns (Empty) {}
+  rpc download(FileDownloadRequest) returns (stream FileDownloadResponse) {}
+}
+
+message FileUploadRequest {
+
+  bytes chunk = 1;
+
+  FileMetadata metadata = 2;
+
+}
+
+message FileDownloadRequest {
+  string path = 1;
+}
+
+message FileDownloadResponse {
+
+  bytes chunk = 1;
+
+  FileMetadata metadata = 2;
+
+}
+
+message FileMetadata {
+
+  uint64 totalSize = 1;
+
+  string path = 2;
+
+}

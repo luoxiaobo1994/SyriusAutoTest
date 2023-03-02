@@ -1,0 +1,22 @@
+syntax = "proto3";
+package com.syriusrobotics.rs.kuafu.work;
+
+import "com/syriusrobotics/rs/kuafu/common.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "WorkerProto";
+
+service Worker {
+  rpc setWorkGroup(WorkGroupRequest) returns (CommonResponse){}
+  rpc getWorkGroup(Empty) returns (WorkGroupResponse){}
+}
+
+message WorkGroupRequest {
+  int64 timestamp = 1; // utc, milliseconds.
+  string workGroupId = 2;
+}
+
+message WorkGroupResponse {
+  int64 timestamp = 1; // utc, milliseconds.
+  string workGroupId = 2;
+}

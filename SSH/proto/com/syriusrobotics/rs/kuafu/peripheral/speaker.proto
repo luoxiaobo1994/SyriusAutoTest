@@ -1,0 +1,26 @@
+syntax = "proto3";
+package com.syriusrobotics.rs.kuafu.peripheral;
+
+option java_multiple_files = true;
+option java_outer_classname = "SpeakerProto";
+
+service Speaker {
+  rpc createPlayTask (PlayTaskRequest) returns (PlayTaskResponse) {}
+}
+
+message PlayTaskRequest {
+  int64 timestamp = 1; // utc, milliseconds.
+  string taskId = 2;
+  string name = 3;
+  bytes soundTrack = 4; // Sound track in byte[]
+}
+
+message PlayTaskResponse {
+  int64 timestamp = 1;
+  Status status = 2;
+  enum Status {
+    ACCEPTED = 0;
+    NOT_ACCEPTABLE = 1;
+  }
+  string msg = 3;
+}

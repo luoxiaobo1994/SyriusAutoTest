@@ -1,0 +1,29 @@
+syntax = "proto3";
+package com.syriusrobotics.rs.kuafu.system;
+
+import "com/syriusrobotics/rs/kuafu/common.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "BlackBoxProto";
+
+service BlackBox {
+  rpc snapshotAndUpload (Empty) returns (stream SnapshotAndUploadResponse) {}
+}
+
+message SnapshotAndUploadResponse {
+  int64 timestamp = 1; // utc, milliseconds.
+  uint32 snapshotProgress = 2; // 0-100 percentage
+  uint64 uploadTotalSize = 3; // k Bytes
+  uint64 uploadedSize = 4; // k Bytes
+  Status status = 5;
+  enum Status {
+    ACCEPTED = 0;
+    NOT_ACCEPTABLE = 1;
+    SNAPSHOTTING = 2;
+    SNAPSHOT_FAILED = 3;
+    UPLOADING = 4;
+    UPLOAD_SUCCEEDED = 5;
+    UPLOAD_FAILED = 6;
+  }
+  string msg = 6;
+}

@@ -1,0 +1,108 @@
+syntax = "proto3";
+package com.syriusrobotics.kuafu.keyring;
+
+import "com/syriusrobotics/kuafu/common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.syriusrobotics.kuafu.keyring";
+option java_outer_classname = "KeyRingProto";
+
+service KeyRing {
+    rpc getSize(Empty) returns (SizeResponse) {}
+    rpc getAliases(Empty) returns (AliasesResponse) {}
+    rpc containsAlias(KeyRingCommonRequest) returns (KeyRingCommonResultResponse) {}
+    rpc getCreationDate(KeyRingCommonRequest) returns (CreationDateResponse) {}
+    rpc deleteEntry(KeyRingCommonRequest) returns (KeyRingCommonResultResponse) {}
+
+    // X509CertificateEntry
+    rpc getX509CertificateEntry(KeyRingCommonRequest) returns (X509CertificateEntryResponse) {}
+    rpc isCertificateEntry(KeyRingCommonRequest) returns (KeyRingCommonResultResponse) {}
+    rpc setX509CertificateEntry(X509CertificateEntryRequest) returns (KeyRingCommonResultResponse) {}
+
+    // PrivateKeyEntry
+    rpc getPrivateKeyEntry(KeyRingCommonRequest) returns (PrivateKeyEntryResponse) {}
+    rpc isPrivateKeyEntry(KeyRingCommonRequest) returns (KeyRingCommonResultResponse) {}
+    rpc setPrivateKeyEntry(SetPrivateKeyEntryRequest) returns (KeyRingCommonResultResponse) {}
+
+    // SecretKeyEntry
+    rpc getSecretKeyEntry(KeyRingCommonRequest) returns (SecretKeyResponse) {}
+    rpc isSecretKeyEntry(KeyRingCommonRequest) returns (KeyRingCommonResultResponse) {}
+    rpc setSecretKeyEntry(SetSecretKeyEntryRequest) returns (KeyRingCommonResultResponse) {}
+}
+
+message KeyRingCommonRequest {
+    int64 timestamp = 1;
+    string alias = 2;
+    string keyPassword = 3;
+}
+
+message KeyRingCommonResultResponse {
+    int64 timestamp = 1;
+    string msg = 2;
+    Status status = 3;
+    bool result = 4;
+}
+
+message X509CertificateEntryRequest {
+    int64 timestamp = 1;
+    string alias = 2;
+    string x509CertificatePemStr = 3;
+}
+
+message X509CertificateEntryResponse {
+    int64 timestamp = 1;
+    string msg = 2;
+    Status status = 3;
+    string certificatePemStr = 4;
+    string certificateStatus = 5;
+}
+
+message SetPrivateKeyEntryRequest {
+    int64 timestamp = 1;
+    string alias = 2;
+    string keyPassword = 3;
+    string privateKeyPemStr = 4;
+    repeated string x509CertificateChainPemStrList = 5;
+}
+
+message SetSecretKeyEntryRequest {
+    int64 timestamp = 1;
+    string alias = 2;
+    string keyPassword = 3;
+    string secretKeyPemStr = 4;
+}
+
+message SizeResponse {
+    int64 timestamp = 1;
+    string msg = 2;
+    Status status = 3;
+    int32 size = 4;
+}
+
+message AliasesResponse {
+    int64 timestamp = 1;
+    string msg = 2;
+    Status status = 3;
+    repeated string aliases = 4;
+}
+
+message CreationDateResponse {
+    int64 timestamp = 1;
+    string msg = 2;
+    Status status = 3;
+    int64 creationDate = 4;
+}
+
+message PrivateKeyEntryResponse {
+    int64 timestamp = 1;
+    string msg = 2;
+    Status status = 3;
+    string privateKeyPemStr = 4;
+}
+
+message SecretKeyResponse {
+    int64 timestamp = 1;
+    string msg = 2;
+    Status status = 3;
+    string secretKeyPemStr = 4;
+}

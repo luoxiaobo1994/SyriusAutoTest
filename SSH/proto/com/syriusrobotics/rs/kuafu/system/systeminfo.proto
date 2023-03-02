@@ -1,0 +1,69 @@
+syntax = "proto3";
+package com.syriusrobotics.rs.kuafu.system;
+
+import "com/syriusrobotics/rs/kuafu/common.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "SystemProto";
+
+service System {
+  rpc getRobotId(Empty) returns (RobotId) {}
+  rpc getBatteryStatus (Empty) returns (BatteryStatus) {}
+  rpc getSoftwareVersion(Empty) returns (SoftwareVersionResponse) {}
+  rpc getHealth(Empty) returns (CommonResponse) {}
+  rpc getRobotModel(Empty) returns (RobotModelResponse) {}
+  rpc setEnv(EnvRequest) returns (CommonResponse) {}
+  rpc getEnv(Empty) returns (EnvResponse) {}
+}
+
+message EnvRequest {
+  int64 timestamp = 1;
+  Env env = 2;
+}
+
+message EnvResponse {
+  int64 timestamp = 1;
+  Status status = 2;
+  Env env = 3;
+}
+
+message Env {
+  string otaServiceEndpoint = 1;
+  string fileServiceEndpoint = 2;
+  string dataServiceEndpoint = 3;
+  bool dataServiceUsePlainText = 4;
+}
+
+message RobotId {
+  int64 timestamp = 1; // utc, milliseconds
+  string robotId = 2;
+}
+
+message BatteryStatus {
+  int64 timestamp = 1; // utc, milliseconds.
+  Status status = 2;
+  enum Status {
+    DISCHARGING = 0;
+    CHARGING = 1;
+  }
+  int64 powerPercentage = 3;
+  int64 remainingChargingTime = 4;
+  int64 remainingDischargingTime = 5;
+}
+
+message SoftwareVersionResponse {
+  int64 timestamp = 1;
+  string msg = 2;
+  Status status = 3;
+  string version = 4;
+}
+
+message RobotModelResponse {
+  int64 timestamp = 1;
+  string msg = 2;
+  Status status = 3;
+  string modelName = 4;
+  string modelNumber = 5;
+  string serialNumber = 6;
+  string manufacturerName = 7;
+}

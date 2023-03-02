@@ -1,0 +1,15 @@
+syntax = "proto3";
+package com.syriusrobotics;
+
+message Empty {}
+
+message CommonResponse{
+  int64 timestamp = 1;
+  Status status = 2;
+  string msg = 3;
+}
+
+enum Status {
+  SUCCEEDED = 0;
+  FAILED = 1;
+}

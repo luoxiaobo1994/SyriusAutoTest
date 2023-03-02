@@ -1,0 +1,42 @@
+syntax = "proto3";
+package com.syriusrobotics.rs.kuafu.peripheral;
+
+import "com/syriusrobotics/rs/kuafu/common.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "ButtonProto";
+
+service Button {
+  rpc listenButtonEvent (Empty) returns (stream ButtonEvent) {}
+}
+
+message ButtonTaskRequest {
+  int64 timestamp = 1;
+  string taskId = 2;
+  bytes content = 3;  // file to be printed in byte[] format
+}
+
+message ButtonEvent {
+  int64 timestamp = 1;
+  string uuid = 2;
+  Status status = 3;
+  Type type = 4;
+  Seat seat = 5;
+
+  enum Status {
+    PRESSED = 0;
+    RELEASED = 1;
+  }
+
+  enum Type {
+    CONFIRM = 0;
+    UNDEFINED = 1;
+  }
+
+  enum Seat {
+    LEFT = 0;
+    RIGHT = 1;
+    BEHIND = 2;
+    AHEAD = 3;
+  }
+}
