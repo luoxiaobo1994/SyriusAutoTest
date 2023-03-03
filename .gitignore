@@ -10,3 +10,6 @@ ignore*
 *_cn3.py
 AutoTest.iml
 misc.xml
+*.svg
+*.png
+*.jpg
