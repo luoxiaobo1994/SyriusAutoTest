@@ -5,6 +5,7 @@
 
 from Python_Jira import JiraTool
 from utils.read_yaml import read_yaml
+from matplotlib import pyplot as plt
 
 jira = JiraTool()
 
@@ -17,8 +18,11 @@ BUG_info = {
     '严重': 0,
     '一般': 0,
     '提示': 0,
+    '创建日期': {},  # 所有Jira的创建日期
     '致命-解决数量': 0,
     '严重-解决数量': 0,
+    '一般-解决数量': 0,
+    '提示-解决数量': 0,
     '致命-无分析评论': 0,  # 针对未解决的问题
     '严重-无分析评论': 0,  # 针对未解决的问题
     'GoGoReady缺陷': 0,
@@ -76,6 +80,10 @@ def issue_for_level(date_interval):
     BUG_info['致命-解决数量'] = len(jira.search_jira_jql(jql=done_critical))
     done_major = f"{project} AND {state_sovled} AND 问题级别 = 严重 AND {date}"
     BUG_info['严重-解决数量'] = len(jira.search_jira_jql(jql=done_critical))
+    done_general = f"{project} AND {state_sovled} AND 问题级别 = 一般 AND {date}"
+    BUG_info['一般-解决数量'] = len(jira.search_jira_jql(jql=done_general))
+    done_minor = f"{project} AND {state_sovled} AND 问题级别 = 提示 AND {date}"
+    BUG_info['提示-解决数量'] = len(jira.search_jira_jql(jql=done_minor))
 
 
 def process_issue_label(date_interval):
@@ -183,6 +191,40 @@ def bug_reporter():
             BUG_info['reporter'][name] += 1
 
 
+def created_date():
+    for bug in all_bug_key:
+        issue_info = jira.get_issuefields(bug)
+        created_date = str(issue_info['created'].split('T')[0])
+        if created_date not in BUG_info['创建日期']:
+            BUG_info[created_date] = 1
+        else:
+            BUG_info[created_date] += 1
+
+
+def issue_pie(total, level, ylabel='y轴名称', chart_name='图标名称'):
+    plt.pie(total, labels=level, autopct='%1.2f%%', startangle=90)
+    plt.ylabel(ylabel)
+    plt.title(chart_name)
+    plt.show()
+
+
+def issue_bar(every_level, level, ylabel='y轴名称', chart_name='图标名称'):
+    plt.bar(level, every_level)
+    plt.ylabel(ylabel)
+    plt.title(chart_name)
+    plt.show()
+
+
+def chart():
+    # 将数据绘图
+    issue_level = ['致命', '严重', '一般', '提示']
+    issue_num = [BUG_info[key] for key in issue_level]  # 各级别缺陷
+    solved_issue = [BUG_info[key + '-解决数量'] for key in issue_level]  # 各级别解决缺陷
+    no_coment = {'致命': BUG_info['致命-无分析评论'], '严重': BUG_info['严重-无分析评论']}
+    created_date = BUG_info['创建日期']  # 这直接是一个好的字典。
+    issue_state = ['完成', '开放', '未分析', '拒绝']
+
+
 def main():
     date = config['month'][2023.02]
     issue_for_date(date)
@@ -192,13 +234,14 @@ def main():
     bug_title()
     bug_assignee()
     bug_reporter()
-    print(BUG_info)
+    # print(BUG_info)
+    chart()
 
 
-main()
+# main()
 
-# info = jira.get_issuefields('SQA-5422')
-# print(info)
+info = jira.get_issuefields('SQA-5422')
+print(info['created'].split('T')[0])
 # lebel = jira.get_issuelabels('SQA-5422')
 # print(lebel)
 # comment = jira.get_comments('SQA-5422')
