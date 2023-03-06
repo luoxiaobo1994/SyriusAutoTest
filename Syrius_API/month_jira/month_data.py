@@ -2,6 +2,7 @@
 # Author: luoxiaobo
 # TIME: 2023/3/2 14:31
 # Desc: 自动抓取Jira数据。
+import yaml
 
 from Python_Jira import JiraTool
 from utils.read_yaml import read_yaml
@@ -154,7 +155,7 @@ def bug_labels():
             BUG_info['算法缺陷'] += num
         elif 'notabug' in label:
             BUG_info['无效缺陷'] += num
-        elif 'robeclose' in label:
+        elif 'tobeclose' in label:
             BUG_info['待关闭缺陷'] += num
         elif 'time' in label:
             BUG_info['时钟缺陷'] += num
@@ -194,38 +195,28 @@ def bug_reporter():
 def created_date():
     for bug in all_bug_key:
         issue_info = jira.get_issuefields(bug)
-        created_date = str(issue_info['created'].split('T')[0])
+        created_date = str(issue_info['created'].split('T')[0])  # '2023-02-17' 这样的，拿去画图，会很密
+        created_date = created_date[5:]  # 把年和一个-去掉。
         if created_date not in BUG_info['创建日期']:
-            BUG_info[created_date] = 1
+            BUG_info['创建日期'][created_date] = 1
         else:
-            BUG_info[created_date] += 1
+            BUG_info['创建日期'][created_date] += 1
 
 
-def issue_pie(total, level, ylabel='y轴名称', chart_name='图标名称'):
-    plt.pie(total, labels=level, autopct='%1.2f%%', startangle=90)
-    plt.ylabel(ylabel)
-    plt.title(chart_name)
-    plt.show()
+
+def write_yaml(file, data=None, mode='a'):
+    if file and isinstance(data, dict):
+        with open(file, encoding='utf-8', mode=mode) as f:
+            yaml.dump(data, stream=f, allow_unicode=True)
+
+    else:
+        print(f"数据写入yaml文件：。请检查输入文件路径或存入的数据类型是否是键值对。")
 
 
-def issue_bar(every_level, level, ylabel='y轴名称', chart_name='图标名称'):
-    plt.bar(level, every_level)
-    plt.ylabel(ylabel)
-    plt.title(chart_name)
-    plt.show()
-
-
-def chart():
-    # 将数据绘图
-    issue_level = ['致命', '严重', '一般', '提示']
-    issue_num = [BUG_info[key] for key in issue_level]  # 各级别缺陷
-    solved_issue = [BUG_info[key + '-解决数量'] for key in issue_level]  # 各级别解决缺陷
-    no_coment = {'致命': BUG_info['致命-无分析评论'], '严重': BUG_info['严重-无分析评论']}
-    created_date = BUG_info['创建日期']  # 这直接是一个好的字典。
-    issue_state = ['完成', '开放', '未分析', '拒绝']
 
 
 def main():
+    # 这一步是获取所有数据。
     date = config['month'][2023.02]
     issue_for_date(date)
     issue_for_level(date)
@@ -234,14 +225,16 @@ def main():
     bug_title()
     bug_assignee()
     bug_reporter()
+    created_date()
     # print(BUG_info)
-    chart()
+    write_yaml(file='jira_data.yml', data=BUG_info, mode='w')
 
 
-# main()
+main()
 
-info = jira.get_issuefields('SQA-5422')
-print(info['created'].split('T')[0])
+
+# info = jira.get_issuefields('SQA-5422')
+# print(info['created'].split('T')[0])
 # lebel = jira.get_issuelabels('SQA-5422')
 # print(lebel)
 # comment = jira.get_comments('SQA-5422')

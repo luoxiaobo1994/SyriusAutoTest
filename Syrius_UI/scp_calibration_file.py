@@ -47,4 +47,5 @@ def scp_file(robot, file):
 
 scp_file(robots['雷龙·内马尔'], file=file + r'\内马尔\robot_sensors.yaml')
 scp_file(robots['梁龙·鸣人'], file=file + r'\鸣人\robot_sensors.yaml')
-scp_file(robots['雷龙·苏亚雷斯'], file=file + r'\苏亚雷斯\robot_sensors.yaml')
+# scp_file(robots['雷龙·苏亚雷斯'], file=file + r'\苏亚雷斯\robot_sensors.yaml')
+scp_file(robots['雷龙·布里茨'], file=file + r'\布里茨\robot_sensors.yaml')
