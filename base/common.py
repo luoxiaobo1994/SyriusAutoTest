@@ -64,7 +64,6 @@ def time_difference(time1, time2):
         pp(f"时间比较函数，传入参数异常，传入格式为：'%Y-%m-%d %H:%M:%S'，如：'2023-02-06 03:10:39'", "WARNING", color='r')
 
 
-
 # 调试打印,带时间戳
 def dp(*args):
     print(get_time(), *args)
@@ -176,6 +175,15 @@ def set_list(num):  # [1,0,0,0,0,1,1,1,0,0,0,1] ==>[1,0,1,0,1]
             else:
                 pass
     return new
+
+
+def list_remove(ls1, ls2):
+    # 列表1内，去除某些数据。
+    for i in ls2:
+        try:
+            ls1.remove(i)
+        except:
+            pass
 
 
 def same_len_str(string, way, width, fill=' ', ):  # 格式输出函数,默认格式填充用单空格,不换行。

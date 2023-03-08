@@ -58,6 +58,10 @@ sp_text:
   - speed_picker
   - picking_code.8cfdd8bd
   - ic_btn_scan.74060d4d
+useless_text:
+  - speed_picker
+  - picking_code.8cfdd8bd
+  - ic_btn_scan.74060d4d
 picking_text:
   - 编码
   - 输入

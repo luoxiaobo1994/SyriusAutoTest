@@ -58,7 +58,7 @@ class SpeedPicker:
         # sleep(10)  # 做一个长等待，没办法。加载慢。
         self.view = (By.XPATH, '//android.view.View')
         self.image = (By.XPATH, '//android.widget.ImageView')
-        self.widget_text = (By.XPATH, '//android.widget.TextView')  # K11桌面的组件和新版GGR新的悬浮窗，部分界面文本组件。
+        self.widget_text = (By.XPATH, '//android.widget.TextView')  # K11桌面的组件和新版GGR的悬浮窗，部分界面文本组件。
         self.notify()  # 刷新一些提醒，避免遗漏配置。
         self.non_count = 0  # 界面抓到异常信息的计数器.
         self.siteid = 202  # 默认是备用场地。
@@ -213,6 +213,9 @@ class SpeedPicker:
         wait_time = random.randint(5, time_out)
         if '暂停' in view_text:
             self.driver.click_element((By.XPATH, '//android.view.View[@text="暂停"]'))
+            if self.random_trigger(n=30, process='倒计时自动恢复流程'):
+                log.debug(f"触发随机事件，不提前点击恢复按钮，让SpeedPicker暂停倒计时结束后，自行恢复移动。")
+                self.wait_moment('恢复')
             log.info(f"移动过程中，暂停移动[{wait_time}]秒钟。")
             sleep(wait_time)
             try:
@@ -261,7 +264,7 @@ class SpeedPicker:
                     if count % 10 == 0:  # 偶尔刷新一次.
                         # 判断是不是在Jarvis主界面.
                         try:
-                            tmp_desc = self.driver.app_elements_content_desc()
+                            tmp_desc = self.driver.app_elements_content_desc(locator=self.view)
                             if 'SkillSpace' in ''.join(tmp_desc):
                                 self.open_sp()
                         except:
@@ -299,6 +302,7 @@ class SpeedPicker:
             log.warning("设备的GoGoReady似乎闪退了。")
             self.shoot()
             self.start_GGR()
+            return 1
         try:
             if self.driver.element_display((By.XPATH, '//*[contains(content-desc,"配置信息")]')):
                 log.info("机器人正在同步配置信息，请稍后...")
@@ -421,7 +425,9 @@ class SpeedPicker:
             self.driver.click_one(self.driver.find_element((By.XPATH, f'//android.view.View[@text="{err}"]')))
             self.press_ok(timeout=2)  #
             return
-        view_ls = tmp_text[1:]
+        view_ls = tmp_text
+        list_remove(view_ls, ['speed_picker', '异常上报'])  # 把这俩去掉
+        log.debug(f"当前可上报异常：{view_ls}")
         err_type = random.choice(view_ls)  # 随机选的一个异常类型
         log.debug(f"本次随机上报的异常是:{err_type}")
         self.driver.click_one(self.driver.find_element((By.XPATH, '//android.view.View[@text="%s"]' % err_type)))
@@ -663,6 +669,7 @@ class SpeedPicker:
             return  # 前往的目标点，不是货架区。说明不是拣货流程，直接跳出去。
         # self.press_ok()  # 异常耗时了。
         view_ls = self.get_text()
+        list_remove(view_ls, self.get_config()['useless_text'])
         # view_ls2 = self.driver.app_elements_text(locator=(By.XPATH, 'android.widget.TextView'))
         # log.debug(f"调试程序，拣货过程中的wdgetText:{view_ls2}")  # 这玩意抓不到，不抓了。
         if target in view_ls and checktarget and ismove:
@@ -694,7 +701,7 @@ class SpeedPicker:
                 self.input_error(random.randint(1, 564313112131))  # 随机取一个,取对了,就可以买彩票了。
 
             try:
-                good_num = re.findall('×[\d]+', ''.join(view_ls))[0]
+                good_num = re.findall('×\d+', ''.join(view_ls))[0]
                 log.debug(f"当前商品需要捡取：{good_num.replace('×', '')}个。")
                 index1 = el_index(good_num, view_ls)
                 good_code = view_ls[index1 - 1]  # 有什么办法,准确拿到商品码.
@@ -942,6 +949,8 @@ class SpeedPicker:
             # self.press_ok()  # 应对随时弹出来的需要协助，提示框。有必要保留,可能点掉绑定载具的"完成"
             try:
                 self.sp_text = self.get_text(wait=15)  # 当前页面文本信息。  [紧急拣货中,订单ID,请放好扫码枪,完成]
+                useless_text = self.get_config()['useless_text']
+                list_remove(self.sp_text, useless_text)
                 # view_content = self.driver.app_elements_text((By.XPATH, '//android.widget.TextView'))
                 # log.debug(f"self.sp_text:{self.sp_text},content:{view_content}")
                 ls = ''.join(self.sp_text)  # 这个是长文本。用来做一些特殊判断。
@@ -986,14 +995,14 @@ class SpeedPicker:
                 target_location = locate  #
                 log.info(f"机器人正在前往:{locate}，请等待。")
                 if locate.startswith('A0'):
-                    log.debug(f"前往目标的拣货点信息：{self.get_text()}")
+                    log.debug(f"前往目标的拣货点信息：{list_remove(self.get_text(), self.get_config()['useless_text'])}")
                 if self.random_trigger(n=self.get_config()['pasue_psb'], process='暂停移动'):  # 触发随机。
                     self.pause_move()  # 暂停移动。
                 self.wait_moment("前往")
                 log.debug(f"机器人到达：{locate}。")
             elif any_one(self.get_config()['bind_text'], self.sp_text) and '前往' not in self.sp_text:
                 self.bind_container()
-            elif len_diff(self.sp_text, use_text) > 4 and re.findall('×[\d]+', ls):
+            elif len_diff(self.sp_text, use_text) > 4 and re.findall('×\d+', ls):
                 # 进入拣货判断逻辑：1.界面文本有非SP特征文本至少4个。2.界面文本包含至少包含2个拣货流程的特定文本。
                 if not target_location.startswith('A0'):  # 移动中的目标点。
                     target_location = ''
