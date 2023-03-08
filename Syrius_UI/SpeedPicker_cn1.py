@@ -20,7 +20,7 @@ def pad_ip():
     try:
         return devices_ls[num].replace(':5555', '')  # 只拿PAD的IP
     except:
-        pp("获取设备UDID失败了，检查一下。", level='WARNING', color='r')
+        log.error("获取设备UDID失败了，检查一下。", level='WARNING', color='r')
 
 
 # 日志目录，文件。
@@ -607,14 +607,14 @@ class SpeedPicker:
                 while count:
                     self.driver.click_element(retry_btn)
                     if self.driver.element_display(retry_btn):
-                        log.debug(f"第{seq}次重试失败。")
+                        log.warning(f"第{seq}次重试失败。")
                         seq += 1
                         count -= 1
                     else:
                         log.debug(f"第{seq}次重试上传拣货结果成功，拣货流程正常流转。")
                         return 1
                 else:
-                    log.debug(f"连续{count}次重试上传均失败，本次尝试暂时跳过本次结果上传。")
+                    log.warning(f"连续{count}次重试上传均失败，本次尝试暂时跳过本次结果上传。")
                     self.driver.click_element(skip_btn)
                     # 调用自身，可能有点问题。先看看。
                     self.page_check(timeout=10, pagename="拣货结果上报", text="暂时跳过", is_shoot=True,
@@ -642,7 +642,7 @@ class SpeedPicker:
                 log.debug(f"强点击文本:[{text}]成功。")
                 return
             else:
-                log.debug(f"强点操作，点击[{text}]失败。")
+                log.warning(f"强点操作，点击[{text}]失败。")
                 self.page_check(timeout=6, text=text, is_shoot=True, pagename=pagename, is_quit=False)
                 count -= 1
         if count == 0:
