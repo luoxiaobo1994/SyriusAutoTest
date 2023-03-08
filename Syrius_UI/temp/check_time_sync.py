@@ -84,9 +84,9 @@ def main(robot):
         except Exception as e:
             log.warning(f"获取时间命令：{date_command}返回结果异常，请检查：{pad_robot_timestamp}。异常类型：{e}。")
     log.debug(f"检查完成，执行重启操作。")
-    # ssh.exe_cmd("sudo reboot")
-    # time.sleep(30)
-    # log.debug(f"当前机器人:[{robot}]重启完成，执行下一次循环。\n")
+    ssh.exe_cmd("sudo reboot")
+    time.sleep(30)
+    log.debug(f"当前机器人:[{robot}]重启完成，执行下一次循环。\n")
     count += 1
     del ssh  # 有必要手动销毁对象，不然循环里的对象，一直用一个，会导致脚本使用的内存，对象出问题。 产生连接异常。
 
@@ -95,13 +95,15 @@ def main(robot):
 if __name__ == '__main__':
     robot = {
         '雷龙·内马尔': '10.2.8.255',
+        '雷龙·布里茨': '10.2.9.125',
         '梁龙1-鸣人': '10.2.8.103',
     }
     while True:
         try:
             # main(robot['雷龙·内马尔'])
-            main(robot['梁龙1-鸣人'])
-            break
+            main(robot['雷龙·布里茨'])
+            # main(robot['梁龙1-鸣人'])
+            # break
         except Exception as e:
             log.error(f"检查流程，发生异常：{e}，跳过本次循环。")
             time.sleep(30)

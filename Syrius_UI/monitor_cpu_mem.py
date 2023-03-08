@@ -24,7 +24,7 @@ def startServerAgent(robot):
     ssh.exe_cmd('chmod +x ./ServerAgent-2.2.3/startAgent.sh')
     time.sleep(1)  # 等待一下。
     try:
-        ssh.exe_cmd('ServerAgent-2.2.3/startAgent.sh', timeout=2)  # 因为是脚本打开的连接窗口，无需放到后台运行。不要加 &
+        ssh.exe_cmd('ServerAgent-2.2.3/startAgent.sh &', timeout=2)  #
     except TimeoutError:
         log.debug(f"startAgent.sh脚本启动成功，已经在刷新日志。结束本次操作。")
     # check_is_alive = ssh.exe_cmd("ps -aux | grep '/bin/sh ./ServerAgent-2.2.3/startAgent.sh'")
@@ -33,9 +33,9 @@ def startServerAgent(robot):
 
 if __name__ == '__main__':
     robots = {
-        '雷龙·苏亚雷斯': '10.2.9.181',
+        # '雷龙·苏亚雷斯': '10.2.9.181',
         '雷龙·内马尔': '10.2.8.255',
-        # '雷龙·布里茨': '10.2.9.125',
+        '雷龙·布里茨': '10.2.9.125',
         # '雷龙·C罗': '10.2.8.118',
         '梁龙·鸣人': '10.2.8.103',
         # '网卡211': '10.2.8.211',

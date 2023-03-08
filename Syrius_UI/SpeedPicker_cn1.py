@@ -973,7 +973,11 @@ class SpeedPicker:
                 log.info(f"出现了[关闭]弹窗，此时的文本:{self.sp_text}")
                 self.click_view_text("关闭")
             elif len(set(use_text) & set(self.sp_text)) == 0:  # 文本比对，不占用时间，保留。
-                log.warning(f"页面获取的文本与SP不符。\n现在拿到的是:{self.sp_text}")
+                if len(self.sp_text) == 0:
+                    log.debug(f"脚本抓到了空文本，跳过本次循环。")
+                    sleep(1)
+                    continue
+                log.warning(f"页面获取的文本与SpeedPicker不符。现在拿到的是:{self.sp_text}")
                 self.shoot()
                 sleep(5)
                 if len_same(self.get_config()['estop_text'], self.sp_text) >= 2:
@@ -995,7 +999,7 @@ class SpeedPicker:
                 target_location = locate  #
                 log.info(f"机器人正在前往:{locate}，请等待。")
                 if locate.startswith('A0'):
-                    log.debug(f"前往目标的拣货点信息：{list_remove(self.get_text(), self.get_config()['useless_text'])}")
+                    log.debug(f"前往目标的拣货点信息：{self.get_text()}")
                 if self.random_trigger(n=self.get_config()['pasue_psb'], process='暂停移动'):  # 触发随机。
                     self.pause_move()  # 暂停移动。
                 self.wait_moment("前往")
