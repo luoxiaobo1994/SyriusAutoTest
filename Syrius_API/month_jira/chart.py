@@ -94,10 +94,12 @@ def chart():
     # 各等级问题占比情况
     # issue_pie(total=issue_num,level=issue_level,ylabel='',chart_name='各等级缺陷分布比例')
     # 问题模块
-    issue_type = [key for key in data if key.endswith('缺陷')]
-    issue_type_bum = [data[key] for key in issue_type]
+    issue_type = [key.replace('缺陷','') for key in data if key.endswith('缺陷')]
+    temp_data_type = [key for key in data if key.endswith('缺陷')]
+    issue_type_bum = [data[key] for key in temp_data_type]
     # print(issue_type,issue_type_bum)
     # issue_pie(total=issue_type_bum, level=issue_type, ylabel='', chart_name='问题类型分布')
+    issue_bar(issue_type_bum,issue_type,xlabel='问题名称',ylabel='缺陷数量',title='问题模块')
     # 构建日期分布
     # date_plot(x=created_date.keys(), y=created_date.values(), xlabel_name='日期', ylabel_name='创建缺陷数量',
     #           title='月度每日创建缺陷数量')
@@ -114,7 +116,7 @@ def chart():
     # Jira创建情况
     reporter = data['reporter'].keys()
     report_num = [data['reporter'][key] for key in reporter]
-    issue_bar(report_num, reporter, xlabel='工程师', ylabel='创建Jira数量', title='Jira创建情况')
+    # issue_bar(report_num, reporter, xlabel='工程师', ylabel='创建Jira数量', title='Jira创建情况')
 
 def word_cloud():
     data = read_yaml('jira_data.yml')
@@ -129,5 +131,5 @@ def word_cloud():
 
 
 if __name__ == '__main__':
-    # chart()
-    word_cloud()
+    chart()
+    # word_cloud()

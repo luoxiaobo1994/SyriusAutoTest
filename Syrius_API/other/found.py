@@ -41,9 +41,9 @@ def get_found(code='012414', money='0'):
     res = re.findall(r'jsonpgz\((.*?)\);', response.text)[0]  # 获取到字符串的字典。
     res = eval(res)  # 转化为字典。
     amplitude = 0.9 if float(res['gszzl']) > 0 else 1.1  # 跌了多跌一点，涨了少涨一点。
-    income = float(res['gszzl']) * float(money) / 100 * amplitude
-    if float(money) < 10 and income == 0:  # 持仓极少的基，收益不要成0，会有点打乱涨跌情况。
-        income = -0.01 if float(res['gszzl']) < 0 else 0.01
+    income = float(res['gszzl']) * float(money) / 100 * amplitude * 10000  # 数据转换，防止错误
+    # if float(money) < 10 and income == 0:  # 持仓极少的基，收益不要成0，会有点打乱涨跌情况。
+    #     income = -0.01 if float(res['gszzl']) < 0 else 0.01
     total += income  # 本基金收益
     name = re.sub(r'[A-Za_z() 0-9]', '', res['name']).replace('发起式', '')
     found_data = f"{code:{space}<10}{name:{space}<15}{res['gszzl']:{space}<10}{income:{space}<10.2f}"

@@ -87,6 +87,9 @@ def bubble_sort(nums):
     return nums
 
 
+def sort_dict():
+    sorted()
+
 # 分割线
 def dd():
     print('\n', '-' * 20, '这是一条分割线', '-' * 20, '\n', sep='')
