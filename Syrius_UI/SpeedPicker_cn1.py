@@ -676,6 +676,7 @@ class SpeedPicker:
         # view_ls2 = self.driver.app_elements_text(locator=(By.XPATH, 'android.widget.TextView'))
         # log.debug(f"调试程序，拣货过程中的wdgetText:{view_ls2}")  # 这玩意抓不到，不抓了。
         if target in picking_text and checktarget and ismove:
+            log.debug(f"机器人到达：{target}。")
             log.debug(f"移动中前往的目标点位：{target}，与当前到达的拣货点一致。")
         elif target and target not in picking_text and ismove:
             log.warning(f"注意检查一下，移动中指示的目标点{target}与当前拣货页面的不一致。")
@@ -688,7 +689,7 @@ class SpeedPicker:
                 self.driver.click_element((By.XPATH, f'//*[@text="跳过"]'))
                 self.driver.click_element((By.XPATH, f'//*[@text="确定"]'), wait=2)
                 return  # 结束当前商品拣货
-        if '扫货品/输入' in picking_text or '扫货品/输入' in picking_text:  # 1.还没扫码，有输入按钮。
+        if '扫货品/输入' in picking_text:  # 1.还没扫码，有输入按钮。
             log.info("拣货场景1，SpeedPicker尚未开始捡取当前商品。")
             if '跳过此处，稍后拣选？' in picking_text:
                 self.driver.click_element((By.XPATH, f'//*[@text="确定"]'), wait=2)
@@ -1011,7 +1012,6 @@ class SpeedPicker:
                 if self.random_trigger(n=self.get_config()['pasue_psb'], process='暂停移动'):  # 触发随机。
                     self.pause_move()  # 暂停移动。
                 self.wait_moment("前往")
-                log.debug(f"机器人到达：{locate}。")
             elif any_one(self.get_config()['bind_text'], self.sp_text) and '前往' not in self.sp_text:
                 self.bind_container(self.sp_text)
             elif len_diff(self.sp_text, use_text) > 4 and re.findall('×\d+', ls):
