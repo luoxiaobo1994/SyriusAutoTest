@@ -1,10 +1,10 @@
 FCT缺陷: 12
 FPCHECKER缺陷: 0
-GoGoReady缺陷: 13
+GoGoReady缺陷: 14
 JingleBell缺陷: 0
 L4T缺陷: 6
 MCU缺陷: 0
-MoveBase缺陷: 57
+MoveBase缺陷: 74
 OTA缺陷: 0
 PQCP缺陷: 13
 PonyRunner缺陷: 1
@@ -13,7 +13,7 @@ all_labels:
   ClearJanitor_884: 50
   ClearJanitor_933: 26
   Clearjanitor_911: 13
-  Clearjanitor_973: 4
+  Clearjanitor_973: 17
   FCT771: 9
   FCT773: 2
   FCT778: 1
@@ -23,6 +23,7 @@ all_labels:
   GGR2718: 1
   GGR2727: 1
   GGR2735: 2
+  GGR2746: 1
   GenericLooperBug: 3
   Known_Issues: 2
   L4TVendor752: 2
@@ -41,12 +42,13 @@ all_labels:
   MoveBase5477: 3
   MoveBase5479: 6
   MoveBase5498: 1
+  MoveBase5544: 17
   NotABug: 4
   PQCP535: 1
   PQCP_542: 2
   PQCP_544: 1
   PQCP_固件_1240: 8
-  ToBeClosed: 11
+  ToBeClosed: 15
   V4TVendor_167_R32.7.3: 2
   V4TVendor_190_R32.7.3: 1
   V4TVendor_196_R32.7.3: 1
@@ -233,7 +235,7 @@ all_summery:
 - 【MoveBase】机器人运行SpeedPicker期间。点击暂停移动，此时拔下电池，更换机器人电池。整机系统恢复后，机器人不能继续移动。
 - 【算法-不移动】梁龙1-佐助，持续运行Ponnyrunner，前往目标点过程中，不能正常移动，暂停/恢复移动操作，不能让机器人继续移动。
 bug_versions: {}
-clearjanitor缺陷: 93
+clearjanitor缺陷: 106
 kuafu缺陷: 17
 reporter:
   刘明阳: 73
@@ -244,10 +246,10 @@ reporter:
   陈健民: 47
 total: 159
 一般: 56
-一般-解决数量: 12
+一般-解决数量: 16
 严重: 67
-严重-无分析评论: 19
-严重-解决数量: 20
+严重-无分析评论: 15
+严重-解决数量: 24
 其他类型缺陷: 42
 创建日期:
   02-01: 4
@@ -271,9 +273,9 @@ total: 159
   02-24: 3
   02-26: 2
   02-27: 14
-待关闭缺陷: 11
+待关闭缺陷: 15
 提示: 7
-提示-解决数量: 3
+提示-解决数量: 4
 无效缺陷: 4
 时钟缺陷: 4
 未解决的工程师:
@@ -283,18 +285,18 @@ total: 159
   chenweiming: 2
   guojiaren: 1
   hongjiaheng: 3
-  huanming: 12
+  huanming: 11
   kumar: 15
   linwenhong: 3
-  liuli: 22
-  lizichen: 8
+  liuli: 23
+  lizichen: 7
   luoxiaobo: 2
-  luxiao: 9
+  luxiao: 6
   menzhipeng: 3
   muxingyuan: 4
   sunqian: 2
   tangzhida: 2
-  wangkai: 32
+  wangkai: 36
   wangxiangyu: 10
   wangyuhang: 1
   yangbo: 1
@@ -303,5 +305,5 @@ total: 159
 碰撞缺陷: 0
 算法缺陷: 15
 致命: 29
-致命-无分析评论: 7
-致命-解决数量: 20
+致命-无分析评论: 3
+致命-解决数量: 24
