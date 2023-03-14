@@ -94,7 +94,7 @@ def basic_info():
     L4t_version = exe_cmd('cat /etc/jurassic_release')
     if L4t_version:
         pp(f"L4T构建日期：{L4T_date}，版本：{L4t_version}")
-        same_data['l4t_vendor'].append(L4t_version.partition('v')[-1])
+        same_data['l4t_vendor'].append(L4t_version.partition('-v')[-1])
     else:
         pp(f"L4T构建日期：{L4T_date}。")
     # 检查SN
@@ -359,10 +359,10 @@ if __name__ == '__main__':
     # main(robot['雷龙·内马尔'])
     main(robot['雷龙·布里茨'])
     # main(robot['雷龙·C罗'])
-    main(robot['梁龙·鸣人'])
+    # main(robot['梁龙·鸣人'])
     main(robot['网卡211'])
     # main(robot['网卡82'])
-    # main(robot['网卡242'])
+    main(robot['网卡242'])
     # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。
     check_same_data()  # 检查有没有版本不一致的机器人，这个不能注释掉。

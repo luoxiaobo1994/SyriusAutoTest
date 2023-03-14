@@ -538,7 +538,7 @@ class SpeedPicker:
                             log.warning(
                                 f"当前页面超过{minutes}分钟没有变化了，请检查是否发生了什么异常情况。")
                             self.shoot()
-                            self.err_notify()
+                            # self.err_notify()
                             return  # 出问题了，也跳出流程，等着回来吧。回来之前，不要重置计时器。
                     else:
                         self.reset_timer()
