@@ -41,7 +41,7 @@ class GGR():
             "apppackage": "com.syriusrobotics.platform.launcher",  # 包名
             "appActivity": "com.syriusrobotics.platform.launcher/com.syriusrobotics.platform.jarvis.MainFlutterActivity",
             "noReset": True,  # 不要重置
-            "unicodeKeyboard": True,  # 不会吊起键盘。
+            # "unicodeKeyboard": True,  # 不会吊起键盘。
             # "resetKeyboard": True,  # 恢复键盘
             'newCommandTimeout': 30000,  # 命令超时时间。给长一点
             'automationName': 'UiAutomator2'  # 可能是这里导致的常断开
@@ -668,82 +668,29 @@ class SpeedPicker:
                     log.warning("出现超时弹窗了，注意检查一下！！！")
 
     def picking(self, picking_text, target='', checktarget=False, ismove=False):
-        if not target.startswith('A0') and target != '':  # 在拣货点开脚本，目标点是空的。
-            log.debug(f"拣货点:目标点[{target}]检查不正确，退出拣货流程。")
-            return  # 前往的目标点，不是货架区。说明不是拣货流程，直接跳出去。
-        # self.press_ok()  # 异常耗时了。
-        # picking_text = self.get_text()
-        # view_ls2 = self.driver.app_elements_text(locator=(By.XPATH, 'android.widget.TextView'))
-        # log.debug(f"调试程序，拣货过程中的wdgetText:{view_ls2}")  # 这玩意抓不到，不抓了。
-        if target in picking_text and checktarget and ismove:
-            log.debug(f"机器人到达：{target}。")
-            log.debug(f"移动中前往的目标点位：{target}，与当前到达的拣货点一致。")
-        elif target and target not in picking_text and ismove:
-            log.warning(f"注意检查一下，移动中指示的目标点{target}与当前拣货页面的不一致。")
-        # print(f"view_ls:{view_ls}")
-        log.info(f"SpeedPicker处于拣货流程，页面信息:{picking_text}")  # 需要记录一下进入拣货流程.
-        self.wait_for_time(n=self.get_config()['picking_out'], timeout=self.get_config()['picking_outtime'])
-        if self.random_trigger(n=self.get_config()['skip_picking'], process='跳过当前商品拣货'):
-            if '跳过' in self.get_text():
-                log.debug(f"触发随机事件，跳过当前商品的捡取。")
-                self.driver.click_element((By.XPATH, f'//*[@text="跳过"]'))
-                self.driver.click_element((By.XPATH, f'//*[@text="确定"]'), wait=2)
-                return  # 结束当前商品拣货
-        if '扫货品/输入' in picking_text:  # 1.还没扫码，有输入按钮。
-            log.info("拣货场景1，SpeedPicker尚未开始捡取当前商品。")
-            if '跳过此处，稍后拣选？' in picking_text:
-                self.driver.click_element((By.XPATH, f'//*[@text="确定"]'), wait=2)
-                log.debug(f"跳过当前商品拣货。")
-                return
-            if self.random_trigger(n=self.get_config()['pick_psb'], process='输入商品码'):  # 概率，上报异常。
-                self.report_err()
-                return  # 结束拣货流程.
+        # log.debug(f"当前输入法是：")?
+        init_loc = {'x': 21, 'y': 1068}
+        count = 7
+        while True:
+            log.debug(f"第{count}次检查。")
             self.click_view_text("扫货品/输入", new_element=(By.XPATH, '//android.widget.EditText'),
                                  pagename="拣货点击输入")  # 点击输入按钮
-            # 随机触发,输入错误商品码的概率
-            if self.random_trigger(n=self.get_config()['err_code_psb'], process='输入错误商品码'):
-                self.input_error(random.randint(1, 564313112131))  # 随机取一个,取对了,就可以买彩票了。
-
-            try:
-                good_num = re.findall('×\d+', ''.join(picking_text))[0]
-                log.debug(f"当前商品需要捡取：{good_num.replace('×', '')}个。")
-                index1 = el_index(good_num, picking_text)
-                good_code = picking_text[index1 - 1]  # 有什么办法,准确拿到商品码.
-                if good_code.isalnum():
-                    pass
-                else:
-                    good_code = '199103181516'
-            except:
-                good_code = '199103181516'
-                log.debug('没有获取到商品编码，检查一下，是不是页面排版又变化了。')
+            loc = self.driver.element_loc((By.XPATH, '//android.widget.EditText'))
+            if loc != init_loc:
+                log.error(f"键盘没有成功弹起，输入框位置不对。请检查。")
                 self.shoot()
-            self.inputcode(code=good_code)  # 输入了商品码。
-            self.wait_for_time(n=self.get_config()['picking_out'], timeout=self.get_config()['wait_finshed'])  # 超时等待
-            # 万一有相同商品同时拣货，需要做一下处理。
-            while True:
-                if self.driver.element_display((By.XPATH, '//*[@text="继续"]'), wait=1):
-                    self.driver.click_element((By.XPATH, '//*[@text="继续"]'))
-                    log.debug(f"当前商品还有其他订单需要捡取，点击继续捡取成功。")
-                else:
-                    # log.debug(f"相同商品连续捡取完毕。")
-                    break
-            self.driver.click_element((By.XPATH, '//*[starts-with(@text, "完成")]'))
-            log.debug(f"通过点击[完成]，完成拣货。")
-        elif self.driver.element_display((By.XPATH, '//android.widget.EditText'), wait=1):
-            # print(2222)
-            # 拣货情形2,点开了输入框,但是没有输入商品码
-            log.debug(f"拣货场景2，点击了输入按钮，弹出输入框，但未输入商品码。本次输入万能码。")
-            self.inputcode(code='199103181516')
-            self.driver.click_element((By.XPATH, '//*[starts-with(@text, "完成")]'))
-        else:
-            # 拣货情形3,都捡完了,只是没点完成.
-            # print(11111)
-            self.driver.click_element((By.XPATH, '//*[starts-with(@text, "完成")]'))
-            log.debug(f"拣货场景3，商品已捡取，未点击[完成]，通过点击[完成]，快速完成拣货。")
-        # 页面检查函数，页面名称是拣货完成，有单独判断。这里名称不要随便改。 会校验：是否开启了快速拣货。
-        self.page_check(timeout=10, pagename='拣货完成', is_shoot=True, text='完成', new_text='前往',
-                        new_text2='完成并继续')  # 这里比较容易卡. 在这里检查一下.
-        # self.go_to()
+                break
+            log.debug(f"输入框已弹出，坐标：{loc}")
+            # sleep(2)
+            self.driver.tap(binlocation=[loc['x'], loc['y'] - 80])
+            # sleep(2)
+            if not self.driver.element_display((By.XPATH, '//android.widget.EditText')):
+                log.debug(f"键盘收起成功。")  # 这个判断，可能不太合理。
+            else:
+                log.error(f"键盘收起，但输入框没有正常收起。")
+                self.shoot()
+            # sleep(3)
+            count += 1
 
     def check_time(self):
         while True:

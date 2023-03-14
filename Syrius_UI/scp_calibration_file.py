@@ -35,7 +35,7 @@ def scp_file(robot, file):
     except:
         pass
     ssh.scp_file(file=file, path='./')
-    ssh.exe_cmd('sudo cp robot_sensors.yaml /opt/cosmos/etc/calib/calibration_result/')
+    ssh.exe_cmd('sudo cp robot_sensors.yaml /opt/cosmos/etc/calib/calibration_result')
     ssh.exe_cmd('sudo chown factory:factory /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml')
     ssh.exe_cmd('sudo chmod 0600 /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml')
     ssh.exe_cmd('sudo setfacl -m u:pivot:rx -R /opt/cosmos/etc/calib/')
@@ -46,7 +46,7 @@ def scp_file(robot, file):
 
 
 # scp_file(robots['雷龙·内马尔'], file=file + r'\内马尔\robot_sensors.yaml')
-# scp_file(robots['梁龙·鸣人'], file=file + r'\鸣人\robot_sensors.yaml')
+scp_file(robots['梁龙·鸣人'], file=file + r'\鸣人\robot_sensors.yaml')
 # scp_file(robots['雷龙·苏亚雷斯'], file=file + r'\苏亚雷斯\robot_sensors.yaml')
 # scp_file(robots['雷龙·布里茨'], file=file + r'\布里茨\robot_sensors.yaml')
-scp_file(robots['网卡211'], file=file + r'\佐助\robot_sensors.yaml')
+# scp_file(robots['网卡211'], file=file + r'\佐助\robot_sensors.yaml')

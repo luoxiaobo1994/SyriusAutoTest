@@ -12,6 +12,9 @@ import pytz
 
 # 全局数据
 ssh = paramiko.SSHClient()  # 连接实例
+same_data = {'MoveBase': [],  # 多个机器人，检查结果应该一致。
+             'l4t_vendor': []
+             }
 
 
 def pp(msg, level='DEBUG', color='g'):
@@ -85,11 +88,13 @@ def basic_info():
     # 检查MoveBase版本
     MoveBase = exe_cmd('cat /opt/cosmos/etc/ota/version')
     pp(f'MoveBase版本：{MoveBase}')
+    same_data['MoveBase'].append(MoveBase)
     # 检查L4T信息
     L4T_date = exe_cmd("grep -E 'build date:(.*?)$' /etc/version.yaml")
     L4t_version = exe_cmd('cat /etc/jurassic_release')
     if L4t_version:
         pp(f"L4T构建日期：{L4T_date}，版本：{L4t_version}")
+        same_data['l4t_vendor'].append(L4t_version.partition('v')[-1])
     else:
         pp(f"L4T构建日期：{L4T_date}。")
     # 检查SN
@@ -304,6 +309,15 @@ def startAgent():
     pass
 
 
+def check_same_data():
+    MoveBase_set = set(same_data['MoveBase'])
+    L4t_set = set(same_data['l4t_vendor'])
+    if len(MoveBase_set) != 1:
+        pp(f'检查的所有机器人MoveBase有不一致的，请检查版本错误的机器人。', "WARNING", color='r')
+    if len(L4t_set) != 1:
+        pp(f'检查的所有机器人L4t Vendor有不一致的，请检查版本错误的机器人。', "WARNING", color='r')
+
+
 def debug():
     pass
     # res = exe_cmd("sudo systemctl is-active systemd-timesyncd").split('\r\n')
@@ -343,11 +357,12 @@ if __name__ == '__main__':
     }
     # main(robot['雷龙·苏亚雷斯'])
     # main(robot['雷龙·内马尔'])
-    # main(robot['雷龙·布里茨'])
+    main(robot['雷龙·布里茨'])
     # main(robot['雷龙·C罗'])
-    # main(robot['梁龙·鸣人'])
-    # main(robot['网卡211'])
+    main(robot['梁龙·鸣人'])
+    main(robot['网卡211'])
     # main(robot['网卡82'])
-    main(robot['网卡242'])
+    # main(robot['网卡242'])
     # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。
+    check_same_data()  # 检查有没有版本不一致的机器人，这个不能注释掉。
