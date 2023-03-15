@@ -283,6 +283,7 @@ def model():
         'LMLDI0500': '高版梁龙2-雅滕电机-非认证',
         'LMLDI0501': '高版梁龙2-雅滕电机-非认证',
         'LMLBA0100': '重龙PA版样机',
+        'LMLDI0300': '梁龙1A',
     }
     try:
         res = exe_cmd('cat /sys/robotInfo/Model')[:9]
@@ -312,9 +313,9 @@ def startAgent():
 def check_same_data():
     MoveBase_set = set(same_data['MoveBase'])
     L4t_set = set(same_data['l4t_vendor'])
-    if len(MoveBase_set) != 1:
+    if len(MoveBase_set) > 1:  # 只检查一个机器人，且连接不上的时候，是0个。
         pp(f'检查的所有机器人MoveBase有不一致的，请检查版本错误的机器人。', "WARNING", color='r')
-    if len(L4t_set) != 1:
+    if len(L4t_set) > 1:
         pp(f'检查的所有机器人L4t Vendor有不一致的，请检查版本错误的机器人。', "WARNING", color='r')
 
 
@@ -357,12 +358,12 @@ if __name__ == '__main__':
     }
     # main(robot['雷龙·苏亚雷斯'])
     # main(robot['雷龙·内马尔'])
-    main(robot['雷龙·布里茨'])
+    # main(robot['雷龙·布里茨'])
     # main(robot['雷龙·C罗'])
-    # main(robot['梁龙·鸣人'])
-    main(robot['网卡211'])
+    main(robot['梁龙·鸣人'])
+    # main(robot['网卡211'])
     # main(robot['网卡82'])
-    main(robot['网卡242'])
+    # main(robot['网卡242'])
     # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。
     check_same_data()  # 检查有没有版本不一致的机器人，这个不能注释掉。
