@@ -35,6 +35,7 @@ def scp_file(robot, file):
     except:
         pass
     ssh.scp_file(file=file, path='./')
+    ssh.exe_cmd('sudo mkdir /opt/cosmos/etc/calib/calibration_result')
     ssh.exe_cmd('sudo cp robot_sensors.yaml /opt/cosmos/etc/calib/calibration_result')
     ssh.exe_cmd('sudo chown factory:factory /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml')
     ssh.exe_cmd('sudo chmod 0600 /opt/cosmos/etc/calib/calibration_result/robot_sensors.yaml')
@@ -50,3 +51,4 @@ scp_file(robots['梁龙·鸣人'], file=file + r'\鸣人\robot_sensors.yaml')
 # scp_file(robots['雷龙·苏亚雷斯'], file=file + r'\苏亚雷斯\robot_sensors.yaml')
 # scp_file(robots['雷龙·布里茨'], file=file + r'\布里茨\robot_sensors.yaml')
 # scp_file(robots['网卡211'], file=file + r'\佐助\robot_sensors.yaml')
+# scp_file(robots['网卡82'], file=file + r'\雷利\robot_sensors.yaml')
