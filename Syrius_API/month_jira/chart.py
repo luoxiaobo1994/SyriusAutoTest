@@ -30,8 +30,9 @@ def issue_pie(total, level, ylabel='', chart_name='图标名称'):
     plt.show()
 
 
-def issue_bar(every_level, level, xlabel='y轴名称', ylabel='y轴名称', title='图标名称'):
+def issue_bar(every_level, level, xlabel='y轴名称', ylabel='y轴名称', title='图标名称', rotation=0):
     rect1 = plt.bar(level, every_level)
+    plt.xticks(rotation=rotation)
     auto_text(rect1)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
@@ -90,44 +91,49 @@ def chart():
     created_date = data['创建日期']  # 这直接是一个好的字典。
     issue_state = ['完成', '开放', '未分析', '拒绝']
     # 各等级问题解决情况
-    # two_bar(total_list=issue_num, solve_list=solved_issue, xticks=issue_level,title='缺陷解决情况')
+    two_bar(total_list=issue_num, solve_list=solved_issue, xticks=issue_level, title='缺陷解决情况')
     # 各等级问题占比情况
-    # issue_pie(total=issue_num,level=issue_level,ylabel='',chart_name='各等级缺陷分布比例')
+    issue_pie(total=issue_num, level=issue_level, ylabel='', chart_name='各等级缺陷分布比例')
     # 问题模块
-    issue_type = [key.replace('缺陷','') for key in data if key.endswith('缺陷')]
+    issue_type = [key.replace('缺陷', '') for key in data if key.endswith('缺陷')]
     temp_data_type = [key for key in data if key.endswith('缺陷')]
     issue_type_bum = [data[key] for key in temp_data_type]
     # print(issue_type,issue_type_bum)
-    # issue_pie(total=issue_type_bum, level=issue_type, ylabel='', chart_name='问题类型分布')
-    issue_bar(issue_type_bum,issue_type,xlabel='问题名称',ylabel='缺陷数量',title='问题模块')
+    issue_pie(total=issue_type_bum, level=issue_type, ylabel='', chart_name='问题类型分布')
+    issue_bar(issue_type_bum, issue_type, xlabel='问题名称', ylabel='缺陷数量', title='问题模块', rotation=315)
     # 构建日期分布
-    # date_plot(x=created_date.keys(), y=created_date.values(), xlabel_name='日期', ylabel_name='创建缺陷数量',
-    #           title='月度每日创建缺陷数量')
+    date_plot(x=created_date.keys(), y=created_date.values(), xlabel_name='日期', ylabel_name='创建缺陷数量',
+              title='月度每日创建缺陷数量')
     # 致命。严重分析情况
     open_issue = ['致命', '严重']
     open_issue_num = [data['致命'] - data['致命-解决数量'], data['严重'] - data['严重-解决数量']]
     no_coment_issue = [data['致命-无分析评论'], data['严重-无分析评论']]
-    # two_bar(open_issue_num, no_coment_issue, open_issue, label_heigh='未解决数量', label_lower='未解决-且无分析',
-    #         title='致命/严重开放问题分析情况')
+    two_bar(open_issue_num, no_coment_issue, open_issue, label_heigh='未解决数量', label_lower='未解决-且无分析',
+            title='致命/严重开放问题分析情况')
     # 未解决问题的责任工程师
     un_solved_engineer = data['未解决的工程师'].keys()
     un_solved_num = [data['未解决的工程师'][key] for key in un_solved_engineer]
-    # issue_bar(un_solved_num, un_solved_engineer, xlabel='工程师', ylabel='未解决缺陷数量', title='未解决缺陷指派情况')
+    issue_bar(un_solved_num, un_solved_engineer, xlabel='工程师', ylabel='未解决缺陷数量', title='未解决缺陷指派情况',
+              rotation=315)
     # Jira创建情况
     reporter = data['reporter'].keys()
     report_num = [data['reporter'][key] for key in reporter]
-    # issue_bar(report_num, reporter, xlabel='工程师', ylabel='创建Jira数量', title='Jira创建情况')
+    issue_bar(report_num, reporter, xlabel='工程师', ylabel='创建Jira数量', title='Jira创建情况')
+
 
 def word_cloud():
     data = read_yaml('jira_data.yml')
     text = ','.join(data['all_summery'])
-    text = text.replace('【','').replace('】','')
+    text = text.replace('【', '').replace('】', '')
     words = ''.join(jieba.lcut(text))
-    words_cloud = WordCloud(font_path = "C:\Windows\Fonts\SIMYOU.TTF",
-                            width=1200,height=800,max_font_size=80
-                            ).generate(words)
-    words_cloud.to_file('词云.jpg')
     # print(words)
+    try:
+        words_cloud = WordCloud(font_path=r"C:\Windows\Fonts\simhei.ttf",  # 这里需要注意，单独百度下载这个字体
+                                width=1200, height=800, max_font_size=80
+                                ).generate(words)
+        words_cloud.to_file('词云.jpg')
+    except:
+        print(f"设置字体失败，请检查字体文件是否正常。")
 
 
 if __name__ == '__main__':

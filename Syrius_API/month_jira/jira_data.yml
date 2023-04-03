@@ -1,309 +1,359 @@
-FCT缺陷: 12
+FCT缺陷: 4
 FPCHECKER缺陷: 0
-GoGoReady缺陷: 14
-JingleBell缺陷: 0
-L4T缺陷: 6
+GoGoReady缺陷: 40
+JingleBell缺陷: 1
+L4T缺陷: 1
 MCU缺陷: 0
-MoveBase缺陷: 74
-OTA缺陷: 0
-PQCP缺陷: 13
-PonyRunner缺陷: 1
+MoveBase缺陷: 103
+OTA缺陷: 1
+PQCP缺陷: 0
+PonyRunner缺陷: 0
 all_labels:
-  '2302': 11
-  ClearJanitor_884: 50
-  ClearJanitor_933: 26
-  Clearjanitor_911: 13
-  Clearjanitor_973: 17
-  FCT771: 9
-  FCT773: 2
-  FCT778: 1
-  GGR2683: 4
-  GGR2701: 3
-  GGR2711: 2
-  GGR2718: 1
-  GGR2727: 1
+  ClearJanitor_1050: 49
+  ClearJanitor_1142: 54
+  ClearJanitor_1171: 1
+  ClearJanitor_365: 32
+  ClearJanitor_933: 1
+  Clearjanitor_973: 43
+  CoreDump: 1
+  FCT730: 1
+  FCT778: 3
   GGR2735: 2
-  GGR2746: 1
-  GenericLooperBug: 3
-  Known_Issues: 2
-  L4TVendor752: 2
-  L4TVendor786: 1
-  L4TVendor788: 2
-  LV4TVendor_190_R32.7.3: 1
-  Mothership_V1.0.0.13: 1
-  MoveBase5348: 1
-  MoveBase5356: 3
-  MoveBase5368: 13
-  MoveBase5392: 7
-  MoveBase5405: 1
-  MoveBase5434: 14
-  MoveBase5436: 3
-  MoveBase5465: 5
-  MoveBase5477: 3
-  MoveBase5479: 6
-  MoveBase5498: 1
-  MoveBase5544: 17
-  NotABug: 4
-  PQCP535: 1
-  PQCP_542: 2
-  PQCP_544: 1
-  PQCP_固件_1240: 8
-  ToBeClosed: 15
-  V4TVendor_167_R32.7.3: 2
-  V4TVendor_190_R32.7.3: 1
-  V4TVendor_196_R32.7.3: 1
-  algorithm: 5
-  collision_issue: 10
-  kuafu_gateway2701: 5
-  kuafu_gateway2717: 2
-  kuafu_gateway2727: 10
-  l4t_vendor_V1.0.752: 1
-  lost_location: 2
-  move_issue: 7
-  ponyrunner_bug: 1
-  pqcp_diplo2: 1
-  rigel_test: 1
-  self_MCB: 4
-  shadow_intruder: 1
-  time_sync: 2
-  timesyncd没启动: 1
-  utime: 1
-  华为平板: 1
-  时钟同步: 4
+  GGR2746: 4
+  GGR2754: 2
+  GGR2766: 1
+  GGR2769: 1
+  GGRA2_1171: 30
+  GTSAMCrashBug: 1
+  Jinglebell: 1
+  L4TVendor788: 1
+  M3: 11
+  M4: 11
+  Marwk3: 1
+  MoveBase4972: 1
+  MoveBase5520: 2
+  MoveBase5544: 34
+  MoveBase5551: 9
+  MoveBase5563: 10
+  MoveBase5597: 1
+  MoveBase5624: 2
+  MoveBase5633: 2
+  MoveBase5658: 4
+  MoveBase5671: 31
+  MoveBase5680: 3
+  MoveBase5728: 1
+  MoveBase5740: 2
+  NotABug: 3
+  ORCA: 2
+  OTA: 1
+  RobotCollisionBug: 3
+  ToBeClosed: 47
+  algorithm: 4
+  collision_issue: 7
+  connect: 1
+  daily_test: 4
+  diplo2A_0330: 4
+  dragonball_2028: 9
+  kuafu_gateway2727: 1
+  lost_location: 5
+  mapping_trouble: 2
+  move_issue: 8
+  no_calibration_file: 2
+  pad_K10: 12
+  rigel_daily_test: 7
+  utime_V1.2_20230301: 21
+  utime_rom: 9
 all_summery:
-- 【ClearJanitor】【RFID】Transmission Output Power的值输入没有进行限制
-- 【ClearJanitor】【RFID】Country/Region RF Config的选项为测试数据
-- 【ClearJanitor】【RFID】Country/Region RF Config右侧的值为UNKNOWN
-- 【梁龙2】【PQCP】刷入最新提测版本MoveBase_V3.0.5465版本后，梁龙2_JCB_V06用PQCP写入Model和Robot_SN失败
-- 【Clearjanitor】机器已经旋起急停，结果上位机执行任务还有急停通知，重启问题存在
-- 【Clearjanitor】-【RFID】-【Tag Reading】值的变化波动有点大，且不稳定
-- 【MoveBase】梁龙1A和梁龙2在拐角处正面相撞
-- 【Clearjanitor】【RFID】【Country/Region RF Config】中【transmissionPowerRange】后面没有对应的值
-- 【Clearjanitor】【RFID】每次重启整机之后保存的数据丢失
-- 【Clearjanitor】【RFID】“Transmission OutPut Power”出现无法保存的情况,且此时“Tag Reading”也无法读取到“UHF
-  Test Card”的强度
-- 【Clearjanitor】【自动清洁】机器执行自动清洁任务时长时间定位不上
-- 【首页-设置-Advance】RFID Manage功能每次重启之后都是默认关闭的
-- 【GoGoReady】重启下位机后，GGR自动拉起，随后白屏，点击页面没反应
-- 【首页-设置-Advance】Speed Settings-speed Management，修改无法保存
-- 【L4TVendor】梁龙2-JCB-V06板子没有数据返回
-- 【L4TVendor】刷机L4TVendor786后，重启下位机，GGR不能自动拉起
-- 【算法-碰撞】MoveBase3.0.5479，T字路口，梁龙直行撞到从巷道内出来的雷龙。碰撞后，梁龙继续作业，雷龙停止运行。
-- 【fpchecker】【梁龙1】测试JCB时有两项错误
-- 【fpchecker】【梁龙1】测试NSB时输入正确的BoardID,结果提示错误
-- 【AOA连接测试】【梁龙2】点击“启动”，点击“整机+云端通信测试”，测试结果：failed
-- 【MoveBase-kuafu】雷龙机器人与GoGoReady不能正常连接，重启GoGoReady，机器人几次，未能恢复连接。
-- 【PQCP】【整机信息检索】【整机SN写入】梁龙2在“整机SN写入”成功之后，通过“整机信息检索”查询发现结果与写入结果不一致
-- 【navigation】罗宾在切换地图成功之后导航服务出现了问题
-- 【FPCHECKER-测试-DIPLO2-DCB】测试内容：“版本检查”，“DAC1”，“DAC2”，“DAC3”，“DAC4”，“DAC5”，“DAC6”，“DAC7”，“DAC8”，“DAC9”，“DAC10”，“DAC11”，“DAC12”，“DAC13”，“DAC14”结果为FAIL
-- 【算法-碰撞】下位机时钟未同步平板正确的时间，导致刚运行SpeedPicker的梁龙1和梁龙2，在过道内产生了面对面的巨大碰撞。
-- 【算法-定位】梁龙2-雷利机器人，首次定位时，定位不成功，重新启动navgation_skil后，定位成功。
-- 【MoveBase】梁龙2机器人，运行SpeedPicker过程中，异常停止在绑定点附近。人为协助不能正常继续作业。急停反馈延迟。急停收日志过程中，出现丢失定位。
-- 【算法-移动】修改版本之后，梁龙运行变得保守，在巷道内或者拐角处，运行缓慢，甚至长时间在原地抖动不能前行。
-- 【MoveBase】梁龙1和雷龙在打包点并排相撞，争抢打包点。
-- 喷水机无法正常喷水，流浪计速度为0
-- 【MoveBase】雷龙机器人平板时间正确同步网络时间，但机器人时间仍然是错误时间。导致不能正确收到OTA推送。
-- 【梁龙1】【navigation-skill】佐助在多次重启之后“navigation-skill”依然存在问题
-- 【算法-碰撞】运行SpeedPicker的梁龙1，将运行的雷龙撞停。梁龙1继续作业。
-- 【Clearjanitor】【首页-自动清洁(Auto Cleaning)-清洁任务(Cleaning Task)-地图列表(Route List)-新增任务(New
-  Task)】任务设置(1个清洁路径)-左侧单个地图与UI设计不符
-- 【Clearjanitor】【首页-自动清洁(Auto Cleaning)-清洁任务(Cleaning Task)-地图列表(Route List)-新增任务(New
-  Task)】任务设置(1个清洁路径)，界面缺少“Timer Settings”
-- 【算法-避障】梁龙2机器人，运行过程中，撞击到拐角的货架。
-- 【算法-避障】运行SpeedPicker的雷龙和梁龙1，面对面碰撞。碰撞之后，仍在继续前进。
-- 【Mothership】云端的报告与PQCP的测试报告相比多了一个【扫码枪】
-- 【MoveBase】OTA过程中，蜂鸣器持续长鸣。等待一段时间后，才结束。影响用户体验。
-- 【fpchecker】【梁龙1】【梁龙2】在测试IBB时测试项【key go/stop键按下测试】结果为“fall”
-- 【梁龙1】【梁龙2】【fpchecker-IBB】梁龙1和梁龙2【fpchecker】中【IBB】测试项【VCC-12V检测】输入电压值为【12.25】，结果为【pass】
-- 【AOA连接测试】界面弹出提示“Gateway Demo已停止运行”
-- 【梁龙1A】电路板JCB识别不到U盘
-- 【PQCP】【底盘组件】【梁龙1】电子平台在测试【底盘组件】时【PDB】SN码读取异常
-- 【PQCP】【梁龙1】查看测试报告时PQCP会闪退
-- 【PQCP】【JCB组件】【梁龙1】鸣人在测试JCB组件时【JCB PCBA】SN码读取异常
-- 【PQCP】【梁龙1】整机信息查询出现了部分查询不到的情况
-- 【PQCP】【梁龙1】【半成品1】PQCP测试半成品1时长时间没有结果输出
-- 【FPCHECKER-测试梁龙2-V04-JCB】测试项内容：“版本检查”、“Ethernet”结果为FAIL
-- 【FPCHECKER-烧录-JCB】一直停留在“正在等待接入串口设备”窗口界面
-- 【FPCHECKER-测试-JCB】测试项“地磁计自检”检测结果为“FAIL”
-- 【FPCHECKER-测试-JCB】使用梁龙2-JCB-V04的配置表和FCT771版本对比，测试内容多出一个“烧录”项
-- 【FPCHECKER-测试-JCB】BoardID+BoardSN输入WWVU0100406JCB06,DIJC0123456789提示格式不正确
-- 【PQCP】【梁龙2】【半成品】【头部组件】检测多项均为“fall”
-- 【梁龙2】罗宾机器在开机时深度视觉模组未开启
-- 【FPCHECKER-烧录-JCB】弹窗提示“进入刷机模式失败”
-- 【ClearJanitor】【自动清洁】机器自动清洁模式下任务刚刚开始就跳转到任务结束界面
-- 【ClearJanitor】【常规建图】机器在建图时速度过快轮毂会卡顿一下
-- 【ClearJanitor】【自动清洁】任务开始时界面上方循环次数选择无限次之后机器无法正常执行任务
-- 【ClearJanitor】自动清洁运动中，机器抖动无法继续运动
-- 【ClearJanitor】【肇光模组】机器肇光模组大概在1000秒左右的时候就会挂掉
-- 【ClearJanitor】自动清洁运动中，某段路程开启了清洁模式时，没有自动进行清洁
-- 【ClearJanitor】【自动清洁】机器自动清洁时与建图时的路线不一致，相差较大
-- 【ClearJanitor】扫定位码时，机器轮毂是锁住的
-- 【ClearJanitor】选择一张地图开始任务，进入开始清洁界面，loading花费的时间过长，大概需要2-3分钟
-- 【ClearJanitor】自动清洁开始运动时，偶现无法进行运动
+- 【雷龙】两台雷龙的导航服务出现问题
+- ' 【梁龙2A】【2次】机器丢失定位静止不动，导航服务占用异常升高，一段时间后机器自己重启'
+- 【梁龙2A】运行过程中长时间卡在拐角处
+- 【GoGoReady】【梁龙2】【梁龙1】【雷龙】新建地图上传到云端失败
+- 【雷龙】机器在执行任务时长时间静止不动
+- 【梁龙2A】运行过程中长时间静止不动
+- 【梁龙2A】【多次】运行过程中出现丢失定位
+- 【ClearJanitor】在ClearJanito小程序主界面，点击ClearJanitor控制面板设置，界面跳到ClearJanitor小程序主界面，没有跳到GGR设置界面
+- 【ClearJanitor】进入“Play List”页面未进行任何操作，“Done”显示是蓝色，而且拖顺序排序失败
+- 【ClearJanitor】由于无法删除数据导致无法达成”Play List数据为空“的前置条件
+- 【ClearJanitor】点击底部按钮【Remove】无反应，不能删除数据
+- 【Clearjanitor】”Play List“中实际UI与预期结果不符
+- 【Clearjanitor】清洁机器人执行到第四个循环停下不动
+- 【Clearjanitor】”sensor view“功能打开之后无法查看传感器数据
 - 【ClearJanitor】新建路径时，保存地图的耗时比较长，大概需要2-3分钟
-- 【ClearJanitor】点击多地图列表右上角的排序icon图标，没有弹出窗口
-- 【ClearJanitor】把文件放进下位机，使磁盘爆满，新建地图，点击保存，界面没有收到提示“Something Went Wrong：x00ac, please
-  try restart robot”
-- 【ClearJanitor】“RFID”在定位时未显示该字段提示
-- 【ClearJanitor】进入常规建图模式，扶手未拉开，界面没有弹窗提示：“Pull handle to continue”
-- 【ClearJanitor】【RFID】该功能目前尚未开发
-- 【ClearJanitor】在执行任务过程中丢失定位上位机没有通知
-- 【ClearJanitor】污水箱箱满/空，清水箱满/空没有提示
-- 【ClearJanitor】完成-任务执行详情标题不正确和缺少属性
-- 【ClearJanitor】开始任务，手杠没放下，界面没有弹出：Pull down the handle back to continue cleaning task
-- 【ClearJanitor】扶手未拉起，通知栏未弹窗提示：Pull up the handle to start manual operation
-- 【状态栏】其他报错时，状态栏没有展示“故障图标”
-- 【ClearJanitor】【休眠】点击“休眠”点击没有反应
-- 【ClearJanitor】【快速模式】快速模式建图和路径详情没有模式切换
-- 【ClearJanitor】任务列表的地图详情上面没有同步图标
-- 【ClearJanitor】【通知-清水/污水箱不在位】建图场景时没有污水箱不在位的提示
-- 【ClearJanitor】急停解除之后弹窗没有消失
-- 【ClearJanitor】【急停】按下急停之后顶部没有发生改变
-- 【ClearJanitor】字段“Termination Mode”上面没有疑问图标
-- 【ClearJanitor】选择2个以上的清洁路径，界面未找到“Timer Settings”按钮
-- 【定位】【ClearJanitor】机器在建图定位时长时间定位不上，界面一直停留在loading页面中
-- 【ClearJanitor】界面没有“Repeat Days”按钮
-- 【ClearJanitor】使用计时表和界面上的时钟一起统计，不一致
-- 【ClearJanitor】选择一张地图进入，没有显示清洁模式
-- 【ClearJanitor】机器不对着二维码，界面一直显示“loading”，控制面板也没有定位丢失提示
-- 【MoveBase】GoGoReady下发的载具，机器人没有正确应用载具尺寸。
-- 【ClearJanitor】在Task list 界面没有上次执行详情
-- 【ClearJanitor】断开USB线，点击无反应，没有气泡弹出，内容为：Save change Failed
-- 【GoGoReady】V2.0.0.2727 K11平板云端OTA完成后，手动打开GoGoReady，界面卡在启动页，不能正常进入GoGoReady。
-- 【GoGoReady】梁龙1，机器人定位正常状态下，进入急停。 解锁/锁定轮毂功能无效。
-- 【MoveBase】【梁龙1】梁龙机器人执行拣货任务，在拐角处撞上货架
-- 【算法-移动】梁龙2，启动SpeedPicker之后，机器人轮毂是解锁状态。不能正常运动。
-- 【GoGoReady】【梁龙2】拍下急停按键，GGR界面没通知，机器未停下，继续执行拣货任务
-- 【GoGoReady】GGR在被下位机自启动后出现了"GoGoReady屡次停止运行“
-- 【暂停作业】【梁龙1】机器取消暂停作业，执行SpeedPicker时机器静止不动
-- 【定位丢失】鸣人在刚刚启动机器时出现定位丢失的情况
-- 【ClearJanitor】页面没有弹窗：检测到可更新应用，下方按钮取消和立即更新
-- 【ClearJanitor】点击“Factory Reset”无反应
-- 【ClearJanitor】“Sensor View mode”不能正常切换到对应的功能，界面也没有找到帮助文档
-- 【算法-碰撞】梁龙1追尾雷龙，将雷龙撞停。碰撞后，梁龙1仍能继续运动。
-- 【首页-自动清洁(Auto Cleaning)-清洁任务(Cleaning Task)-任务列表(Task List)-任务详情】1个路径的任务详情，左侧单个地图下方标识与预期不符
-- 【算法-碰撞】运行SpeedPicker的机器人与运行PonyRunner的机器人面对面碰撞，碰撞后，均能继续移动。
-- 【首页-自动清洁(Auto Cleaning)-清洁任务(Cleaning Task)-任务列表(Task List)】选中1个任务，界面查看
-- 【首页-自动清洁(Auto Cleaning)-清洁任务(Cleaning Task)】未录入地图（或者首次进入），新增任务时提示与实际不符
-- 【首页-自动清洁(Auto Cleaning)-清洁路径(Cleaning Route)-路径列表(Route List)】地图详情-删除，地图删除的时候没有提示
-- 【算法-碰撞】梁龙1与梁龙2，执行SpeedPicker前往打包点时，梁龙2追尾梁龙1.
-- 【ClearJanitor】【通知-即将关机】GGR提示
-- 【首页-自动清洁(Auto Cleaning)-清洁路径(Cleaning Route)-新建地图(Create Route)-常规模式(Normal Mode)】路径详情，保存数据成功之后的界面与UI不符
-- 【首页-自动清洁(Auto Cleaning)-清洁路径(Cleaning Route)-新建地图(Create Route)-常规模式(Normal Mode)】路径详情，退出UI与实际不符
-- 【首页-自动清洁(Auto Cleaning)-清洁路径(Cleaning Route)-新建地图(Create Route)-常规模式(Normal Mode)】建图完成之后地图上无任何路径
-- 【首页-自动清洁(Auto Cleaning)-清洁路径(Cleaning Route)-新建地图(Create Route)-常规模式(Normal Mode)】预备条件，洗涤水箱不在位，界面弹窗提示并未在3秒之后消失
-- 【kuafu】【雷龙】【梁龙1】鸣人、苏雅雷斯在测试AOA时导航内存突然升高，然后下位机自己重启
-- 【AOA连接测试】【梁龙2】【K11海外版android10】APP界面弹出提示“Gateway Demo已停止运行”
-- 【rigel】【云端OTA】【ClearJanitor】机器在下位机OTA时，上位机界面一直停留在升级界面
-- 【算法-移动】梁龙1-佐助，上班首次启动，定位正常后，运行SpeedPicker，机器人不能正常移动，重启小程序，暂停/恢复不能解决。
-- '【L4TVendor_V06】【梁龙2】输入指令：sudo nvbootctrl dump-slots-info后，显示version: 5'
-- 【iot-gateway】【OTA】在手动OTA梁龙1/梁龙2时“iot-gateway”服务没有安装
-- 【GoGoReady】机器人暂时推开机器人后，进入暂停作业状态。进入暂停作业状态恢复作业，恢复成功后，仍然处在恢复作业界面。
-- 【 MoveBase】【梁龙2】按下急停按钮，点击“锁定车轮”，还是可以推动
-- 【GoGoReady】恢复急停按钮，点击“继续作业”，界面提示“机器人无响应，请重试操作或重启软件”
-- 【GoGoReady】梁龙1鸣人，同步账户配置多次，应用地图均失败。重启仍不能同步云端地图。 改为PonyRunner应用地图，一次成功。
-- 【L4TVendor_V04】【梁龙2】在终端输入：sudo minicom -D /dev/ttyUSB0 指令后报错
-- 【L4TVendor】【梁龙1】鸣人在刷机之后【CAN0】和【CAN1】丢失
-- 【梁龙2】机器在执行PonyRunner任务时DCB失去数据
-- 【AOA连接测试】【梁龙2】【K11国内版android10】APP界面偶尔弹出提示“Gateway Demo已停止运行”
-- 【平板重启】【AOA连接测试】【雷龙】【荣耀平板（一眼平板）】平板重启之后APP弹出授权提示
-- 【AOA连接测试】【梁龙2】【K11海外版android10】APP界面弹出提示“Gateway Demo已停止运行”
-- 【AOA连接测试】APP在点击按钮【启动】之后出现提示"Gateway Demo已停止运行”
-- 【AOA测试】华为C5，AOA在测试成功之后插拔USB接口，测试失败
-- 【L4TVendor】【梁龙2】共刷机十次，失败4次，成功6次
-- 【云端OTA】【鸣人】梁龙1在刷完702版本的L4TVendor后无法从云端进行OTA
-- 【L4TVendor】使用梁龙1和雷龙刷机均失败
-- 【PonyRunner】梁龙1在执行PonyRunner时暂停任务，重启下位机，定位成功之后机器直接执行任务
-- 在连接正常情况下，重启上下位机的KuafuGateway后，AOA连接显示正常，但通信失败
-- 【JCB】梁龙2JCB单板进行重新供电大约10s蜂鸣器异常警告声响才消失
-- 【急停声响】梁龙2在按下急停之后第三次蜂鸣器会发出短鸣两声的警报
-- 【MoveBase】OTA完成的机器人，GoGoReady同步配置，下发地图到机器人失败，重启机器人两次后，同步成功。
-- 【自研MCB】Ponnyrunner两点之间有多个路由点，且两点相距较近。机器人运行时，出现急刹车，掉头现象，运行奇怪。
-- 【GoGoReady】多次手动同步配置和进入“机器人无法接收任务”处理流程进行处理，均不能关闭该通知，机器人不能正常开始SpeedPicker拣货作业。
-- 【MoveBase-GoGoReady】梁龙1，上班后定位成功，首次启动SpeedPicker，机器人不能正常移动。暂停/恢复，不能使机器人移动。
-- 【自研MCB】18:35~18:37 之间，Ponnyrunner多次点击暂停/继续作业，机器人不能正确释放轮毂。一直处于锁轮毂状态。
-- 【自研MCB】机器人持续运行Ponnyrunner过程中，出现丢失定位。
-- 【梁龙2定位失败】【罗宾】机器镜像刷机之后云端OTA，结果无法正常定位
-- 【蜂鸣器异常提醒】在用电子平台梁龙1测试时分别拔掉PHB和DCB的供电线，蜂鸣器没有发出异常报警提示
-- 【GoGoReady】偶现：机器人收集下位机日志，第一次收集不成功，需要重新进入收集。
-- 【算法-碰撞】雷龙和梁龙1，运行SpeedPicker过程中，面对面相撞。运行不足20分钟。早上运行2小时未出现碰撞。
-- 【GoGoReady】单机问题-机器人工作组正常，网络正常时，同步账户配置不全，多次同步，仍不能完成同步。
-- 【GoGoReady】GoGoReady无本地地图时。Ponnyrunner启动页新建任务时提示弹窗，没有地图可用，指示图显示缺失。
-- 【文件权限】有些文件用户和用户组与预期结果不相符
-- 【算法-不移动】梁龙2-执行SpeedPicker和Ponnyrunner运行过程中，出现前往新目标点时，不能正常前往。机器人停在原地，GoGoReady无异常上报。
-- 【急停数值】梁龙2在按下急停之后查看急停数值为0
-- 【MoveBase】机器人运行SpeedPicker期间。点击暂停移动，此时拔下电池，更换机器人电池。整机系统恢复后，机器人不能继续移动。
-- 【算法-不移动】梁龙1-佐助，持续运行Ponnyrunner，前往目标点过程中，不能正常移动，暂停/恢复移动操作，不能让机器人继续移动。
+- 【Clearjanitor】清洁机器人未按照地图规定路线行驶，执行到闭环路线外面去了
+- 【MoveBase】自动清洁定位时，navigation_skill占用内存极高，各进程被反复杀死
+- 【Clearjanitor】机器人后退灯光没有橙色闪烁
+- 【Clearjanitor】机器在执行自动清洁任务期间出现两次丢失定位
+- 【MoveBase】gadgetman 进程不断重启，无法完成建图流程
+- 【Clearjanitor】随机两中异常情况发生，上位机只提示一种情况
+- 【Clearjanitor】录制地图，推动机器人很长路段，界面没有任何变化
+- 【Clearjanitor】机器开始任务长时间在“Loading task”界面
+- 【Clearjanitor】点击休眠界面无二次弹窗确认
+- 【Clearjanitor】RFID无法保存
+- 【Clearjanitor】建图模式在“Ready”状态下没有返回图标
+- 【Clearjanitor】点击上传上位机日志，界面一直显示加载中，超过五分钟还是显示加载中
+- 【MoveBase】打开PonyRunne，选择刚刚新建地图，界面一直显示加载中，退出小程序重新进，点击刚刚新建地图，弹窗提示“地图应用失败”
+- 【MoveBase】梁龙1和雷龙正面相撞
+- 【MoveBase】创建新地图到第三步，页面一直提示失败，不能流转成功
+- 【GoGoReady】【雷龙】已经绑定一个载具了，点击全部卸载，点击保存，界面提示“操作失败，请重试”
+- 【MoveBase】【梁龙1A】鸣人机器MoveBase5645升级MoveBase5658后，蜂鸣器一直在响，下位机线都是检查过的，链接正常，重启三遍还是一直响
+- 【RIGEL】电池耗尽（小于3%）无灯效变化、pager提醒，也无界面弹窗提示
+- 【RIGEL】低电量时没有红色呼吸灯和Pager提示
+- 【RIGEL】机器人无法定位，下位机日志输出:marker is not in the map
+- 【utime】【62M1日亚版/62M2美洲版】点击“提供禁用所有安卓原生弹窗的API”无任何反应
+- 【utime】【62M1日亚版/62M2美洲版】点击“安装/卸载app”无任何反应
+- 【P2A】机器传感器数据存在问题
+- 【Clearjanitor】长按实体关机键偶现上位机没有关机的现象
+- 【Clearjanitor】机器建图过程中轮毂没有解锁
+- 【Clearjanitor】机器偶现无法后退的情况
+- 【ClearJanitor】机器执行自动清洁任务，转弯时beep机没有响应
+- 【Clearjanitor】电量低于10%，pager图标为电量图标
+- 【Clearjanitor】机器长时间定位不上
+- 【ClearJanitor】进入自动清洁模式，点击暂停，蓝色灯光没亮
+- 【首页-设置-Advance】Factory Reset，无云端登陆校验
+- 【Clearjanitor】机器开机没有Melody开关机音效，且pager图标为感叹号
+- ' 【Clearjanitor】机器上下位机器断联，pager图标为感叹号'
+- 【Clearjanitor】机器急停pager无任何反应，急停解除之后pager发出“错误”音效和感叹号警告
+- 【utime】62M1日亚版/62M2美洲版，提供测试工具的版本号查看方式
+- 【Clearjanitor】【Full Diagnosis】机器自检有两项没有过
+- 【Clearjanitor】【Full Diagnosis】机器后方灯光在自检过程中第一次为红色灯光，第二次为蓝色灯光
+- 【Clearjanitor】【Full Diagnosis】机器前方灯光在自检过程中仅在第二次检查灯光时亮且显示蓝色灯光
+- 【Clearjanitor】【Full Diagnosis】机器在人为自检灯光时提示都是显示前方灯光
+- 【Clearjanitor】【Full Diagnosis】机器在开始自检界面无法下滑看到更多自检内容
+- 【Clearjanitor】定位任务在未到定时时间就开始执行任务
+- 【utime手机】【62M1日亚版/62M2美洲版】点击“5秒后亮屏”，再点击“熄屏”，偶尔屏幕不能亮起
+- 【utime手机】【62M1日亚版/62M2美洲版】界面暂无“启动/禁用4G”功能
+- 【utime手机】【62M1日亚版/62M2美洲版】点击“跳转到APN界面”按钮，界面未能跳转
+- 【ClearJanitor】反复进行重启操作，会偶现弹出启动失败提示
+- 【RIGELE】机器人执行自动清洁任务中突然停止不动
+- 建图中界面显示扫描完成的地图会逐渐消失
+- 【Diagnosis】诊断左右轮时出现仅抖动而不左右移动的现象
+- 雷龙导航时径直撞上地图外沿桌子
+- 【utime】62M1日亚版/62M2美洲版无论是否插入SIM卡，获取Cell ID时显示结果均为”null“
+- 【utime手机】【62M1日亚版/62M2美洲版】在界面上未找到功能“APN”
+- 【utime手机】【62M1日亚版/62M2美洲版】在界面上未找到功能“启用/禁用：屏保”
+- 【utime】62M1日亚版/62M2美洲版点击“指定只能安装应用白名单”无任何反应
+- 【utime手机】【62M1日亚版/62M2美洲版】在界面上未找到功能“启用/禁用：app锁屏”
+- 【utime手机】【62M1日亚版/62M2美洲版点击“恢复出厂设置”，没有二次弹窗，进行确认
+- 【utime手机】【62M1日亚版/62M2美洲版】系统语言只有英文、中文、日文
+- 【utime】62M1日亚版/62M2美洲版点击“指定开关机动画API”无任何反应
+- 【utime】62M1日亚版/62M2美洲版暂无“启动/禁用4G、wifi、蓝牙”、“亮屏”、“休眠”功能
+- 【utime】62M1日亚版/62M2美洲版暂无“启动/禁用GPS”功能
+- 【utime手机】【62M1日亚版/62M2美洲版】点击音量键（+/-），界面有显示
+- 【utime】62M1日亚版/62M2美洲版暂无“启动/禁用SD卡”功能
+- 【utime】62M1日亚版/62M2美洲版暂无“时间同步”功能
+- 【utime手机】【62M1日亚版/62M2美洲版】测试APK缺少拉起浏览器功能
+- 【utime】62M1日亚版/62M2美洲版暂无“自动化测试”功能
+- 【算法-建图】梁龙2建图，得到的特征数据异常，来回扫相同位置，得到不同结果。
+- 【工具优化】【梁龙2】【rigel】使用研发提供的脚本过滤关键词“imu”无法得到日志输出
+- 【MoveBase-MCU】【银星】按下物理关机按键七八秒左右才关机完成
+- 【MoveBase-MCU】【银星】输入指令后，银星机器蜂鸣器没响，开关机键蜂鸣器也没响
+- 【GoGoReady】配置区域环境后，重启了机器人，完成与机器人的连接后，GoGoReady仍然停留在“请重启机器人”的弹窗，无法流转进入GoGoReady界面，仍然需要重启GoGoReady。
+- 雷龙通过OTA方式偶现升级PDB失败
+- 【工具优化】【梁龙1A】研发提供工具只能使蜂鸣器按照音量0或100发声
+- 机器人跑着跑着就突然停止不动了
+- 【梁龙1A】【雷龙】UAVCAN测试之节点管理无法关闭广播
+- 【K10】运行一段时间之后，平板界面出现卡顿现象
+- 【梁龙1】机器按下关机键，灯带灯光逆流水4秒之后灯光红色常亮大约1秒
+- 【工具优化】【梁龙1A】【雷龙】按下急停之后日志反馈错误
+- 【工具优化】【梁龙1A】【雷龙】【梁龙2】使用指令无法查看到lidar的信息
+- 【K10平板】K10启动SpeedPicker，卡了一段时间白屏，再卡在进度条满的界面，不能正常进入SpeedPicker。
+- 【K10平板】平板开启了自动旋转，平板倒置的情况下，平板系统显示未进行同步旋转显示，导致系统显示方向与物理方向相反，不易使用。
+- 【MoveBase-MCU】【梁龙2】输入指令后，梁龙2机器底盘灯带没亮
+- 【算法-定位】机器人OTA完成，重启后，不能正常定位，进入建图，退出建图后，机器人成功定位。
+- '【ClearJanitor】整机检测Full Diagnosis里缺少Mobility: WHM，Sound: BeP，Sound: SPK，Light: LED，Mobility:
+  ESB，Cleaning: TPS，Cleaning: WaC，Cleaning: WaP，Cleaning: SSM，Cleaning: SPS，Cleaning:
+  VSM，Cleaning: Vam，Navigation: IFC，Navigation: RFI测试项'
+- '【ClearJanitor】整机检测Full Diagnosis里缺少“Sound: BeP”测试项'
+- '【ClearJanitor】整机检测Full Diagnosis里缺少“Mobility: WHM”测试项'
+- 【ClearJanitor】开始自动检测后无任何反应
+- 【Clearjanitor】“针对性检测”功能暂未实现
+- 【Clearjanitor】定时任务静止不动
+- 【Clearjanitor】下位机磁盘爆满之后手动清洁仍然能开启
+- 【Clearjanitor】手动清洁时灯光为白色呼吸
+- 【Clearjanitor】下位机打包日志出错，且没有显示对应Droid_id信息
+- 【Clearjanitor】任务完成时灯光熄灭
+- 【Clearjanitor】上传下位机日志界面日志没有自动置底
+- 【Clearjanitor】自动清洁暂停，灯光为白色常亮
+- 【Clearjanitor】水箱不在位时灯光和beep及pager效果均未触发
+- 【Clearjanitor】显示灰色，点击“Sync with Cloud”按钮无反应
+- 【Clearjanitor】上位机没有显示协议内容
+- 【算法-定位】梁龙1A，相机扫描到定位码，却始终无法定位。
+- 【Clearjanitor】执行自动清洁任务，把机器推出地图外，机器还能动，界面没有弹窗提示
+- 【Clearjanitor】关机键长按时间大于5秒，结果机器未关机
+- 【Clearjanitor】常规建图时遇见下位机系统软件异常并没有暂停建图
+- 【Clearjanitor】灯光在异常事件消失之后熄灭
+- 【Clearjanitor】清水箱空暂无提示
+- 【Clearjanitor】关机倒计时时间不对
+- 【Clearjanitor】执行清洁任务，机器人受困，等待10s界面没有弹出提示语，点击暂停和继续界面也没有提示语
+- 【Clearjanitor】按下多功能按键取消关机，结果自动清洁任务并没有暂停，而且关机倒计时时间也不对
+- 【Clearjanitor】执行清洁任务中拍下急停按钮，界面弹出提示语没有居中
+- 【Clearjanitor】滚轮悬空超过1s，提示错误
+- 【Clearjanitor】执行任务中，污水箱已满提示错误
+- 【Clearjanitor】RFID提示错误
+- 【Clearjanitor】机器在自动清洁中点击暂停，轮毂依然锁住
+- 【Clearjanitor】在执行自动清洁任务中上位机发出丢失定位的通知，下位机无法正常执行任务
+- 【MoveBase】梁龙1更换相机升级为梁龙1A后，刷机完成，机器人不能正常执行SpeedPicker运动命令。重启不能解决。重启后再次尝试运行，机器人丢失定位。
+- 【Clearjanitor】弹窗提示"The sewage tank is full. Please feplace the tank before cleaning"
+- 【Clearjanitor】上位机无法从云端进行OTA
+- 【Clearjanitor】机器定位成功之后静止不动
+- 【Clearjanitor】建图时停留超过四分钟，界面没有弹窗提示
+- 【Clearjanitor】常规建图定位成功上位机仍然显示继续定位的通知
+- 【Clearjanitor】弹窗提示“Recovery tank is Full,continue cleaning without VACUUM function?”
+- 【Clearjanitor】污水箱满在建图过程中继续建图偶现没有提示的现象
+- 【Clearjanitor】界面弹出“wheel lift floating >1s”，提示语与实际不一样
+- 【MoveBase】梁龙1A机器前往拣货区，在拐角处撞上货架
+- 【算法-丢失定位】2次：梁龙1运行SpeedPicker过程中，拣货完成，运动过程中暂停移动，恢复后，出现丢失定位。
+- 【算法-运动】梁龙2机器人已经停靠在打包点，但SpeedPicker流程未流转，仍然是前往状态。
+- 【算法-丢失定位】雷龙OTA完成，定位成功后，对准定位码静置几分钟后，启动SpeedPicker。机器人转弯时，点击暂停移动后，机器人丢失定位。
+- 【k10】梁龙2在仅重启下位机之后出现上下位机器通讯异常的情况
+- 【K10国内版本】下位机同步时间失败
+- 【k10】【GGR时间同步】系统时间改变之后GGR只改变了时间，没有改变日期
+- 【GoGoReady】点击上传机器日志，界面的数字没跳动。等待一会后重新进入上传才显示数字才跳动和显示百分比，随后界面显示日志上传失败
+- 【MoveBase】梁龙2和梁龙1A在货架路口相撞
+- 【AOA】雷利只重启下位机偶现测试失败
+- 【算法-定位】【MoveBase-ota】MoveBase3.0.5551 OTA 更新至 MoveBase 3.0.5563，更新完成后，雷龙和梁龙1不能成功进行定位。
+  手动重启机器人后，正常进行定位。雷龙蜂鸣器一直响。
+- 【算法-丢失定位】2次：梁龙2机器人，运行SpeedPicker一个小时候，在打包点，机器人无响应，随后出现丢失定位。
+- 【算法-碰撞】从巷道内出来的梁龙机器人，碰撞到绑定完载物箱，前往拣货点，直行的雷龙。碰撞后，梁龙继续移动。雷龙则被撞停。撞停后的雷龙，多次重启SpeedPicker，不能继续运动。重启机器人才能继续作业。
+- 【MoveBase-移动】梁龙1，机器人状态正常的情况下，启动SpeedPicker，前往绑定点时，点击暂停/恢复后，机器人不能正常继续作业。轮毂为解锁状态。
+  再次启动SpeedPicker，机器人正常开始作业。
+- 【同步配置】MoveBase更新完成，首次绑定账户，易出现地图下发失败现象，再次同步配置，即可下发成功。
+- 【Clearjanitor】机器电量低于3%触发自动关机时上位机仍然会弹出定位丢失的通知
+- 【Clearjanitor】异常情况上位机提示重复
+- 【Clearjanitor】机器在执行任务期间定位成功之后上位机仍然会弹出定位丢失的通知
+- 【Clearjanitor】机器人定时任务无法正常执行
+- 【开关机】机器人开关机偶现无法正常开关机现象，且电量<3%时，下位机无法关机，上位机关机之后又开机
+- 【Clearjanitor】【bumper】机器无法识别到突然在整机正前方放置2CM以上的物体
+- 【Clearjanitor】机器在执行自动清洁任务期间下位机灯光突然熄灭，只有转向时灯光正常
+- 【Clearjanitor】P2B将前方的外壳装上之后机器无法正常运行
+- 【Clearjanitor】正常执行任务时，无法恢复急停状态
+- 【Clearjanitor】上下位机器通讯断开，灯光无任何变化
+- 【海外版】【GoGoReady】海外版K11无法进行时钟同步
+- 【Clearjanitor】水箱重新归位之后灯光仍然在红色呼吸
+- 【MoveBase-jinglebeall】急停声音变化，与需求定义不符。
+- 【Clearjanitor】-beep音效在测试全程中均无声响
+- 【Clearjanitor】清水箱空灯带和beep声效错误
+- 【Clearjanitor】待机状态/定时状态/手动清洁机器人灯光为红色
+- 【Clearjanitor】提测版本暂时还未开发pager功能
+- 【Clearjanitor】-【关机】机器没有Melody关机音效
+- 【Clearjanitor】【开关机】开机时，机器没有四色跑马灯的光效
+- 【Clearjanitor】-【自动清洁】机器自动清洁走到清洁区并未开始清洁
+- 【GoGoReady】急停处理流程异常，不合理。
+- 【GoGoReady】点击“获取配置”，页面卡死，无法自动跳转
+- 【算法-碰撞】两台雷龙抢占打包点，出现剐蹭。 未中断运行，人为协助，可继续运行。
+- 【Clearjanitor】-【清水箱空】清水箱空上位机无任何提示
+- 【Clearjanitor】-常规模式建图-路径详情，左侧概览图文本标注
+- 【ClearJanitor】磁盘空间爆满，无弹窗提示
+- 【ClearJanitor】【通知-传感器异常】拔掉DCB或者使下位机传感器异常之后上位机没有提示
+- 【Clearjanitor】-【RFID】-【Tag Reading】值的变化波动有点大，且不稳定
+- 【ClearJanitor】制造系统硬件异常“CPU”、“磁盘”、“内存”，弹窗提示没有错误码
+- 【Clearjanitor】清洁模式在手动清洁和常规建图时无法开启
+- 【Clearjanitor】污水箱满提示不一样
+- 【ClearJanitor】界面弹出气泡，三秒后还在，未消失
+- 【Clearjanitor】-【开始任务】机器定位成功之后静止不动，未执行任务
+- 【ClearJanitor】开机上位机黑屏，且第一次进入ClearJanitor时会卡顿
+- 【ClearJanitor】扶手未拉起，可以调节模式
+- 【ClearJanitor】选择各个数值的音量调节，机器没有发出声响
+- 【ClearJanitor】界面未找到sound list，只有Advance Cleaning Mode和Play List
+- 【ClearJanitor】快速建图长时间保存失败
+- 【ClearJanitor】快速建图，已经在建图期间上位机弹出定位通知
+- 【ClearJanitor】只有障碍物轮廓，没有提示
+- 【Clearjanitor】【快速建图】机器在快速建图时出现界面数据异常
+- 【ClearJanitor】提示语不一样
+- 【Clearjanitor】【云端OTA】P2B机器禁止进行云端OTA
+- 【GoGoReady】联想k10_国内版运行GGR容易出现非常卡顿的现象
+- 【k10】【海外版+国内版】平板在运行SpeedPicker时概率出现键盘无法调出的情况
+- 【Clearjanitor】【手动清洁】手动清洁的滚刷力度档位会自己切换
+- 【ClearJanitor】常规路径查看，地图下方多出“----None”，快速路径查看，地图下方多出“Vaccum、Scrubber”
+- 【ClearJanitor】无法删除路径任务，没有删除功能
+- 【ClearJanitor】初次进入地图，界面提示语“No map here,Click"Create Route"toadd new Route”
+- 【ClearJanitor】选择地图详情，缺少“Applied Cleaning setting”
+- 【ClearJanitor】快速建图模式，新建的地图长时间无法保存地图
+- 【雷龙-移动】雷龙机器人在巷道内运行时，相机可能扫描到虚假障碍，导致机器人不能继续前行。
+- 【MoveBase】刷机完成后，下载完成，界面提示“MoveBase重启中”，等待一会儿下位机没启动成功，需要手动启动
+- 【FPCHECKER-测试-DIPLO-JCB】弹窗提示“正在配置CAN...”或“重启中”，随后弹窗“正等待与TX2连接...”
+- 【fpchecker】【梁龙1】测试项”J2001USBHub检测“没有通过
+- 【算法-碰撞】MoveBase3.0.5520，L4T 1.0.794，两台运行SpeedPicker的雷龙，面对面缓慢运行时，产生碰撞。 碰撞完成，还能继续运行。
+- 【梁龙2】【AOA】罗宾搭配K10偶现无法充电的情况
+- 【L4TVendor】S3上签名版本更新滞后，且缺少雷龙签名版本
+- 【AOA】测试期间出现异常弹窗
+- 【FPCHECKER-测试-DIPLO2-DCB】测试内容：“版本检查”，“DAC1”结果为FAIL
+- 【AOA】AOA测试下位机重启测试失败
+- 【AOA】测试用例：Kuafu启动顺序LUA，执行失败
 bug_versions: {}
-clearjanitor缺陷: 106
-kuafu缺陷: 17
+clearjanitor缺陷: 180
+kuafu缺陷: 1
 reporter:
-  刘明阳: 73
-  王凯: 3
-  王翔宇: 1
-  罗小波: 34
-  胡安明: 1
-  陈健民: 47
-total: 159
-一般: 56
-一般-解决数量: 16
-严重: 67
-严重-无分析评论: 15
-严重-解决数量: 24
-其他类型缺陷: 42
+  刘明阳: 104
+  王凯: 4
+  罗小波: 20
+  胡安明: 11
+  蓝月康: 1
+  陈健民: 72
+total: 212
+一般: 47
+一般-解决数量: 22
+严重: 142
+严重-无分析评论: 49
+严重-解决数量: 49
+其他类型缺陷: 71
 创建日期:
-  02-01: 4
-  02-02: 9
-  02-03: 6
-  02-06: 2
-  02-07: 5
-  02-08: 4
-  02-09: 2
-  02-10: 5
-  02-13: 1
-  02-14: 19
-  02-15: 6
-  02-16: 40
-  02-17: 8
-  02-18: 6
-  02-20: 10
-  02-21: 6
-  02-22: 6
-  02-23: 1
-  02-24: 3
-  02-26: 2
-  02-27: 14
-待关闭缺陷: 15
-提示: 7
-提示-解决数量: 4
-无效缺陷: 4
-时钟缺陷: 4
+  03-01: 9
+  03-02: 1
+  03-03: 9
+  03-06: 21
+  03-07: 21
+  03-08: 9
+  03-09: 3
+  03-10: 3
+  03-13: 22
+  03-14: 15
+  03-15: 5
+  03-16: 10
+  03-17: 23
+  03-20: 12
+  03-21: 9
+  03-22: 3
+  03-23: 5
+  03-24: 5
+  03-27: 5
+  03-28: 10
+  03-29: 5
+  03-30: 7
+建图缺陷: 2
+待关闭缺陷: 47
+提示: 4
+提示-解决数量: 3
+无效缺陷: 3
+时钟缺陷: 30
 未解决的工程师:
-  banyue: 4
-  chenjianmin: 1
-  chenqinhu: 2
+  banyue: 11
+  chaoj: 1
   chenweiming: 2
-  guojiaren: 1
-  hongjiaheng: 3
-  huanming: 11
-  kumar: 15
-  linwenhong: 3
-  liuli: 23
-  lizichen: 7
-  luoxiaobo: 2
-  luxiao: 6
-  menzhipeng: 3
-  muxingyuan: 4
-  sunqian: 2
-  tangzhida: 2
-  wangkai: 36
-  wangxiangyu: 10
-  wangyuhang: 1
+  hongjiaheng: 2
+  huanming: 1
+  kumar: 17
+  limu: 1
+  linwenhong: 1
+  liuli: 21
+  liuyanwen: 1
+  lizichen: 15
+  luxiao: 2
+  muxingyuan: 3
+  sunqian: 1
+  tangzhida: 6
+  wangkai: 15
+  wangxiangyu: 6
+  xiezhensen: 11
   yangbo: 1
-  yanghuan: 17
-  zhangjinxu: 3
-碰撞缺陷: 0
-算法缺陷: 15
-致命: 29
-致命-无分析评论: 3
-致命-解决数量: 24
+  yanghuan: 10
+  zhangjinxu: 1
+  zhengbin: 1
+  zhengpan: 2
+  zhouhao: 2
+碰撞缺陷: 10
+移动缺陷: 8
+算法缺陷: 24
+致命: 19
+致命-无分析评论: 6
+致命-解决数量: 4
