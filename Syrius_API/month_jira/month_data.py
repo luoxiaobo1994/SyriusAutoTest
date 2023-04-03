@@ -3,7 +3,7 @@
 # TIME: 2023/3/2 14:31
 # Desc: 自动抓取Jira数据。
 import yaml
-
+from datetime import date, timedelta
 from Python_Jira import JiraTool
 from utils.read_yaml import read_yaml
 from matplotlib import pyplot as plt
@@ -12,10 +12,16 @@ jira = JiraTool()
 
 month_date = 2023.03
 
-config = read_yaml('jira_config.yml')
+
 # print(read_yaml('jira_config.yml')['month'][month_date])
-start_date = read_yaml('jira_config.yml')['month'][month_date][0]
-end_date = read_yaml('jira_config.yml')['month'][month_date][-1]
+def last_month_start_end_day(today=''):
+    this_first = date.today().replace(day=1)  # 这个月1号
+    prev_last = this_first - timedelta(days=1)  # 上个语言最后一天。
+    prev_first = prev_last.replace(day=1)  # 上个月1号。
+    return prev_first, prev_last
+
+
+start_date, end_date = last_month_start_end_day()
 
 BUG_info = {
     'total': 0,
@@ -58,22 +64,22 @@ BUG_info = {
 }
 
 
-def issue_for_date(date_interval):
+def issue_for_date():
     project = "project = SQA AND issuetype = Bug"
-    date = f"created >= {date_interval[0]} AND created <= {date_interval[1]}"
+    date = f"created >= {start_date} AND created <= {end_date}"
     jql = f"{project} AND {date}"
     total = jira.search_jira_jql(jql=jql)
     BUG_info['total'] = len(total)
     return total  # 返回的是可迭代对象，对象内容是缺陷的key，如：SQA-5457
 
 
-all_bug_key = issue_for_date(config['month'][month_date])
+all_bug_key = issue_for_date()
 
 
-def issue_for_level(date_interval):
+def issue_for_level():
     # 月度区间内，各等级的缺陷。
     project = "project = SQA AND issuetype = Bug"
-    date = f"created >= {date_interval[0]} AND created <= {date_interval[1]}"
+    date = f"created >= {start_date} AND created <= {end_date}"
     state_sovled = "status in (Aborted, Rejected, Disapear, Done)"
     critical_bug = f'{project} AND 问题级别 = 致命 AND {date}'
     BUG_info['致命'] = len(jira.search_jira_jql(jql=critical_bug))
@@ -102,9 +108,9 @@ def process_issue_label(date_interval):
         bug_info = jira.get_issuefields(i)
 
 
-def jira_comment(date_interval):
+def jira_comment():
     project = "project = SQA AND issuetype = Bug"
-    date = f"created >= {date_interval[0]} AND created <= {date_interval[1]}"
+    date = f"created >= {start_date} AND created <= {end_date}"
     state_sovled = "status = open"
     critical_bug_list = jira.search_jira_jql(f'{project} AND {state_sovled} AND 问题级别 = 致命 AND {date}')
     for bug in critical_bug_list:
@@ -239,10 +245,9 @@ def write_yaml(file, data=None, mode='a'):
 
 def main():
     # 这一步是获取所有数据。
-    date = config['month'][month_date]
-    issue_for_date(date)
-    issue_for_level(date)
-    jira_comment(date)
+    issue_for_date()
+    issue_for_level()
+    jira_comment()
     bug_labels()
     bug_title()
     bug_assignee()
