@@ -2,26 +2,24 @@
 # Author: luoxiaobo
 # TIME: 2023/3/2 14:31
 # Desc: 自动抓取Jira数据。
-import yaml
+
 from datetime import date, timedelta
+
+import yaml
+
 from Python_Jira import JiraTool
-from utils.read_yaml import read_yaml
-from matplotlib import pyplot as plt
 
 jira = JiraTool()
 
-month_date = 2023.03
-
-
-# print(read_yaml('jira_config.yml')['month'][month_date])
-def last_month_start_end_day(today=''):
+def last_month_start_end_day():
     this_first = date.today().replace(day=1)  # 这个月1号
-    prev_last = this_first - timedelta(days=1)  # 上个语言最后一天。
+    prev_last = this_first - timedelta(days=1)  # 上个月最后一天。
     prev_first = prev_last.replace(day=1)  # 上个月1号。
     return prev_first, prev_last
 
 
 start_date, end_date = last_month_start_end_day()
+print(f"本次Jira数据获取的时间区间是：{start_date}~{end_date}。请注意时间区间的准确性。")
 
 BUG_info = {
     'total': 0,

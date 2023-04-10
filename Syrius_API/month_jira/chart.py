@@ -137,5 +137,5 @@ def word_cloud():
 
 
 if __name__ == '__main__':
-    chart()
-    # word_cloud()
+    # chart()
+    word_cloud()

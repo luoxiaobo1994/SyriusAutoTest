@@ -4,7 +4,7 @@
 import os
 import re
 from multiprocessing.dummy import Pool
-
+from base.common import write_yaml
 from utils.connect_linux import ssh
 from utils.log import logger
 
@@ -16,14 +16,17 @@ devices = {
     # '10.2.9.181': '10.2.11.119',  # 雷龙-苏亚雷斯
     # '10.2.8.118': '10.2.16.198',  # 雷龙-C罗
     # '10.2.8.77': '10.2.16.57',
-    '10.2.8.242': '10.2.11.107',  # 网卡
+    # '10.2.8.242': '10.2.11.107',  # 网卡
     # '10.2.8.103': '10.2.10.9',  # 梁龙-鸣人
     # '10.2.9.18': '10.2.16.163'  # 雷龙1604
     # '10.2.9.125': '10.2.16.163',  # 雷龙-布里茨
     # '10.2.8.211': '0.0.0.0',  # 网卡
     # '10.2.9.82': '0.0.0.0',  # 网卡
+    '192.168.10.108': '0.0.0.0',  # 北京雷龙
 
 }
+
+pad_robot = {}  # 存储padip和机器人IP
 
 
 def all_connect(ip):
@@ -40,6 +43,10 @@ def all_connect(ip):
                 logger.debug(f"当前机器人：{ip},实时连接的平板IP为：{pad_ip}.")
                 info = os.popen(f"adb connect {pad_ip}").readlines()
                 logger.debug(info[0])
+                try:
+                    pad_robot[f"{pad_ip}"] = ip
+                except:
+                    logger.warning(f"为什么写不进去，pad:{pad_ip},robot:{ip}")
             except:
                 logger.warning(f"没有抓取到平板的实时IP。")
         else:
@@ -50,6 +57,8 @@ def all_connect(ip):
         logger.warning(f"设备:{ip},连接失败!!!")
 
         # print(f"共连接成功:{len(get_devices())}个设备.")  # 多线程会重复打印.
+    logger.info(f"连接完成，平板与机器人的配对关系是：{pad_robot}，即将写入配置文件。")
+    write_yaml(file='pad_with_robot.yaml', data=pad_robot)
 
 
 def is_alive(ip):

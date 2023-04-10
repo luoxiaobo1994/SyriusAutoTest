@@ -12,6 +12,8 @@ from Syrius_API.flagship.SendOrder import send_order
 from base.common import *
 from utils.file_reader import YamlReader
 from utils.mylog import Logger
+from play_audio import palyAudio
+
 
 
 def pad_ip():
@@ -537,6 +539,7 @@ class SpeedPicker:
                             count.append(minutes)
                             log.warning(
                                 f"当前页面超过{minutes}分钟没有变化了，请检查是否发生了什么异常情况。")
+                            palyAudio(host='',audio_file='StopLongTime.wav',count=5)
                             self.shoot()
                             # self.err_notify()
                             return  # 出问题了，也跳出流程，等着回来吧。回来之前，不要重置计时器。

@@ -363,7 +363,8 @@ if __name__ == '__main__':
     # main(robot['梁龙·鸣人'])
     # main(robot['网卡211'])
     # main(robot['网卡82'])
-    main(robot['网卡242'])
+    # main(robot['网卡242'])
     # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。
+    main('192.168.10.108')  # 临时调试的IP。
     check_same_data()  # 检查有没有版本不一致的机器人，这个不能注释掉。
