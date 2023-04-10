@@ -2,16 +2,24 @@
 # Author: luoxiaobo
 # TIME: 2023/3/2 14:31
 # Desc: 自动抓取Jira数据。
+
+from datetime import date, timedelta
+
 import yaml
 
 from Python_Jira import JiraTool
-from utils.read_yaml import read_yaml
-from matplotlib import pyplot as plt
 
 jira = JiraTool()
 
-config = read_yaml('jira_config.yml')
-# print(config['month'][2023.02])
+def last_month_start_end_day():
+    this_first = date.today().replace(day=1)  # 这个月1号
+    prev_last = this_first - timedelta(days=1)  # 上个月最后一天。
+    prev_first = prev_last.replace(day=1)  # 上个月1号。
+    return prev_first, prev_last
+
+
+start_date, end_date = last_month_start_end_day()
+print(f"本次Jira数据获取的时间区间是：{start_date}~{end_date}。请注意时间区间的准确性。")
 
 BUG_info = {
     'total': 0,
@@ -30,6 +38,8 @@ BUG_info = {
     'MoveBase缺陷': 0,
     '碰撞缺陷': 0,
     '算法缺陷': 0,
+    '移动缺陷': 0,
+    '建图缺陷': 0,
     'MCU缺陷': 0,
     'JingleBell缺陷': 0,
     'OTA缺陷': 0,
@@ -52,22 +62,22 @@ BUG_info = {
 }
 
 
-def issue_for_date(date_interval):
+def issue_for_date():
     project = "project = SQA AND issuetype = Bug"
-    date = f"created >= {date_interval[0]} AND created <= {date_interval[1]}"
+    date = f"created >= {start_date} AND created <= {end_date}"
     jql = f"{project} AND {date}"
     total = jira.search_jira_jql(jql=jql)
     BUG_info['total'] = len(total)
     return total  # 返回的是可迭代对象，对象内容是缺陷的key，如：SQA-5457
 
 
-all_bug_key = issue_for_date(config['month'][2023.02])
+all_bug_key = issue_for_date()
 
 
-def issue_for_level(date_interval):
+def issue_for_level():
     # 月度区间内，各等级的缺陷。
     project = "project = SQA AND issuetype = Bug"
-    date = f"created >= {date_interval[0]} AND created <= {date_interval[1]}"
+    date = f"created >= {start_date} AND created <= {end_date}"
     state_sovled = "status in (Aborted, Rejected, Disapear, Done)"
     critical_bug = f'{project} AND 问题级别 = 致命 AND {date}'
     BUG_info['致命'] = len(jira.search_jira_jql(jql=critical_bug))
@@ -80,7 +90,7 @@ def issue_for_level(date_interval):
     done_critical = f"{project} AND {state_sovled} AND 问题级别 = 致命 AND {date}"
     BUG_info['致命-解决数量'] = len(jira.search_jira_jql(jql=done_critical))
     done_major = f"{project} AND {state_sovled} AND 问题级别 = 严重 AND {date}"
-    BUG_info['严重-解决数量'] = len(jira.search_jira_jql(jql=done_critical))
+    BUG_info['严重-解决数量'] = len(jira.search_jira_jql(jql=done_major))
     done_general = f"{project} AND {state_sovled} AND 问题级别 = 一般 AND {date}"
     BUG_info['一般-解决数量'] = len(jira.search_jira_jql(jql=done_general))
     done_minor = f"{project} AND {state_sovled} AND 问题级别 = 提示 AND {date}"
@@ -96,12 +106,13 @@ def process_issue_label(date_interval):
         bug_info = jira.get_issuefields(i)
 
 
-def jira_comment(date_interval):
+def jira_comment():
     project = "project = SQA AND issuetype = Bug"
-    date = f"created >= {date_interval[0]} AND created <= {date_interval[1]}"
+    date = f"created >= {start_date} AND created <= {end_date}"
     state_sovled = "status = open"
     critical_bug_list = jira.search_jira_jql(f'{project} AND {state_sovled} AND 问题级别 = 致命 AND {date}')
     for bug in critical_bug_list:
+        # 致命问题
         comment = jira.get_comments(bug)
         if comment:
             pass
@@ -109,6 +120,7 @@ def jira_comment(date_interval):
             BUG_info['致命-无分析评论'] += 1
     major_bug_list = jira.search_jira_jql(f'{project} AND {state_sovled} AND 问题级别 = 严重 AND {date}')
     for bug in major_bug_list:
+        # 严重问题
         comment = jira.get_comments(bug)
         if comment:  # 有评论
             # print()
@@ -152,6 +164,13 @@ def bug_labels():
         elif 'algorithm' in label:
             BUG_info['算法缺陷'] += num
         elif 'collision' in label:
+            BUG_info['碰撞缺陷'] += num
+            BUG_info['算法缺陷'] += num
+        elif 'mapping' in label:
+            BUG_info['建图缺陷'] += num
+            BUG_info['算法缺陷'] += num
+        elif 'move_issue' in label:
+            BUG_info['移动缺陷'] += num
             BUG_info['算法缺陷'] += num
         elif 'notabug' in label:
             BUG_info['无效缺陷'] += num
@@ -161,6 +180,9 @@ def bug_labels():
             BUG_info['时钟缺陷'] += num
         elif 'ota' in label:
             BUG_info['OTA缺陷'] += num
+        elif 'jinglebell' in label:
+            BUG_info['JingleBell缺陷'] += num
+            BUG_info['MoveBase缺陷'] += num
         else:
             BUG_info['其他类型缺陷'] += num
 
@@ -174,10 +196,17 @@ def bug_title():
 def bug_assignee():
     for bug in all_bug_key:
         assignee = jira.get_assignee(bug)
-        if assignee not in BUG_info['未解决的工程师']:
-            BUG_info['未解决的工程师'][assignee] = 1
+        if assignee not in BUG_info['未解决的工程师']:  # 这个工程师还未收录。
+            jql = f'project = SQA AND issuetype = Bug AND status in (open, "IN PROGRESS", "NEED VERIFY", POSTPONE) ' \
+                  f'AND created >= {start_date} AND created <= {end_date} AND assignee in ({assignee})'
+            # print(jql)
+            issue_num = jira.search_jira_jql(jql=jql)
+            if issue_num == 0:
+                pass
+            else:
+                BUG_info['未解决的工程师'][assignee] = len(issue_num)
         else:
-            BUG_info['未解决的工程师'][assignee] += 1
+            pass
 
 
 def bug_reporter():
@@ -203,7 +232,6 @@ def created_date():
             BUG_info['创建日期'][created_date] += 1
 
 
-
 def write_yaml(file, data=None, mode='a'):
     if file and isinstance(data, dict):
         with open(file, encoding='utf-8', mode=mode) as f:
@@ -213,14 +241,11 @@ def write_yaml(file, data=None, mode='a'):
         print(f"数据写入yaml文件：。请检查输入文件路径或存入的数据类型是否是键值对。")
 
 
-
-
 def main():
     # 这一步是获取所有数据。
-    date = config['month'][2023.02]
-    issue_for_date(date)
-    issue_for_level(date)
-    jira_comment(date)
+    issue_for_date()
+    issue_for_level()
+    jira_comment()
     bug_labels()
     bug_title()
     bug_assignee()
@@ -231,7 +256,6 @@ def main():
 
 
 main()
-
 
 # info = jira.get_issuefields('SQA-5422')
 # print(info['created'].split('T')[0])
