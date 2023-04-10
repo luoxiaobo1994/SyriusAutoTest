@@ -15,7 +15,6 @@ from utils.mylog import Logger
 from play_audio import palyAudio
 
 
-
 def pad_ip():
     num = int(__file__.split('\\')[-1].split('.')[0].split('cn')[-1]) - 1  # 序号从0开始
     devices_ls = get_devices()
@@ -102,6 +101,11 @@ class SpeedPicker:
                 log.info(f"当前机器人电量为:{i}")
                 return 1
         return 0
+
+    def robot_ip(self):
+        # 获取当前脚本配对的机器人IP
+        robotip = read_yaml(file='pad_with_robot.yaml', key=pad_ip())
+        return robotip
 
     def open_sp(self):
         log.debug(f"脚本启动成功，检查是否需要脚本启动SpeedPicker。")
@@ -306,6 +310,7 @@ class SpeedPicker:
         log.debug("检查是否进入其他界面了。")
         if not check_app(device=self.device_num()[0], appname='com.syriusrobotics.platform.launcher'):
             log.warning("设备的GoGoReady似乎闪退了。")
+            palyAudio(host=self.robot_ip(),audio_file='g=GoGoReadyCrash.wav')
             self.shoot()
             self.start_GGR()
             return 1
@@ -539,7 +544,7 @@ class SpeedPicker:
                             count.append(minutes)
                             log.warning(
                                 f"当前页面超过{minutes}分钟没有变化了，请检查是否发生了什么异常情况。")
-                            palyAudio(host='',audio_file='StopLongTime.wav',count=5)
+                            palyAudio(host=self.robot_ip(), audio_file='StopLongTime.wav', count=5)
                             self.shoot()
                             # self.err_notify()
                             return  # 出问题了，也跳出流程，等着回来吧。回来之前，不要重置计时器。

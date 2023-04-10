@@ -4,7 +4,7 @@
 import os
 import re
 from multiprocessing.dummy import Pool
-from base.common import write_yaml
+from base.common import update_yaml
 from utils.connect_linux import ssh
 from utils.log import logger
 
@@ -58,7 +58,7 @@ def all_connect(ip):
 
         # print(f"共连接成功:{len(get_devices())}个设备.")  # 多线程会重复打印.
     logger.info(f"连接完成，平板与机器人的配对关系是：{pad_robot}，即将写入配置文件。")
-    write_yaml(file='pad_with_robot.yaml', data=pad_robot)
+    update_yaml(file='pad_with_robot.yaml', data=pad_robot)
 
 
 def is_alive(ip):
