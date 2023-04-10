@@ -40,22 +40,22 @@ def all_connect(ip):
             # 能抓到机器人平板IP的情况下。
             try:
                 pad_ip = re.findall(r'inet (.*?)/', text)[0]  # 兜底抓到空的情况下
-                logger.debug(f"当前机器人：{ip},实时连接的平板IP为：{pad_ip}.")
-                info = os.popen(f"adb connect {pad_ip}").readlines()
-                logger.debug(info[0])
+                pad_ip = pad_ip.encode('gbk').decode('utf-8')  # 转码，莫名其妙。 不然会有数据异常。
+                logger.debug(f"当前机器人：{ip},实时连接的平板IP为：[{pad_ip}]{type(pad_ip)}.")
                 try:
                     pad_robot[f"{pad_ip}"] = ip
                 except:
                     logger.warning(f"为什么写不进去，pad:{pad_ip},robot:{ip}")
-            except:
-                logger.warning(f"没有抓取到平板的实时IP。")
+                info = os.popen(f"adb connect {pad_ip}").readlines()
+                logger.debug(info[0])
+            except Exception as e:
+                logger.warning(f"没有抓取到平板的实时IP。发生了异常：{e}")
         else:
             # 抓不到实时的IP，就按默认的去连接。
             info = os.popen(f"adb connect {devices[ip]}").readlines()  # 连接对应的平板.
             logger.debug(info[0])
     else:
         logger.warning(f"设备:{ip},连接失败!!!")
-
         # print(f"共连接成功:{len(get_devices())}个设备.")  # 多线程会重复打印.
     logger.info(f"连接完成，平板与机器人的配对关系是：{pad_robot}，即将写入配置文件。")
     update_yaml(file='pad_with_robot.yaml', data=pad_robot)

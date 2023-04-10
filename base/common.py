@@ -90,6 +90,7 @@ def bubble_sort(nums):
 def sort_dict():
     sorted()
 
+
 # 分割线
 def dd():
     print('\n', '-' * 20, '这是一条分割线', '-' * 20, '\n', sep='')
@@ -470,13 +471,16 @@ def read_yaml(file, key=None):
         value = yaml.load(stream=f, Loader=yaml.FullLoader)
         if key:
             return value[key] if value[key] else f'No value: {key}'
-        return value
+        return value if value else {}  # 空的时候，直接返回一个空字典。
 
 
 def write_yaml(file, data=None, mode='a'):
     if file and isinstance(data, dict):
-        with open(file, encoding='utf-8', mode=mode) as f:
-            yaml.dump(data, stream=f, allow_unicode=True)
+        if len(data) != 0:
+            with open(file, encoding='utf-8', mode=mode) as f:
+                yaml.dump(data, stream=f, allow_unicode=True)
+        else:
+            logger.warning(f"注意：写入的数据为空。不能成功写入yaml文件中。")
     else:
         logger.debug(f"请检查输入文件路径或存入的数据类型是否是键值对。")
 
@@ -488,12 +492,14 @@ def clear_yaml(file):
 
 def update_yaml(file, data, mode='w'):
     # 暂时没有好的办法能直接改指定的键值对，全读出来，再写进去，可能是最好的办法。
-    value = read_yaml(file)  # 读出来
-    # print(data)
-    for k, v in data.items():
-        value[k] = v
-    write_yaml(file, data=value, mode=mode)  # 再写进去。
-
+    if len(data) != 0:
+        value = read_yaml(file)  # 读出来，如果是空的，会有问题。
+        # print(data)
+        for k, v in data.items():
+            value[k] = v
+        write_yaml(file, data=value, mode=mode)  # 再写进去。
+    else:
+        logger.warning(f"注意：写入的数据为空。不能成功写入yaml文件中。")
 
 def get_filename():
     name = str(__file__).split('\\')[-1].split('.')[0]
