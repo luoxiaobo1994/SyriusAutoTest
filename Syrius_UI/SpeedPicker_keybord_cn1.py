@@ -117,10 +117,10 @@ class SpeedPicker:
                 site_name = re.findall(r"\n(.*?)\nSkill", ''.join(desc))[0]  # 正则提取出场地名称。
                 if site_name in ['sz-sqa-test-spare', 'sz-sqa-test']:
                     log.debug(f"获取到当前场地为:{site_name}。")
-                    update_yaml('site_info.yaml', {self.get_filename(): site_name})
+                    update_yaml('config_file/site_info.yaml', {self.get_filename(): site_name})
                 else:
                     log.debug(f"获取到的场地不是sqa测试场地，关闭接口自动派单功能。")
-                    update_yaml('site_info.yaml', {'api_order': False})
+                    update_yaml('config_file/site_info.yaml', {'api_order': False})
                 image = self.driver.find_elements(self.image)
                 soft_index = self.driver.app_elements_content_desc(self.view)
                 installsp = False
@@ -522,7 +522,7 @@ class SpeedPicker:
                             wait_time = 20
                             sleep(wait_time)
                             if '等待任务中' in self.get_text():
-                                if read_yaml('site_info.yaml', 'api_order'):
+                                if read_yaml('config_file/site_info.yaml', 'api_order'):
                                     log.debug(f"持续等待{wait_time}s，机器人仍然等待任务，且开启了接口发送订单功能。")
                                     self.api_order()
                                     sleep(40)
@@ -858,7 +858,7 @@ class SpeedPicker:
         return name
 
     def api_order(self):
-        site_info = read_yaml('site_info.yaml')  # {'SpeedPicker_cn1': 'sz-sqa-test''sz-sqa-test': 2}
+        site_info = read_yaml('config_file/site_info.yaml')  # {'SpeedPicker_cn1': 'sz-sqa-test''sz-sqa-test': 2}
         site = site_info[site_info[self.get_filename()]]  # 根据文本，拿到场地名称，根据场地名称，拿到场地ID。
         order_num = self.get_config()['order_num']
         try:
@@ -875,7 +875,7 @@ class SpeedPicker:
             sleep(10)
 
     def get_config(self):
-        return YamlReader('2speedpicker_config.yaml').data
+        return YamlReader('speedpicker_config.yaml').data
 
     def shoot(self, file_name='', just_shoot=False):
         if just_shoot:  # 有些时候，不问为什么，就是要截图。
