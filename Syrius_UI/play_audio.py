@@ -7,7 +7,7 @@ from utils.ssh_linux import MySSH
 from time import sleep
 
 
-def palyAudio(host, audio_file='GoGoReadyCrash.wav', volume=70, count=3):
+def palyAudio(host, audio_file='GoGoReadyCrash.wav', volume=100, count=3):
     """
     :param host:  需要控制的机器人。
     :param audio_file:  需要播放的异常音频文件。
