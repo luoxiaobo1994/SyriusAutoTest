@@ -7,7 +7,7 @@ from utils.ssh_linux import MySSH
 from time import sleep
 
 
-def palyAudio(host, audio_file='GoGoReadyCrash.wav', volume=100, count=3):
+def palyAudio(host, audio_file='StopLongTime.wav', volume=100, count=3):
     """
     :param host:  需要控制的机器人。
     :param audio_file:  需要播放的异常音频文件。
@@ -20,7 +20,7 @@ def palyAudio(host, audio_file='GoGoReadyCrash.wav', volume=100, count=3):
     if ssh.exe_cmd(f"ls -l ~/audio/{audio_file}"):
         pass
     else:
-        ssh.scp_file(file=f"audio.tar.gz", path='~/')
+        ssh.scp_file(file=f"./config_file/audio.tar.gz", path='~/')
         ssh.exe_cmd(f"tar -xzf audio.tar.gz")
     for i in range(count):
         ssh.exe_cmd(f"aplay ~/audio/{audio_file}")  # 播放音频
@@ -29,4 +29,4 @@ def palyAudio(host, audio_file='GoGoReadyCrash.wav', volume=100, count=3):
 
 
 if __name__ == '__main__':
-    palyAudio('192.168.10.108')
+    palyAudio('10.2.9.125')

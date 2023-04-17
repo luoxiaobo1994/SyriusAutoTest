@@ -12,6 +12,8 @@ from Syrius_API.flagship.SendOrder import send_order
 from base.common import *
 from utils.file_reader import YamlReader
 from utils.mylog import Logger
+from play_audio import palyAudio
+from utils.ssh_linux import MySSH
 
 
 def pad_ip():
@@ -67,6 +69,7 @@ class SpeedPicker:
         self.sp_text = []
         self.shoot_text = []
         self.useless_text = self.get_config()['useless_text']
+        self.set_low_volume(robot_ip=self.robot_ip())  # 跑之前，把扬声器音量调低。
 
     def init_driver(self):
         pad_ip = self.device_num()[0]  # 10.111.150.202:5555 这种格式.
@@ -100,6 +103,20 @@ class SpeedPicker:
                 log.info(f"当前机器人电量为:{i}")
                 return 1
         return 0
+
+    def robot_ip(self):
+        # 获取当前脚本配对的机器人IP
+        robotip = read_yaml(file='config_file/pad_with_robot.yaml', key=pad_ip())
+        return robotip
+
+    def set_low_volume(self, robot_ip, volume=15):
+        # 调低当前跑脚本的机器人的音量。避免吵到其他人
+        if robot_ip:
+            log.debug(f"运行之前，将机器人：{robot_ip}的扬声器音量调到{volume}%。")
+            ssh = MySSH(ip=robot_ip)
+            ssh.exe_cmd(f"amixer cset numid=864,iface=MIXER,name='x Speaker Playback Volume' {volume}%")
+        else:
+            log.warning(f"没有获取到机器人IP，请手动调低测试机器人的音量。")
 
     def open_sp(self):
         log.debug(f"脚本启动成功，检查是否需要脚本启动SpeedPicker。")
@@ -304,6 +321,7 @@ class SpeedPicker:
         log.debug("检查是否进入其他界面了。")
         if not check_app(device=self.device_num()[0], appname='com.syriusrobotics.platform.launcher'):
             log.warning("设备的GoGoReady似乎闪退了。")
+            palyAudio(host=self.robot_ip(), audio_file='g=GoGoReadyCrash.wav', volume=100, count=5)
             self.shoot()
             self.start_GGR()
             return 1
@@ -537,6 +555,7 @@ class SpeedPicker:
                             count.append(minutes)
                             log.warning(
                                 f"当前页面超过{minutes}分钟没有变化了，请检查是否发生了什么异常情况。")
+                            palyAudio(host=self.robot_ip(), audio_file='StopLongTime.wav', volume=100, count=5)
                             self.shoot()
                             # self.err_notify()
                             return  # 出问题了，也跳出流程，等着回来吧。回来之前，不要重置计时器。
@@ -928,7 +947,7 @@ class SpeedPicker:
             sleep(10)
 
     def get_config(self):
-        return YamlReader('speedpicker_config.yaml').data
+        return YamlReader('./config_file/speedpicker_config.yaml').data
 
     def shoot(self, file_name='', just_shoot=False):
         if just_shoot:  # 有些时候，不问为什么，就是要截图。
