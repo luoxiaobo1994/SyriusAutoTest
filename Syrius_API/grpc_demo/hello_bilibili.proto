@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package test;
+
+service Bibili {
+    rpc HelloDewei(HelloDeweiReq) returns (HelloDeweiReply){}
+}
+
+
+message HelloDeweiReq {
+    string name = 1;
+    int32 age = 2;
+}
+
+message HelloDeweiReply {
+    string result = 1;
+}

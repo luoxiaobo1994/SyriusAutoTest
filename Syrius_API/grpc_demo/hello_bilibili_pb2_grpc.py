@@ -2,10 +2,10 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import demo_pb2 as demo__pb2
+import hello_bilibili_pb2 as hello__bilibili__pb2
 
 
-class DemoStub(object):
+class BibiliStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -14,42 +14,42 @@ class DemoStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.HelloWord = channel.unary_unary(
-                '/test.Demo/HelloWord',
-                request_serializer=demo__pb2.HelloWordReq.SerializeToString,
-                response_deserializer=demo__pb2.HelloWordRes.FromString,
+        self.HelloDewei = channel.unary_unary(
+                '/test.Bibili/HelloDewei',
+                request_serializer=hello__bilibili__pb2.HelloDeweiReq.SerializeToString,
+                response_deserializer=hello__bilibili__pb2.HelloDeweiReply.FromString,
                 )
 
 
-class DemoServicer(object):
+class BibiliServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def HelloWord(self, request, context):
+    def HelloDewei(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_DemoServicer_to_server(servicer, server):
+def add_BibiliServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'HelloWord': grpc.unary_unary_rpc_method_handler(
-                    servicer.HelloWord,
-                    request_deserializer=demo__pb2.HelloWordReq.FromString,
-                    response_serializer=demo__pb2.HelloWordRes.SerializeToString,
+            'HelloDewei': grpc.unary_unary_rpc_method_handler(
+                    servicer.HelloDewei,
+                    request_deserializer=hello__bilibili__pb2.HelloDeweiReq.FromString,
+                    response_serializer=hello__bilibili__pb2.HelloDeweiReply.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'test.Demo', rpc_method_handlers)
+            'test.Bibili', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class Demo(object):
+class Bibili(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def HelloWord(request,
+    def HelloDewei(request,
             target,
             options=(),
             channel_credentials=None,
@@ -59,8 +59,8 @@ class Demo(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/test.Demo/HelloWord',
-            demo__pb2.HelloWordReq.SerializeToString,
-            demo__pb2.HelloWordRes.FromString,
+        return grpc.experimental.unary_unary(request, target, '/test.Bibili/HelloDewei',
+            hello__bilibili__pb2.HelloDeweiReq.SerializeToString,
+            hello__bilibili__pb2.HelloDeweiReply.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -1,17 +1,19 @@
-# -*- coding:utf-8 -*-
-# Author: luoxiaobo
-# TIME: 2023/4/13 17:42
-# Desc: grpc 客户端文件
+# coding: utf-8
 
 import grpc
-import demo_pb2 as pb2
-import demo_pb2_grpc as pb2_grpc
+import hello_bilibili_pb2 as pb2
+import hello_bilibili_pb2_grpc as pb2_grpc
+
 
 def run():
-    conn = grpc.insecure_channel('127.0.0.1:5000')  # 连接前面绑定的客户端。
-    client = pb2_grpc.DemoStub(channel=conn)
-    respone = client.Demo(pb2.DemoReq(
-        name = '罗小波'
-        age = 30
+    host = '127.0.0.1:5000'
+    conn = grpc.insecure_channel(host)
+    client = pb2_grpc.BibiliStub(channel=conn)
+    response = client.HelloDewei(pb2.HelloDeweiReq(
+        name='dewei',
+        age=33
     ))
-    print(respone)
+    print(response.result)
+
+if __name__ == '__main__':
+    run()
