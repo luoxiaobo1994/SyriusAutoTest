@@ -9,7 +9,7 @@ def run():
     host = '127.0.0.1:5000'
     conn = grpc.insecure_channel(host)
     client = pb2_grpc.BibiliStub(channel=conn)
-    response = client.HelloDewei(pb2.HelloDeweiReq(
+    response = client.HelloDewei(pb2.OneRequest(
         name='dewei',
         age=33
     ))
