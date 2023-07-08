@@ -15,11 +15,14 @@ runtime_list = [
     'pytest',
     'allure-pytest',
     'pytest-rerun',
+    'pytest-xdist',
     'Appium-Python-Client',
     'pytest-rerunfailures',
     'wcwidth',
     'paramiko',
-    'pyaml'
+    'pyaml',
+    'Faker',
+    'Flask'
 ]
 
 # 安装必要的库，省得每次都手写。麻烦
