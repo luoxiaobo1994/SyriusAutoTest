@@ -4,12 +4,16 @@
 # Describe: 本地调试脚本
 
 
-import requests
+def tt(func):
+    def gf(*args):
+        print("in gf")
+        func(*args)
+
+    return gf
 
 
-def test_get_user():
-    response = requests.get('https://jsonplaceholder.typicode.com/users/1')
-    assert response.status_code == 200
-    assert response.json()['username'] == 'Bret'
+@tt
+def foo(x):
+    print(f"in foo",x)
 
-test_get_user()
+foo(7)
