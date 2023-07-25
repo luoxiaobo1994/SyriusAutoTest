@@ -65,7 +65,35 @@ def func4(name):
     return name
 
 
-func1()
-func2()
-func3('luoxiaobo', 29)
-print(func4('被装饰函数要返回的数据'))
+def retry(max_retries=3):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            retries = 0
+            while retries < max_retries:
+                try:
+                    result = func(*args, **kwargs)
+                    # retries = max_retries + 1
+                    return result
+                except Exception as e:
+                    print(f"Error:{e}, Retrying...")
+                    retries += 1
+            raise Exception(f"Function {func.__name__} failed after {max_retries} retries.")
+
+        return wrapper
+
+    return decorator
+
+
+@retry(max_retries=1)
+def myfunc(ls):
+    for i in ls:
+        return 1 / i
+
+
+# func1()
+# func2()
+# func3('luoxiaobo', 29)
+# print(func4('被装饰函数要返回的数据'))
+
+
+print(myfunc([0, 0, 2]))
