@@ -239,7 +239,8 @@ def skill_file():
     skill = {'bootstrapper', 'jinglebell', 'ota', 'share', 'calibration_skill', 'keyring', 'oxe', 'time_sync',
              'cpu_mem_monitor.sh', 'kuafu', 'psyche', 'tx2_web_server', 'gadgetman', 'lost+found', 'pulseaudioman',
              'video_device.sh', 'health_skill', 'maintenance', 'README.txt', 'inuitive_xusb_detector', 'mapping_skill',
-             'scanner_skill', 'iot-gateway', 'navigation_skill', 'secbot', 'cleaning_skill'}
+             'scanner_skill', 'iot-gateway', 'navigation_skill', 'secbot', 'cleaning_skill', 'diagnosis_skill',
+             'avserver_skill'}
     if res1.difference(skill):
         pp(f"/opt/cosmos/bin目录下的文件检查有差异，差异项：{res1.difference(skill)}", "WARNING", color='r')
     else:
@@ -355,6 +356,7 @@ if __name__ == '__main__':
         '梁龙·佐助': '10.2.8.77',
         '网卡82': '10.2.9.82',
         '网卡242': '10.2.8.242',
+        '网卡193': '10.2.8.193',
     }
     # main(robot['雷龙·苏亚雷斯'])
     # main(robot['雷龙·内马尔'])
@@ -364,7 +366,8 @@ if __name__ == '__main__':
     # main(robot['网卡211'])
     # main(robot['网卡82'])
     # main(robot['网卡242'])
+    # main(robot['网卡193'])
     # main(robot['梁龙·佐助'])
     # main('10.2.9.39')  # 重龙PA版样机。
-    # main('192.168.10.108')  # 临时调试的IP。
+    # main('10.2.9.50')  # 临时调试的IP。
     check_same_data()  # 检查有没有版本不一致的机器人，这个不能注释掉。

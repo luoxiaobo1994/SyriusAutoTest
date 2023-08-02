@@ -48,7 +48,7 @@ class GGR():
             'newCommandTimeout': 30000,  # 命令超时时间。给长一点
             'automationName': 'UiAutomator2'  # 可能是这里导致的常断开
         }
-        br = webdriver.Remote(f"http://localhost:{port}", app_data)
+        br = webdriver.Remote(f"http://localhost:{port}", app_data)  # appium更新后，不需要再填： /wd/hub 了
         driver = TestKey(br, file=file)  # 传入脚本日志写在哪，确保单个机器人写的日志都集中在一起。
         return driver
 
@@ -106,8 +106,11 @@ class SpeedPicker:
 
     def robot_ip(self):
         # 获取当前脚本配对的机器人IP
-        robotip = read_yaml(file='config_file/pad_with_robot.yaml', key=pad_ip())
-        return robotip
+        try:
+            robotip = read_yaml(file='config_file/pad_with_robot.yaml', key=pad_ip())
+            return robotip
+        except:
+            return ''
 
     def set_low_volume(self, robot_ip, volume=15):
         # 调低当前跑脚本的机器人的音量。避免吵到其他人
