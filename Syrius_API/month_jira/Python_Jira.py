@@ -8,7 +8,7 @@ from jira import JIRA, Issue
 
 
 class JiraTool:
-    def __init__(self, username='luoxiaobo', password='qwe123123', project='SQA'):
+    def __init__(self, username='luoxiaobo', password='Lxb@20230713', project='SQA'):
         self.server = 'https://jira.syriusrobotics.cn/'
         self.username = username
         self.password = password

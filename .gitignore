@@ -13,3 +13,6 @@ misc.xml
 *.svg
 *.png
 *.jpg
+IDLE.py
+*.log
+debug.py

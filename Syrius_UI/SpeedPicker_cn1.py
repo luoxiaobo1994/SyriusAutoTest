@@ -324,7 +324,7 @@ class SpeedPicker:
         log.debug("检查是否进入其他界面了。")
         if not check_app(device=self.device_num()[0], appname='com.syriusrobotics.platform.launcher'):
             log.warning("设备的GoGoReady似乎闪退了。")
-            palyAudio(host=self.robot_ip(), audio_file='g=GoGoReadyCrash.wav', volume=100, count=5)
+            palyAudio(host=self.robot_ip(), audio_file='GoGoReadyCrash.wav', volume=100, count=5)
             self.shoot()
             self.start_GGR()
             return 1
@@ -558,8 +558,8 @@ class SpeedPicker:
                             count.append(minutes)
                             log.warning(
                                 f"当前页面超过{minutes}分钟没有变化了，请检查是否发生了什么异常情况。")
-                            palyAudio(host=self.robot_ip(), audio_file='StopLongTime.wav', volume=100, count=5)
                             self.shoot()
+                            palyAudio(host=self.robot_ip(), audio_file='StopLongTime.wav', volume=100, count=5)
                             # self.err_notify()
                             return  # 出问题了，也跳出流程，等着回来吧。回来之前，不要重置计时器。
                     else:

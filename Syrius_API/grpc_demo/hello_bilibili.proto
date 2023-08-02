@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package test;
+
+service Bibili {
+    rpc HelloDewei(HelloDeweiReq) returns (HelloDeweiReply){}
+    rpc HelloTest(stream HelloTestRequest) returns (stream HelloTestReply){}
+}
+
+
+// 传输方式
+// 1： unary 单程
+// 2： stream 类似长链接，持续流转。 代价是服务器资源占用较高。影响性能。分为： 1：双向  --> 客户端请求服务器端（流）, 服务器端返回
+// 给客户端的。 2：单向的 --> 服务器端收到客户端（流）。服务器端返回给客户端（非流）。3：单向的 --> 与2相反。
+//
+
+message HelloDeweiReq {
+    string name = 1;
+    int32 age = 2;
+}
+
+message HelloDeweiReply {
+    string result = 1;
+}

@@ -10,3 +10,4 @@ class Solution:
         return (num - 1) % 9 + 1 if num else num
 
 
+print(Solution().addDigits(123))

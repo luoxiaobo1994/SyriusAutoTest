@@ -1,0 +1,26 @@
+// 说明proto的版本。
+syntax = "proto3";
+
+
+// 包名
+package test;
+
+
+service DemoTest {// 关键字 + 服务名称 空格 大括号
+    // 请求和请求对象可以不同名。 returns 后面直接括号说明返回。
+    rpc DemoReq (OneRequest) returns (OneResponse) {}  // 定义请求和返回
+    // 可以定义多个请求和返回
+    //rpc Second (SecondReq) returns (SecondResponse) {}
+}
+
+// 定义请求实体。
+message OneRequest {
+    //    请求的参数，类型是string，参数名是name，序号是1. 最后要加上分号。
+    string name = 1;
+    //    proto里int分32和64等，都没关系，到Python里面，都是int。
+    int64 age = 2;
+}
+message OneResponse {
+    //    就返回一个result
+    string result = 1;
+}
