@@ -749,8 +749,12 @@ class SpeedPicker:
                 else:
                     # log.debug(f"相同商品连续捡取完毕。")
                     break
-            self.driver.click_element((By.XPATH, '//*[starts-with(@text, "完成")]'))
-            log.debug(f"通过点击[完成]，完成拣货。")
+            if self.driver.element_display((By.XPATH, '//android.widget.EditText')):
+                log.warning(f"输入框仍然存在，商品码输入可能校验没有通过。")
+            if self.driver.element_display((By.XPATH, '//*[starts-with(@text, "完成")]')):
+                log.info(f"商品码校验通过，出现了完成按钮。")
+                self.driver.click_element((By.XPATH, '//*[starts-with(@text, "完成")]'))
+                log.debug(f"通过点击[完成]，完成拣货。")
         elif self.driver.element_display((By.XPATH, '//android.widget.EditText'), wait=1):
             # print(2222)
             # 拣货情形2,点开了输入框,但是没有输入商品码
