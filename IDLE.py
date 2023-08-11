@@ -6,10 +6,19 @@
 from base.common import *
 from collections.abc import Iterable
 
-class Student:
+from itertools import product, combinations
 
-    def __iter__(self):
-        pass
+def generate_combinations(chars, length):
+    # 重复排列
+    repeated_perms = product(chars, repeat=length)
+    for perm in repeated_perms:
+        yield ''.join(perm)
 
-dp(isinstance(Student(),Iterable))
-dp(hasattr(Student(),'__getitem__'))
+    # 组合
+    combs = combinations(chars, length)
+    for comb in combs:
+        yield ''.join(comb)
+
+
+for i in generate_combinations('abc1',2):
+    print(i)

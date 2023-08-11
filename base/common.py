@@ -13,7 +13,7 @@ import time
 import traceback
 from collections.abc import Iterable
 from datetime import datetime
-
+from itertools import product, combinations
 import wcwidth
 import yaml
 
@@ -501,9 +501,22 @@ def update_yaml(file, data, mode='w'):
     else:
         logger.warning(f"注意：写入的数据为空。不能成功写入yaml文件中。")
 
+
 def get_filename():
     name = str(__file__).split('\\')[-1].split('.')[0]
     return name
+
+
+def generate_combinations(chars, length):
+    # 重复排列
+    repeated_perms = product(chars, repeat=length)
+    for perm in repeated_perms:
+        yield ''.join(perm)
+
+    # 组合
+    combs = combinations(chars, length)
+    for comb in combs:
+        yield ''.join(comb)
 
 
 class just_err(Exception):

@@ -31,8 +31,9 @@ class Logger():
     def pp(self, message, level='DEBUG', color='g', isprint=0):
         data = f"{self.name} {datetime.now()} [{level}] : {message}\n"
         try:
-            with open(file=self.file, mode='a', encoding='utf-8') as f:  # 需要指定utf8编码，不然写一些特殊字符会挂掉。
+            with open(file=self.file, mode='a', encoding='utf-8', buffering=4096) as f:  # 需要指定utf8编码，不然写一些特殊字符会挂掉。
                 f.write(data)
+                f.flush()
         except Exception as e:
             print(f"\033[1;31m{self.name} {datetime.now()} [{level}] :"
                   f" 发生异常：{e}。日志写入失败，请检查：[{data}]\033[0m")

@@ -128,7 +128,7 @@ class SpeedPicker:
         #     exit(-404)  # 走不动了,直接停吧.
         # 抓取界面的小程序.
         try:
-            desc = self.driver.app_elements_content_desc(self.view)
+            desc = self.driver.app_elements_content_desc(self.view, where='[打开SpeedPicker]')
             if 'SkillSpace' not in ''.join(desc):
                 log.debug("当前不在Jarvis Launcher主界面。")
                 return
@@ -142,7 +142,7 @@ class SpeedPicker:
                     log.debug(f"获取到的场地不是sqa测试场地，关闭接口自动派单功能。")
                     update_yaml('config_file/site_info.yaml', {'api_order': False})
                 image = self.driver.find_elements(self.image)
-                soft_index = self.driver.app_elements_content_desc(self.view)
+                soft_index = self.driver.app_elements_content_desc(self.view, where='[检查小程序顺序]')
                 installsp = False
                 for i in soft_index:
                     if 'SpeedPicker' in i:
@@ -152,7 +152,7 @@ class SpeedPicker:
                         self.driver.click_one(image[-sp_index])
                         log.info("尚未启动SpeedPicker，即将自动启动SpeedPicker。")
                         sleep(1)
-                        tmp_text = self.get_text()
+                        tmp_text = self.get_text(func="open_sp")
                         for item in tmp_text:
                             if 'version:' in item:
                                 log.info(f"SpeedPicker的版本是:{item.split(':')[-1]}")
@@ -272,7 +272,9 @@ class SpeedPicker:
         self.inputcode(code=str(code) + err_num)  # Add a random number to form an error barcode.
         log.info("随机事件，输入一个[错误的]条码。")
 
-    def get_text(self, ele='', wait=3, raise_except=False, ):  # 3s左右合理,有些流程跳转时,会转圈一会儿.
+    def get_text(self, ele='', wait=3, raise_except=False, func=''):  # 3s左右合理,有些流程跳转时,会转圈一会儿.
+        if func:
+            log.debug(f"{func} 函数，查询页面文本。")
         if not ele:
             ele = self.view
         count = 20  # 有个限制.
@@ -288,8 +290,9 @@ class SpeedPicker:
                     if count % 10 == 0:  # 偶尔刷新一次.
                         # 判断是不是在Jarvis主界面.
                         try:
-                            tmp_desc = self.driver.app_elements_content_desc(locator=self.view)
+                            tmp_desc = self.driver.app_elements_content_desc(locator=self.view, where='[获取text]')
                             if 'SkillSpace' in ''.join(tmp_desc):
+                                # pass
                                 self.open_sp()
                         except:
                             pass  # The function needs to be improved
@@ -353,7 +356,7 @@ class SpeedPicker:
                             sleep(1)
                         break  # 返回完了,退出去
                     elif self.driver.element_display((By.XPATH, '//*[contains(@content-desc,"请稍后")]')):
-                        schedule = self.driver.app_elements_content_desc((By.XPATH, '//*'))
+                        schedule = self.driver.app_elements_content_desc((By.XPATH, '//*'), where='[检查是否进入其他界面]')
                         for i in schedule:
                             if i.startswith('请稍后'):
                                 log.debug(f"日志正在上传，{i}...")
@@ -382,7 +385,7 @@ class SpeedPicker:
                 log.debug(f"连续5次抓不到文本，可能是Appium通讯断了。当前异常:{e}")
                 raise just_err(message="通讯可能出问题了")
         try:
-            x = self.driver.app_elements_content_desc((By.XPATH, '//*'))
+            x = self.driver.app_elements_content_desc((By.XPATH, '//*'), where='[检查是否进入其他界面2]')
             view_text = self.get_text()
             if len(interset(view_text, self.get_text())) == 0:
                 log.warning("SpeedPicker可能白屏了。或者进入别的界面了。请检查。")
@@ -655,8 +658,8 @@ class SpeedPicker:
         log.warning(f"超过[{total_time}]s，[{pagename}]页面文本没有变化。可能卡界面了。")
         if is_shoot:
             self.shoot()
-        if is_quit:
-            exit(-100)
+        # if is_quit:
+        #     exit(-100)
 
     def click_view_text(self, text, wait=1, count=5, new_text=None, new_element=None, pagename='强点操作'):
         # 强点击,保证点到.
@@ -892,7 +895,7 @@ class SpeedPicker:
     def other_situation(self):
         # 开另一个线程来检测是否发生异常.持续检测的线程,就不要经常刷新日志了.
         view_text = self.get_text()  # 可能会空.
-        view_content = self.driver.app_elements_content_desc(self.view)
+        view_content = self.driver.app_elements_content_desc(self.view, where='[支线进程]')
         if len_same(self.get_config()['estop_text'], set(view_text)) >= 2:
             # 急停的情况.
             log.info("机器人被按下急停按钮。停止脚本。")
